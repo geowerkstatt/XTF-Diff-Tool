@@ -1,4 +1,4 @@
-package ch.geowerkstatt.xtf-diff-tool;
+package ch.geowerkstatt.xtfdifftool;
 
 public class Main {
     public static void main(String[] args) {

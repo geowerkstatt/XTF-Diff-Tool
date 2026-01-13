@@ -2,7 +2,7 @@ plugins {
     id("java")
 }
 
-group = "ch.geowerkstatt.xtf-diff-tool"
+group = "ch.geowerkstatt.xtfdifftool"
 version = "1.0-SNAPSHOT"
 
 repositories {
