@@ -5,7 +5,6 @@ plugins {
 }
 
 group = "ch.geowerkstatt.xtfdifftool"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
