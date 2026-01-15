@@ -18,10 +18,10 @@ A [docker image](https://github.com/geowerkstatt/XTF-Diff-Tool/pkgs/container/XT
 
 Starting from JAR:
 ```shell
-java -jar XTF-Diff-Tool.jar <XTF input files ...> <diff output file>
+java -jar XTF-Diff-Tool.jar <first XTF file> <second XTF file> <diff output file>
 ```
 
 Starting with Docker:
 ```shell
-docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/XTF-Diff-Tool <XTF inputs inside volume: /host/**/*.xtf> <diff output inside volume: /host/**/*.json>
+docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/XTF-Diff-Tool <first XTF file inside volume: /host/**/*.xtf> <second XTF file inside volume: /host/**/*.xtf> <diff output inside volume: /host/**/*.json>
 ```
