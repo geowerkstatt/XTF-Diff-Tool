@@ -6,6 +6,7 @@ import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.interlis.iom.IomObject;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,7 +33,6 @@ public final class XtfAnalyzer {
      * Analyzes the differences between the two streams and passes each change to the {@code changeConsumer}.
      */
     public void analyzeDifferences(Consumer<Change> changeConsumer) {
-        final int[] changeId = new int[] {0};
         Map<String, IomObject> secondObjectMap = createObjectMap(secondObjects);
 
         firstObjects.forEach(object -> {
@@ -40,7 +40,7 @@ public final class XtfAnalyzer {
             IomObject matchingObject = secondObjectMap.get(oid);
             if (matchingObject == null) {
                 Change removeChange = new Change(
-                        Integer.toString(changeId[0]++),
+                        UUID.randomUUID().toString(),
                         oid,
                         ChangeType.DELETED,
                         ValueType.OBJECT,
@@ -57,7 +57,7 @@ public final class XtfAnalyzer {
         for (IomObject remainingObject : secondObjectMap.values()) {
             if (remainingObject != null) {
                 Change addChange = new Change(
-                        Integer.toString(changeId[0]++),
+                        UUID.randomUUID().toString(),
                         remainingObject.getobjectoid(),
                         ChangeType.ADDED,
                         ValueType.OBJECT,
