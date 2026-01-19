@@ -48,6 +48,8 @@ public final class Main {
                 printUsage(cliOptions);
                 System.exit(1);
             }
+
+            applyGlobalOptions(options.get());
         }
     }
 
@@ -91,6 +93,20 @@ public final class Main {
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_PROXY)),
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_PROXY_PORT))
         ));
+    }
+
+    private static void applyGlobalOptions(XtfDiffToolOptions options) {
+        if (options.proxyHost().isPresent()) {
+            System.setProperty("http.proxyHost", options.proxyHost().get());
+            System.setProperty("https.proxyHost", options.proxyHost().get());
+
+            if (options.proxyPort().isPresent()) {
+                System.setProperty("http.proxyPort", options.proxyPort().get());
+                System.setProperty("https.proxyPort", options.proxyPort().get());
+            }
+        } else {
+            System.setProperty("java.net.useSystemProxies", "true");
+        }
     }
 
     private static Options createCliOptions() {
