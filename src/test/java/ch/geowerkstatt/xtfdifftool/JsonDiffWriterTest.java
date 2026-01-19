@@ -20,18 +20,18 @@ public class JsonDiffWriterTest {
 
     @Test
     public void writeSingleAddedObject() throws IOException {
-        Change change = new Change("0", "o1", ChangeType.ADDED, ValueType.OBJECT, "ClassName", null, null);
+        Change change = new Change("o1", ChangeType.ADDED, ValueType.OBJECT, "ClassName", null, null);
         String json = serializeChanges(change);
-        assertEquals("[{\"changeId\":\"0\",\"oid\":\"o1\",\"changeType\":\"added\",\"valueType\":\"object\",\"interlisName\":\"ClassName\",\"oldValue\":null,\"newValue\":null}]", json);
+        assertEquals("[{\"oid\":\"o1\",\"changeType\":\"added\",\"valueType\":\"object\",\"interlisName\":\"ClassName\",\"oldValue\":null,\"newValue\":null}]", json);
     }
 
     @Test
     public void writeAddedAndDeletedObjects() throws IOException {
         String json = serializeChanges(
-                new Change("0", "o1", ChangeType.ADDED, ValueType.OBJECT, "ClassName", null, null),
-                new Change("1", "o2", ChangeType.DELETED, ValueType.OBJECT, "ClassName", null, null)
+                new Change("o1", ChangeType.ADDED, ValueType.OBJECT, "ClassName", null, null),
+                new Change("o2", ChangeType.DELETED, ValueType.OBJECT, "ClassName", null, null)
         );
-        assertEquals("[{\"changeId\":\"0\",\"oid\":\"o1\",\"changeType\":\"added\",\"valueType\":\"object\",\"interlisName\":\"ClassName\",\"oldValue\":null,\"newValue\":null},{\"changeId\":\"1\",\"oid\":\"o2\",\"changeType\":\"deleted\",\"valueType\":\"object\",\"interlisName\":\"ClassName\",\"oldValue\":null,\"newValue\":null}]", json);
+        assertEquals("[{\"oid\":\"o1\",\"changeType\":\"added\",\"valueType\":\"object\",\"interlisName\":\"ClassName\",\"oldValue\":null,\"newValue\":null},{\"oid\":\"o2\",\"changeType\":\"deleted\",\"valueType\":\"object\",\"interlisName\":\"ClassName\",\"oldValue\":null,\"newValue\":null}]", json);
     }
 
     private String serializeChanges(Change... changes) throws IOException {

@@ -54,8 +54,8 @@ public class XtfAnalyzerTest {
         );
 
         List<Change> expectedChanges = List.of(
-                createChange("0", "o2", ChangeType.ADDED),
-                createChange("1", "o3", ChangeType.ADDED)
+                createChange("o2", ChangeType.ADDED),
+                createChange("o3", ChangeType.ADDED)
         );
 
         XtfAnalyzer analyzer = new XtfAnalyzer(first.stream(), second.stream());
@@ -75,8 +75,8 @@ public class XtfAnalyzerTest {
         );
 
         List<Change> expectedChanges = List.of(
-                createChange("0", "o1", ChangeType.DELETED),
-                createChange("1", "o3", ChangeType.DELETED)
+                createChange("o1", ChangeType.DELETED),
+                createChange("o3", ChangeType.DELETED)
         );
 
         XtfAnalyzer analyzer = new XtfAnalyzer(first.stream(), second.stream());
@@ -98,8 +98,8 @@ public class XtfAnalyzerTest {
         );
 
         List<Change> expectedChanges = List.of(
-                createChange("0", "o1", ChangeType.DELETED),
-                createChange("1", "o4", ChangeType.ADDED)
+                createChange("o1", ChangeType.DELETED),
+                createChange("o4", ChangeType.ADDED)
         );
 
         XtfAnalyzer analyzer = new XtfAnalyzer(first.stream(), second.stream());
@@ -111,8 +111,8 @@ public class XtfAnalyzerTest {
         return new Iom_jObject(INTERLIS_CLASS_NAME, oid);
     }
 
-    private Change createChange(String changeId, String oid, ChangeType type) {
-        return new Change(changeId, oid, type, ValueType.OBJECT, INTERLIS_CLASS_NAME, null, null);
+    private Change createChange(String oid, ChangeType type) {
+        return new Change(oid, type, ValueType.OBJECT, INTERLIS_CLASS_NAME, null, null);
     }
 
     private List<Change> getChanges(XtfAnalyzer analyzer) {
