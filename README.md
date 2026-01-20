@@ -18,10 +18,20 @@ A [docker image](https://github.com/geowerkstatt/XTF-Diff-Tool/pkgs/container/XT
 
 Starting from JAR:
 ```shell
-java -jar XTF-Diff-Tool.jar <first XTF file> <second XTF file> <diff output file>
+java -jar XTF-Diff-Tool.jar [options] <first XTF file> <second XTF file> <diff output file>
 ```
 
 Starting with Docker:
 ```shell
-docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/XTF-Diff-Tool <first XTF file inside volume: /host/**/*.xtf> <second XTF file inside volume: /host/**/*.xtf> <diff output inside volume: /host/**/*.json>
+docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/XTF-Diff-Tool [options] <first XTF file inside volume: /host/**/*.xtf> <second XTF file inside volume: /host/**/*.xtf> <diff output inside volume: /host/**/*.json>
 ```
+
+### Commandline Options
+| Option | Description |
+| --- | --- |
+| --help | Show help message and exit |
+| --version | Show version information and exit |
+| --logfile \<file\> | Path to the log file |
+| --modeldir \<modeldir\> | INTERLIS model search directories and repositories separated by `;` |
+| --proxy \<host\> | Set the proxy server used to access the INTERLIS model repositories |
+| --proxyPort \<port\> | Set the proxy port used to access the INTERLIS model repositories |
