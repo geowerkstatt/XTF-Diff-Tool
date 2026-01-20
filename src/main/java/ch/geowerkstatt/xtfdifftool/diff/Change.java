@@ -6,7 +6,7 @@ package ch.geowerkstatt.xtfdifftool.diff;
  * @param oid Transfer ID of the object
  * @param changeType Type of change (CHANGED, ADDED, DELETED)
  * @param valueType Type of the value that changed
- * @param interlisName INTERLIS element name
+ * @param interlisName Fully qualified INTERLIS element name
  * @param oldValue Old attribute value
  * @param newValue New attribute value
  */
