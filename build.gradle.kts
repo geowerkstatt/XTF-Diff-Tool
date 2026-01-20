@@ -8,9 +8,17 @@ group = "ch.geowerkstatt.xtfdifftool"
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://jars.interlis.ch") }
 }
 
 dependencies {
+    implementation("ch.interlis:iox-ili:1.24.4")
+    implementation("ch.interlis:ili2c-core:5.6.8")
+
+    implementation(platform("tools.jackson:jackson-bom:3.0.3"))
+    implementation("tools.jackson.core:jackson-databind")
+    implementation("tools.jackson.core:jackson-core")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
