@@ -14,6 +14,7 @@ repositories {
 dependencies {
     implementation("ch.interlis:iox-ili:1.24.4")
     implementation("ch.interlis:ili2c-core:5.6.8")
+    implementation("ch.interlis:ili2c-tool:5.6.8")
 
     implementation("commons-cli:commons-cli:1.11.0")
 
