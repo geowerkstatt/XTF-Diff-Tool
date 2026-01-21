@@ -5,7 +5,7 @@ import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.interlis.iom.IomObject;
 
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,6 +49,7 @@ public final class XtfAnalyzer {
             } else {
                 // Mark that the object of the second transfer has a matching entry in the first transfer
                 secondObjectMap.put(oid, null);
+                comparePrimitiveAttributes(object, matchingObject, changeConsumer);
             }
         });
 
@@ -68,5 +69,63 @@ public final class XtfAnalyzer {
 
     private Map<String, IomObject> createObjectMap(Stream<IomObject> objects) {
         return objects.collect(Collectors.toMap(IomObject::getobjectoid, Function.identity()));
+    }
+
+    /**
+     * Compare the primitive attributes of two IomObjects without knowledge of the INTERLIS model and report changes via the changeConsumer.
+     */
+    private void comparePrimitiveAttributes(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
+        var primitiveAttributesFirst = getPrimitiveAttributes(first);
+        var primitiveAttributesSecond = getPrimitiveAttributes(second);
+
+        primitiveAttributesFirst.forEach((key, attribute) -> {
+            var matchingAttribute = primitiveAttributesSecond.get(key);
+            if (matchingAttribute == null) {
+                changeConsumer.accept(new Change(
+                        first.getobjectoid(),
+                        ChangeType.DELETED,
+                        ValueType.ATTRIBUTE,
+                        first.getobjecttag(),
+                        String.join(",", attribute),
+                        null));
+            } else {
+                primitiveAttributesSecond.remove(key);
+                if (!attribute.equals(matchingAttribute)) {
+                    changeConsumer.accept(new Change(
+                            first.getobjectoid(),
+                            ChangeType.CHANGED,
+                            ValueType.ATTRIBUTE,
+                            first.getobjecttag(),
+                            String.join(",", attribute),
+                            String.join(",", matchingAttribute)));
+                }
+            }
+        });
+
+        primitiveAttributesSecond.forEach((key, attribute) -> {
+            changeConsumer.accept(new Change(
+                    first.getobjectoid(),
+                    ChangeType.ADDED,
+                    ValueType.ATTRIBUTE,
+                    first.getobjecttag(),
+                    null,
+                    String.join(",", attribute)));
+        });
+    }
+
+    private HashMap<String, List<String>> getPrimitiveAttributes(IomObject object) {
+        var primitiveAttributes = new HashMap<String, List<String>>();
+        for (var i = 0; i < object.getattrcount(); i++) {
+            var name = object.getattrname(i);
+            var elementCount = object.getattrvaluecount(name);
+            for (var elementIndex = 0; elementIndex < elementCount; elementIndex++) {
+                var value = object.getattrprim(name, elementIndex);
+                if (value != null) {
+                    primitiveAttributes.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
+                }
+            }
+        }
+
+        return primitiveAttributes;
     }
 }

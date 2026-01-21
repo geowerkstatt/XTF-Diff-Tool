@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class XtfAnalyzerTest {
@@ -105,6 +107,85 @@ public class XtfAnalyzerTest {
         XtfAnalyzer analyzer = new XtfAnalyzer(first.stream(), second.stream());
         List<Change> changes = getChanges(analyzer);
         assertIterableEquals(expectedChanges, changes);
+    }
+
+    @Test
+    public void analyzeDifferentPrimitiveAttribute() {
+        var first = List.of(createObject("o1", obj -> {
+            obj.setattrvalue("text", "Wazuviti");
+            obj.setattrvalue("text2", "Unchanged");
+            obj.addattrvalue("textList", "A");
+            obj.addattrvalue("textList", "B");
+        }));
+        var second = List.of(createObject("o1", obj -> {
+            obj.setattrvalue("text", "Fazakapo");
+            obj.setattrvalue("text2", "Unchanged");
+            obj.addattrvalue("textList", "A");
+            obj.addattrvalue("textList", "C");
+            obj.addattrvalue("textList", "D");
+        }));
+
+        var expectedChanges = List.of(
+                new Change("o1", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "Wazuviti", "Fazakapo"),
+                new Change("o1", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "A,B", "A,C,D")
+        );
+
+        XtfAnalyzer analyzer = new XtfAnalyzer(first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+
+        assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
+    @Test
+    public void analyzeDeletePrimitiveAttribute() {
+        var first = List.of(createObject("o1", obj -> {
+            obj.setattrvalue("text", "Wazuviti");
+            obj.setattrvalue("text2", "Unchanged");
+            obj.addattrvalue("textList", "A");
+            obj.addattrvalue("textList", "B");
+        }));
+        var second = List.of(createObject("o1", obj -> {
+            obj.setattrvalue("text2", "Unchanged");
+        }));
+
+        var expectedChanges = List.of(
+                new Change("o1", ChangeType.DELETED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "Wazuviti", null),
+                new Change("o1", ChangeType.DELETED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "A,B", null)
+        );
+
+        XtfAnalyzer analyzer = new XtfAnalyzer(first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+
+        assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
+    @Test
+    public void analyzeAddedPrimitiveAttribute() {
+        var first = List.of(createObject("o1", obj -> {
+            obj.setattrvalue("text2", "Unchanged");
+        }));
+        var second = List.of(createObject("o1", obj -> {
+            obj.setattrvalue("text", "Fazakapo");
+            obj.setattrvalue("text2", "Unchanged");
+            obj.addattrvalue("textList", "A");
+            obj.addattrvalue("textList", "C");
+        }));
+
+        var expectedChanges = List.of(
+                new Change("o1", ChangeType.ADDED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, null, "Fazakapo"),
+                new Change("o1", ChangeType.ADDED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, null, "A,C")
+        );
+
+        XtfAnalyzer analyzer = new XtfAnalyzer(first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+
+        assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
+    private IomObject createObject(String oid, Consumer<Iom_jObject> configure) {
+        var result = new Iom_jObject(INTERLIS_CLASS_NAME, oid);
+        configure.accept(result);
+        return result;
     }
 
     private IomObject createObject(String oid) {
