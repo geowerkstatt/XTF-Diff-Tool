@@ -110,46 +110,41 @@ public final class Main {
     }
 
     private static Options createCliOptions() {
-        Option help = Option.builder("h")
+        Options options = new Options();
+
+        options.addOption(Option.builder("h")
                 .longOpt(OPTION_HELP)
                 .desc("print this help message")
-                .get();
-        Option logfile = Option.builder()
+                .get());
+        options.addOption(Option.builder()
                 .longOpt(OPTION_LOGFILE)
                 .desc("path to the log file")
                 .argName("file")
                 .hasArg()
-                .get();
-        Option modelDir = Option.builder()
+                .get());
+        options.addOption(Option.builder()
                 .longOpt(OPTION_MODEL_DIR)
                 .desc("INTERLIS model search paths")
                 .argName("modeldir")
                 .hasArg()
-                .get();
-        Option proxy = Option.builder()
+                .get());
+        options.addOption(Option.builder()
                 .longOpt(OPTION_PROXY)
                 .desc("set the proxy server to access the INTERLIS model repositories")
                 .argName("host")
                 .hasArg()
-                .get();
-        Option proxyPort = Option.builder()
+                .get());
+        options.addOption(Option.builder()
                 .longOpt(OPTION_PROXY_PORT)
                 .desc("set the proxy port to access the INTERLIS model repositories")
                 .argName("port")
                 .hasArg()
-                .get();
-        Option version = Option.builder()
+                .get());
+        options.addOption(Option.builder()
                 .longOpt(OPTION_VERSION)
                 .desc("print the version of this application")
-                .get();
+                .get());
 
-        Options options = new Options();
-        options.addOption(help);
-        options.addOption(logfile);
-        options.addOption(modelDir);
-        options.addOption(proxy);
-        options.addOption(proxyPort);
-        options.addOption(version);
         return options;
     }
 }
