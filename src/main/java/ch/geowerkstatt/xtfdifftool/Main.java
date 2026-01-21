@@ -9,6 +9,8 @@ import org.apache.commons.cli.help.HelpFormatter;
 import org.apache.commons.cli.help.TextHelpAppendable;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +52,21 @@ public final class Main {
             }
 
             applyGlobalOptions(options.get());
+            process(options.get());
+        }
+    }
+
+    private static void process(XtfDiffToolOptions options) {
+        try (
+                XtfStreamReader firstReader = new XtfStreamReader(Path.of(options.firstXtfFile()).toFile());
+                XtfStreamReader secondReader = new XtfStreamReader(Path.of(options.secondXtfFile()).toFile());
+                JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
+        ) {
+            XtfAnalyzer xtfAnalyzer = new XtfAnalyzer(firstReader.readObjects(), secondReader.readObjects());
+            xtfAnalyzer.analyzeDifferences(diffWriter::writeChange);
+        } catch (Exception e) {
+            System.err.println("Error processing XTF files: " + e.getMessage());
+            System.exit(1);
         }
     }
 
