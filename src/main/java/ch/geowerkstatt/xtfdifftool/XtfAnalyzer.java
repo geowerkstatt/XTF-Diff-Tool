@@ -3,6 +3,7 @@ package ch.geowerkstatt.xtfdifftool;
 import ch.geowerkstatt.xtfdifftool.diff.Change;
 import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
+import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.iom.IomObject;
 
 import java.util.*;
@@ -17,15 +18,18 @@ import java.util.stream.Stream;
 public final class XtfAnalyzer {
     private final Stream<IomObject> firstObjects;
     private final Stream<IomObject> secondObjects;
+    private final ModelValidator modelValidator;
 
     /**
      * Creates a new XtfAnalyzer for the given object streams.
+     * @param transfer The INTERLIS transfer description.
      * @param firstObjects The objects of the first transfer.
      * @param secondObjects The objects of the second transfer.
      */
-    public XtfAnalyzer(Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
-        this.firstObjects = firstObjects;
-        this.secondObjects = secondObjects;
+    public XtfAnalyzer(TransferDescription transfer, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
+        this.modelValidator = new ModelValidator(transfer);
+        this.firstObjects = firstObjects.map(this::validateObject);
+        this.secondObjects = secondObjects.map(this::validateObject);
     }
 
     /**
@@ -69,6 +73,11 @@ public final class XtfAnalyzer {
 
     private Map<String, IomObject> createObjectMap(Stream<IomObject> objects) {
         return objects.collect(Collectors.toMap(IomObject::getobjectoid, Function.identity()));
+    }
+
+    private IomObject validateObject(IomObject iomObject) {
+        modelValidator.validateObjectHasStableOid(iomObject);
+        return iomObject;
     }
 
     /**

@@ -60,14 +60,14 @@ public final class Main {
     private static void process(XtfDiffToolOptions options) {
         try {
             ModelReader modelReader = new ModelReader();
-            TransferDescription td = modelReader.validateAndCompileIli(options);
+            TransferDescription transfer = modelReader.validateAndCompileIli(options);
 
             try (
                     XtfStreamReader firstReader = new XtfStreamReader(Path.of(options.firstXtfFile()).toFile());
                     XtfStreamReader secondReader = new XtfStreamReader(Path.of(options.secondXtfFile()).toFile());
                     JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
             ) {
-                XtfAnalyzer xtfAnalyzer = new XtfAnalyzer(firstReader.readObjects(), secondReader.readObjects());
+                XtfAnalyzer xtfAnalyzer = new XtfAnalyzer(transfer, firstReader.readObjects(), secondReader.readObjects());
                 xtfAnalyzer.analyzeDifferences(diffWriter::writeChange);
             }
         } catch (Exception e) {
