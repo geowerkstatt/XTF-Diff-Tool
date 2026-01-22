@@ -1,0 +1,11 @@
+INTERLIS 2.4;
+
+MODEL ModelB AT "mailto:noreply@localhost" VERSION "2026-01-21" =
+    IMPORTS ModelA;
+
+    TOPIC TopicB =
+        CLASS ClassB =
+            attrB1 : 0 .. 100;
+        END ClassB;
+    END TopicB;
+END ModelB.
