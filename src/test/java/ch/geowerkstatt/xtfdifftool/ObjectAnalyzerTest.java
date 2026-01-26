@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 public final class ObjectAnalyzerTest {
     private static final String MODEL_FILE = "src/test/data/ObjectAnalyzerTest/Model.ili";
     private static final String INTERLIS_CLASS_NAME = "ObjectAnalyzerTest.Topic.Class";
+    private static final String INTERLIS_CLASS_NAME_WITHOUT_ID = "ObjectAnalyzerTest.Topic.ClassWithoutId";
     private TransferDescription transferDescription;
 
     @BeforeEach
@@ -194,6 +195,21 @@ public final class ObjectAnalyzerTest {
         List<Change> changes = getChanges(analyzer);
 
         assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
+    @Test
+    public void analyzeIgnoresObjectsWithoutId() {
+        List<IomObject> first = List.of(
+                new Iom_jObject(INTERLIS_CLASS_NAME_WITHOUT_ID, "123"),
+                new Iom_jObject(INTERLIS_CLASS_NAME_WITHOUT_ID, "456")
+        );
+        List<IomObject> second = List.of(
+                new Iom_jObject(INTERLIS_CLASS_NAME_WITHOUT_ID, "789")
+        );
+
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+        assertIterableEquals(Collections.emptyList(), changes);
     }
 
     private IomObject createObject(String oid, Consumer<Iom_jObject> configure) {

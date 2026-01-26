@@ -9,5 +9,11 @@ MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             text2 : TEXT;
             textList : LIST OF TEXT;
         END Class;
+
+        CLASS ClassWithoutId =
+            text : TEXT;
+            text2 : TEXT;
+            textList : LIST OF TEXT;
+        END ClassWithoutId;
     END Topic;
 END ObjectAnalyzerTest.
