@@ -78,17 +78,23 @@ public final class Main {
 
     private static void process(XtfDiffToolOptions options) {
         int[] changeCount = {0};
-        try (
-                XtfStreamReader firstReader = new XtfStreamReader(Path.of(options.firstXtfFile()).toFile());
-                XtfStreamReader secondReader = new XtfStreamReader(Path.of(options.secondXtfFile()).toFile());
-                JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
-        ) {
-            XtfAnalyzer xtfAnalyzer = new XtfAnalyzer(firstReader.readObjects(), secondReader.readObjects());
-            xtfAnalyzer.analyzeDifferences(change -> {
-                diffWriter.writeChange(change);
-                changeCount[0]++;
-            });
-            LOGGER.info("Total changes found: {}", changeCount[0]);
+        try {
+            Path firstXtfPath = Path.of(options.firstXtfFile());
+            Path secondXtfPath = Path.of(options.secondXtfFile());
+            TransferDescription transferDescription = ModelReader.validateAndCompileIli(firstXtfPath, secondXtfPath, options.modelDir());
+
+            try (
+                    XtfStreamReader firstReader = new XtfStreamReader(firstXtfPath.toFile());
+                    XtfStreamReader secondReader = new XtfStreamReader(secondXtfPath.toFile());
+                    JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
+            ) {
+                ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
+                objectAnalyzer.analyzeDifferences(change -> {
+                    diffWriter.writeChange(change);
+                    changeCount[0]++;
+                });
+                LOGGER.info("Total changes found: {}", changeCount[0]);
+            }
         } catch (Exception e) {
             LOGGER.error("Error processing XTF files", e);
             System.exit(1);

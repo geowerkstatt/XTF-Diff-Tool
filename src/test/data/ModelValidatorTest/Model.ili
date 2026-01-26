@@ -1,0 +1,53 @@
+INTERLIS 2.4;
+
+MODEL Model AT "mailto:noreply@localhost" VERSION "2026-01-22" =
+    TOPIC TopicMissingOid =
+        CLASS ClassMissingOid =
+        END ClassMissingOid;
+
+        CLASS ClassNoOid =
+            NO OID;
+        END ClassNoOid;
+
+        CLASS ClassOid =
+            OID AS INTERLIS.UUIDOID;
+        END ClassOid;
+
+        ASSOCIATION AssocOid =
+            OID AS INTERLIS.UUIDOID;
+            role1 -- ClassOid;
+            role2 -<> ClassNoOid;
+        END AssocOid;
+    END TopicMissingOid;
+
+    TOPIC TopicOid =
+        OID AS INTERLIS.UUIDOID;
+
+        CLASS ClassMissingOid =
+        END ClassMissingOid;
+
+        CLASS ClassNoOid =
+            NO OID;
+        END ClassNoOid;
+
+        CLASS ClassOid =
+            OID AS INTERLIS.UUIDOID;
+        END ClassOid;
+
+        ASSOCIATION AssocMissingOid =
+            role1 -- ClassOid;
+            role2 -<> ClassNoOid;
+        END AssocMissingOid;
+    END TopicOid;
+
+    TOPIC TopicOidExtended EXTENDS TopicOid =
+        CLASS ClassMissingOidExtended EXTENDS ClassMissingOid =
+        END ClassMissingOidExtended;
+
+        CLASS ClassNoOidExtended EXTENDS ClassNoOid =
+        END ClassNoOidExtended;
+
+        CLASS ClassOidExtended EXTENDS ClassOid =
+        END ClassOidExtended;
+    END TopicOidExtended;
+END Model.
