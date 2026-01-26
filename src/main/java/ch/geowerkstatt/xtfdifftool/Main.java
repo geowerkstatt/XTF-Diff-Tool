@@ -21,6 +21,8 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,18 +66,29 @@ public final class Main {
 
             configureProxy(options.get());
             configureLogging(options.get());
+
+            Instant start = Instant.now();
             process(options.get());
+            Instant end = Instant.now();
+            Duration duration = Duration.between(start, end);
+            String formattedDuration = String.format("%d.%03ds", duration.toSeconds(), duration.toMillisPart());
+            LOGGER.info("Processing took {}", formattedDuration);
         }
     }
 
     private static void process(XtfDiffToolOptions options) {
+        int[] changeCount = {0};
         try (
                 XtfStreamReader firstReader = new XtfStreamReader(Path.of(options.firstXtfFile()).toFile());
                 XtfStreamReader secondReader = new XtfStreamReader(Path.of(options.secondXtfFile()).toFile());
                 JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
         ) {
             XtfAnalyzer xtfAnalyzer = new XtfAnalyzer(firstReader.readObjects(), secondReader.readObjects());
-            xtfAnalyzer.analyzeDifferences(diffWriter::writeChange);
+            xtfAnalyzer.analyzeDifferences(change -> {
+                diffWriter.writeChange(change);
+                changeCount[0]++;
+            });
+            LOGGER.info("Total changes found: {}", changeCount[0]);
         } catch (Exception e) {
             LOGGER.error("Error processing XTF files", e);
             System.exit(1);
