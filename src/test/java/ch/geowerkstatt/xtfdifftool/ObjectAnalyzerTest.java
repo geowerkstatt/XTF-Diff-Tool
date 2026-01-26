@@ -198,6 +198,40 @@ public final class ObjectAnalyzerTest {
     }
 
     @Test
+    public void analyzeDifferentPrimitiveCollectionAttribute() {
+        var first = List.of(createObject("o1", obj -> {
+            obj.addattrvalue("textList", "A");
+            obj.addattrvalue("textList", "B");
+            obj.addattrvalue("textBag", "C");
+            obj.addattrvalue("textBag", "D");
+        }), createObject("o2", obj -> {
+            obj.addattrvalue("textBag", "S");
+            obj.addattrvalue("textBag", "E");
+            obj.addattrvalue("textBag", "T");
+        }));
+        var second = List.of(createObject("o1", obj -> {
+            obj.addattrvalue("textList", "B");
+            obj.addattrvalue("textList", "A");
+            obj.addattrvalue("textBag", "D");
+            obj.addattrvalue("textBag", "C");
+        }), createObject("o2", obj -> {
+            obj.addattrvalue("textBag", "T");
+            obj.addattrvalue("textBag", "E");
+            obj.addattrvalue("textBag", "A");
+        }));
+
+        var expectedChanges = List.of(
+                new Change("o1", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "A,B", "B,A"),
+                new Change("o2", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "E,S,T", "A,E,T")
+        );
+
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+
+        assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
+    @Test
     public void analyzeIgnoresObjectsWithoutId() {
         List<IomObject> first = List.of(
                 new Iom_jObject(INTERLIS_CLASS_NAME_WITHOUT_ID, "123"),
