@@ -59,11 +59,13 @@ public final class Main {
 
     private static void process(XtfDiffToolOptions options) {
         try {
-            TransferDescription transferDescription = ModelReader.validateAndCompileIli(options);
+            Path firstXtfPath = Path.of(options.firstXtfFile());
+            Path secondXtfPath = Path.of(options.secondXtfFile());
+            TransferDescription transferDescription = ModelReader.validateAndCompileIli(firstXtfPath, secondXtfPath, options.modelDir());
 
             try (
-                    XtfStreamReader firstReader = new XtfStreamReader(Path.of(options.firstXtfFile()).toFile());
-                    XtfStreamReader secondReader = new XtfStreamReader(Path.of(options.secondXtfFile()).toFile());
+                    XtfStreamReader firstReader = new XtfStreamReader(firstXtfPath.toFile());
+                    XtfStreamReader secondReader = new XtfStreamReader(secondXtfPath.toFile());
                     JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
             ) {
                 ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(transferDescription, firstReader.readObjects(), secondReader.readObjects());

@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 public final class ModelReader {
     private static final LogEventFactory ERROR_FACTORY = new LogEventFactory();
@@ -24,16 +25,15 @@ public final class ModelReader {
 
     /**
      * Validates the INTERLIS versions and models of the two XTF files and compiles the corresponding INTERLIS models.
-     * @param options The XTF diff tool options.
+     * @param firstXtfFile The path to the first XTF file.
+     * @param secondXtfFile The path to the second XTF file.
+     * @param modelDir Optional INTERLIS model search paths.
      * @return The compiled INTERLIS models.
      */
-    public static TransferDescription validateAndCompileIli(XtfDiffToolOptions options) {
-        Path firstPath = Path.of(options.firstXtfFile());
-        Path secondPath = Path.of(options.secondXtfFile());
-
-        double version = validateVersion(firstPath, secondPath);
-        List<String> models = validateModels(firstPath, secondPath);
-        return compileIli(options.modelDir().orElse("https://models.interlis.ch/"), models, version);
+    public static TransferDescription validateAndCompileIli(Path firstXtfFile, Path secondXtfFile, Optional<String> modelDir) {
+        double version = validateVersion(firstXtfFile, secondXtfFile);
+        List<String> models = validateModels(firstXtfFile, secondXtfFile);
+        return compileIli(modelDir.orElse("https://models.interlis.ch/"), models, version);
     }
 
     private static double validateVersion(Path firstPath, Path secondPath) {
