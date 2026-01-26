@@ -1,0 +1,96 @@
+INTERLIS 2.3;
+
+MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
+
+    DOMAIN
+        Coord2 = COORD
+            2460000.00 .. 2870000.00 [INTERLIS.m],
+            1045000.00 .. 1310000.00 [INTERLIS.m],
+            ROTATION 2 -> 1;
+
+        TextDomain = TEXT*20;
+
+    TOPIC TypesTopic =
+        OID AS INTERLIS.UUIDOID;
+
+        STRUCTURE PointStructure =
+            Point: Coord2;
+        END PointStructure;
+
+        STRUCTURE MultiCoord2 =
+            Points: BAG {1..*} OF PointStructure;
+        END MultiCoord2;
+
+        STRUCTURE Struct =
+            Text: TextDomain;
+        END Struct;
+
+        CLASS PrimitiveTypes =
+            Number: 0.00 .. 100.00;
+            Bool: BOOLEAN;
+            Text: TextDomain;
+            MText: MTEXT*20;
+            Enum: (red (rose, crimson, ruby), green, blue);
+            Alignment: HALIGNMENT;
+            Date: INTERLIS.XMLDateTime;
+            Blackbox: BLACKBOX BINARY;
+        END PrimitiveTypes;
+
+        CLASS NestedTypes =
+            Struct: Struct;
+            StructList: LIST OF Struct;
+            StructBag: BAG OF Struct;
+        END NestedTypes;
+
+        CLASS GeometryTypes =
+            Point: Coord2;
+            MultiPoint: MultiCoord2;
+            Line: POLYLINE WITH (STRAIGHTS, ARCS) VERTEX Coord2;
+            Surface: SURFACE WITH (STRAIGHTS, ARCS) VERTEX Coord2 WITHOUT OVERLAPS > 0.02;
+        END GeometryTypes;
+
+        CLASS UnstableIds =
+            NO OID;
+            Text: TextDomain;
+        END UnstableIds;
+    END TypesTopic;
+
+    TOPIC ReferencesTopic =
+        OID AS INTERLIS.UUIDOID;
+
+        CLASS B =
+        END B;
+
+        CLASS C =
+        END C;
+
+        CLASS D =
+        END D;
+
+        STRUCTURE ReferenceB =
+            Ref: REFERENCE TO B;
+        END ReferenceB;
+
+        CLASS A =
+            RefAttr: ReferenceB;
+        END A;
+
+        !! Eingebettete Beziehung
+        ASSOCIATION A_C =
+            RoleA -- {0..1} A;
+            RoleC -- {0..*} C;
+
+            text : TextDomain;
+        END A_C;
+
+        !! Nicht eingebettete Beziehung
+        ASSOCIATION A_D =
+            RoleA -- {*} A;
+            RoleD -- {*} D;
+
+            text : TextDomain;
+        END A_D;
+
+    END ReferencesTopic;
+
+END DiffToolTest.
