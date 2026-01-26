@@ -1,6 +1,6 @@
 INTERLIS 2.4;
 
-MODEL XtfAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" = 
+MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
     TOPIC Topic =
         CLASS Class =
             OID AS INTERLIS.STANDARDOID;
@@ -10,4 +10,4 @@ MODEL XtfAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             textList : LIST OF TEXT;
         END Class;
     END Topic;
-END XtfAnalyzerTest.
+END ObjectAnalyzerTest.

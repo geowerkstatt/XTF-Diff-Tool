@@ -21,9 +21,9 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
-public final class XtfAnalyzerTest {
-    private static final String MODEL_FILE = "src/test/data/XtfAnalyzerTest/Model.ili";
-    private static final String INTERLIS_CLASS_NAME = "XtfAnalyzerTest.Topic.Class";
+public final class ObjectAnalyzerTest {
+    private static final String MODEL_FILE = "src/test/data/ObjectAnalyzerTest/Model.ili";
+    private static final String INTERLIS_CLASS_NAME = "ObjectAnalyzerTest.Topic.Class";
     private TransferDescription transferDescription;
 
     @BeforeEach
@@ -35,7 +35,7 @@ public final class XtfAnalyzerTest {
 
     @Test
     public void analyzeNoObjects() {
-        XtfAnalyzer analyzer = new XtfAnalyzer(transferDescription, Stream.empty(), Stream.empty());
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, Stream.empty(), Stream.empty());
         List<Change> changes = getChanges(analyzer);
         assertIterableEquals(Collections.emptyList(), changes);
     }
@@ -53,7 +53,7 @@ public final class XtfAnalyzerTest {
                 createObject("o3")
         );
 
-        XtfAnalyzer analyzer = new XtfAnalyzer(transferDescription, first.stream(), second.stream());
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
         List<Change> changes = getChanges(analyzer);
         assertIterableEquals(Collections.emptyList(), changes);
     }
@@ -74,7 +74,7 @@ public final class XtfAnalyzerTest {
                 createChange("o3", ChangeType.ADDED)
         );
 
-        XtfAnalyzer analyzer = new XtfAnalyzer(transferDescription, first.stream(), second.stream());
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
         List<Change> changes = getChanges(analyzer);
         assertIterableEquals(expectedChanges, changes);
     }
@@ -95,7 +95,7 @@ public final class XtfAnalyzerTest {
                 createChange("o3", ChangeType.DELETED)
         );
 
-        XtfAnalyzer analyzer = new XtfAnalyzer(transferDescription, first.stream(), second.stream());
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
         List<Change> changes = getChanges(analyzer);
         assertIterableEquals(expectedChanges, changes);
     }
@@ -118,7 +118,7 @@ public final class XtfAnalyzerTest {
                 createChange("o4", ChangeType.ADDED)
         );
 
-        XtfAnalyzer analyzer = new XtfAnalyzer(transferDescription, first.stream(), second.stream());
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
         List<Change> changes = getChanges(analyzer);
         assertIterableEquals(expectedChanges, changes);
     }
@@ -144,7 +144,7 @@ public final class XtfAnalyzerTest {
                 new Change("o1", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "A,B", "A,C,D")
         );
 
-        XtfAnalyzer analyzer = new XtfAnalyzer(transferDescription, first.stream(), second.stream());
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
         List<Change> changes = getChanges(analyzer);
 
         assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
@@ -167,7 +167,7 @@ public final class XtfAnalyzerTest {
                 new Change("o1", ChangeType.DELETED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "A,B", null)
         );
 
-        XtfAnalyzer analyzer = new XtfAnalyzer(transferDescription, first.stream(), second.stream());
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
         List<Change> changes = getChanges(analyzer);
 
         assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
@@ -190,7 +190,7 @@ public final class XtfAnalyzerTest {
                 new Change("o1", ChangeType.ADDED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, null, "A,C")
         );
 
-        XtfAnalyzer analyzer = new XtfAnalyzer(transferDescription, first.stream(), second.stream());
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
         List<Change> changes = getChanges(analyzer);
 
         assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
@@ -210,7 +210,7 @@ public final class XtfAnalyzerTest {
         return new Change(oid, type, ValueType.OBJECT, INTERLIS_CLASS_NAME, null, null);
     }
 
-    private List<Change> getChanges(XtfAnalyzer analyzer) {
+    private List<Change> getChanges(ObjectAnalyzer analyzer) {
         List<Change> changes = new ArrayList<>();
         analyzer.analyzeDifferences(changes::add);
         return changes;

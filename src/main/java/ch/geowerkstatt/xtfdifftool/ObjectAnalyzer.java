@@ -15,18 +15,18 @@ import java.util.stream.Stream;
 /**
  * Analyzes the differences between two INTERLIS transfers.
  */
-public final class XtfAnalyzer {
+public final class ObjectAnalyzer {
     private final Stream<IomObject> firstObjects;
     private final Stream<IomObject> secondObjects;
     private final ModelValidator modelValidator;
 
     /**
-     * Creates a new XtfAnalyzer for the given object streams.
+     * Creates a new ObjectAnalyzer for the given object streams.
      * @param transferDescription The INTERLIS transfer description.
      * @param firstObjects The objects of the first transfer.
      * @param secondObjects The objects of the second transfer.
      */
-    public XtfAnalyzer(TransferDescription transferDescription, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
+    public ObjectAnalyzer(TransferDescription transferDescription, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
         this.modelValidator = new ModelValidator(transferDescription);
         this.firstObjects = firstObjects.map(this::validateObject);
         this.secondObjects = secondObjects.map(this::validateObject);

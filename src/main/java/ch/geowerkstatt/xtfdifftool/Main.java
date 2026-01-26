@@ -66,8 +66,8 @@ public final class Main {
                     XtfStreamReader secondReader = new XtfStreamReader(Path.of(options.secondXtfFile()).toFile());
                     JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
             ) {
-                XtfAnalyzer xtfAnalyzer = new XtfAnalyzer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
-                xtfAnalyzer.analyzeDifferences(diffWriter::writeChange);
+                ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
+                objectAnalyzer.analyzeDifferences(diffWriter::writeChange);
             }
         } catch (Exception e) {
             System.err.println("Error processing XTF files: " + e.getMessage());
