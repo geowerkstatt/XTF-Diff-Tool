@@ -1,5 +1,6 @@
 package ch.geowerkstatt.xtfdifftool;
 
+import ch.interlis.ili2c.metamodel.TransferDescription;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -57,13 +58,19 @@ public final class Main {
     }
 
     private static void process(XtfDiffToolOptions options) {
-        try (
-                XtfStreamReader firstReader = new XtfStreamReader(Path.of(options.firstXtfFile()).toFile());
-                XtfStreamReader secondReader = new XtfStreamReader(Path.of(options.secondXtfFile()).toFile());
-                JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
-        ) {
-            XtfAnalyzer xtfAnalyzer = new XtfAnalyzer(firstReader.readObjects(), secondReader.readObjects());
-            xtfAnalyzer.analyzeDifferences(diffWriter::writeChange);
+        try {
+            Path firstXtfPath = Path.of(options.firstXtfFile());
+            Path secondXtfPath = Path.of(options.secondXtfFile());
+            TransferDescription transferDescription = ModelReader.validateAndCompileIli(firstXtfPath, secondXtfPath, options.modelDir());
+
+            try (
+                    XtfStreamReader firstReader = new XtfStreamReader(firstXtfPath.toFile());
+                    XtfStreamReader secondReader = new XtfStreamReader(secondXtfPath.toFile());
+                    JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
+            ) {
+                ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
+                objectAnalyzer.analyzeDifferences(diffWriter::writeChange);
+            }
         } catch (Exception e) {
             System.err.println("Error processing XTF files: " + e.getMessage());
             System.exit(1);

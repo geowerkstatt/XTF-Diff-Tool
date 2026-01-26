@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS" xmlns:geom="http://www.interlis.ch/geometry/1.0"
+              xmlns:ModelB="http://www.interlis.ch/xtf/2.4/ModelB" xmlns:ModelA="http://www.interlis.ch/xtf/2.4/ModelA">
+    <ili:headersection>
+        <ili:models>
+            <ili:model>ModelB</ili:model>
+            <ili:model>ModelA</ili:model>
+        </ili:models>
+        <ili:sender>Test</ili:sender>
+    </ili:headersection>
+    <ili:datasection>
+        <ModelB:TopicB ili:bid="b1">
+            <ModelB:ClassB ili:tid="o1">
+                <ModelB:attrB1>12</ModelB:attrB1>
+            </ModelB:ClassB>
+        </ModelB:TopicB>
+    </ili:datasection>
+</ili:transfer>

@@ -3,6 +3,7 @@ package ch.geowerkstatt.xtfdifftool;
 import ch.geowerkstatt.xtfdifftool.diff.Change;
 import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
+import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.iom.IomObject;
 
 import java.util.*;
@@ -14,29 +15,48 @@ import java.util.stream.Stream;
 /**
  * Analyzes the differences between two INTERLIS transfers.
  */
-public final class XtfAnalyzer {
-    private final Stream<IomObject> firstObjects;
-    private final Stream<IomObject> secondObjects;
+public final class ObjectAnalyzer {
+    private final Stream<AnalyzedObject> firstObjects;
+    private final Stream<AnalyzedObject> secondObjects;
+    private final ModelValidator modelValidator;
+
+    private static final class AnalyzedObject {
+        private final IomObject object;
+        private final boolean hasStableOid;
+        private boolean visited;
+
+        AnalyzedObject(IomObject object, boolean hasStableOid) {
+            this.object = object;
+            this.hasStableOid = hasStableOid;
+        }
+    }
 
     /**
-     * Creates a new XtfAnalyzer for the given object streams.
+     * Creates a new ObjectAnalyzer for the given object streams.
+     * @param transferDescription The INTERLIS transfer description.
      * @param firstObjects The objects of the first transfer.
      * @param secondObjects The objects of the second transfer.
      */
-    public XtfAnalyzer(Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
-        this.firstObjects = firstObjects;
-        this.secondObjects = secondObjects;
+    public ObjectAnalyzer(TransferDescription transferDescription, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
+        this.modelValidator = new ModelValidator(transferDescription);
+        this.firstObjects = firstObjects.map(this::validateObject);
+        this.secondObjects = secondObjects.map(this::validateObject);
     }
 
     /**
      * Analyzes the differences between the two streams and passes each change to the {@code changeConsumer}.
      */
     public void analyzeDifferences(Consumer<Change> changeConsumer) {
-        Map<String, IomObject> secondObjectMap = createObjectMap(secondObjects);
+        Map<String, AnalyzedObject> secondObjectMap = createObjectMap(secondObjects);
 
-        firstObjects.forEach(object -> {
+        firstObjects.forEach(analyzedObject -> {
+            if (!analyzedObject.hasStableOid) {
+                return;
+            }
+
+            IomObject object = analyzedObject.object;
             String oid = object.getobjectoid();
-            IomObject matchingObject = secondObjectMap.get(oid);
+            AnalyzedObject matchingObject = secondObjectMap.get(oid);
             if (matchingObject == null) {
                 Change removeChange = new Change(
                         oid,
@@ -47,19 +67,19 @@ public final class XtfAnalyzer {
                         null);
                 changeConsumer.accept(removeChange);
             } else {
-                // Mark that the object of the second transfer has a matching entry in the first transfer
-                secondObjectMap.put(oid, null);
-                comparePrimitiveAttributes(object, matchingObject, changeConsumer);
+                matchingObject.visited = true;
+                comparePrimitiveAttributes(object, matchingObject.object, changeConsumer);
             }
         });
 
-        for (IomObject remainingObject : secondObjectMap.values()) {
-            if (remainingObject != null) {
+        for (AnalyzedObject remainingObject : secondObjectMap.values()) {
+            if (remainingObject.hasStableOid && !remainingObject.visited) {
+                IomObject object = remainingObject.object;
                 Change addChange = new Change(
-                        remainingObject.getobjectoid(),
+                        object.getobjectoid(),
                         ChangeType.ADDED,
                         ValueType.OBJECT,
-                        remainingObject.getobjecttag(),
+                        object.getobjecttag(),
                         null,
                         null);
                 changeConsumer.accept(addChange);
@@ -67,8 +87,13 @@ public final class XtfAnalyzer {
         }
     }
 
-    private Map<String, IomObject> createObjectMap(Stream<IomObject> objects) {
-        return objects.collect(Collectors.toMap(IomObject::getobjectoid, Function.identity()));
+    private Map<String, AnalyzedObject> createObjectMap(Stream<AnalyzedObject> objects) {
+        return objects.collect(Collectors.toMap(analyzedObject -> analyzedObject.object.getobjectoid(), Function.identity()));
+    }
+
+    private AnalyzedObject validateObject(IomObject iomObject) {
+        boolean hasStableOid = modelValidator.validateObjectHasStableOid(iomObject);
+        return new AnalyzedObject(iomObject, hasStableOid);
     }
 
     /**
