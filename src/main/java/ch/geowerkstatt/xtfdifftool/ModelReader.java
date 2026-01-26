@@ -17,15 +17,17 @@ import java.util.HashSet;
 import java.util.List;
 
 public final class ModelReader {
-    private final LogEventFactory errorFactory = new LogEventFactory();
-    private final Settings settings = new Settings();
+    private static final LogEventFactory ERROR_FACTORY = new LogEventFactory();
+    private static final Settings SETTINGS = new Settings();
+
+    private ModelReader() { }
 
     /**
      * Validates the INTERLIS versions and models of the two XTF files and compiles the corresponding INTERLIS models.
      * @param options The XTF diff tool options.
      * @return The compiled INTERLIS models.
      */
-    public TransferDescription validateAndCompileIli(XtfDiffToolOptions options) {
+    public static TransferDescription validateAndCompileIli(XtfDiffToolOptions options) {
         Path firstPath = Path.of(options.firstXtfFile());
         Path secondPath = Path.of(options.secondXtfFile());
 
@@ -34,10 +36,10 @@ public final class ModelReader {
         return compileIli(options.modelDir().orElse("https://models.interlis.ch/"), models, version);
     }
 
-    private double validateVersion(Path firstPath, Path secondPath) {
+    private static double validateVersion(Path firstPath, Path secondPath) {
         try {
-            String firstVersion = IoxUtility.getModelVersion(new String[]{firstPath.toString()}, errorFactory, settings);
-            String secondVersion = IoxUtility.getModelVersion(new String[]{secondPath.toString()}, errorFactory, settings);
+            String firstVersion = IoxUtility.getModelVersion(new String[]{firstPath.toString()}, ERROR_FACTORY, SETTINGS);
+            String secondVersion = IoxUtility.getModelVersion(new String[]{secondPath.toString()}, ERROR_FACTORY, SETTINGS);
 
             if (!firstVersion.equals(secondVersion)) {
                 throw new IllegalStateException("XTF files use different INTERLIS versions");
@@ -48,10 +50,10 @@ public final class ModelReader {
         }
     }
 
-    private List<String> validateModels(Path firstPath, Path secondPath) {
+    private static List<String> validateModels(Path firstPath, Path secondPath) {
         try {
-            List<String> firstModels = IoxUtility.getModels(firstPath.toFile(), errorFactory, settings);
-            List<String> secondModels = IoxUtility.getModels(secondPath.toFile(), errorFactory, settings);
+            List<String> firstModels = IoxUtility.getModels(firstPath.toFile(), ERROR_FACTORY, SETTINGS);
+            List<String> secondModels = IoxUtility.getModels(secondPath.toFile(), ERROR_FACTORY, SETTINGS);
 
             if (!new HashSet<>(firstModels).equals(new HashSet<>(secondModels))) {
                 throw new IllegalStateException("XTF files use different INTERLIS models");
@@ -62,7 +64,7 @@ public final class ModelReader {
         }
     }
 
-    private TransferDescription compileIli(String modelDir, List<String> modelNames, double version) {
+    private static TransferDescription compileIli(String modelDir, List<String> modelNames, double version) {
         IliManager modelManager = new IliManager();
         modelManager.setRepositories(modelDir.split(";"));
         Configuration ili2cConfig;

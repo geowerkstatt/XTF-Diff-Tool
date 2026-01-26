@@ -59,8 +59,7 @@ public final class Main {
 
     private static void process(XtfDiffToolOptions options) {
         try {
-            ModelReader modelReader = new ModelReader();
-            TransferDescription transferDescription = modelReader.validateAndCompileIli(options);
+            TransferDescription transferDescription = ModelReader.validateAndCompileIli(options);
 
             try (
                     XtfStreamReader firstReader = new XtfStreamReader(Path.of(options.firstXtfFile()).toFile());

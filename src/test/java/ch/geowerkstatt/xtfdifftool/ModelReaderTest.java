@@ -14,41 +14,36 @@ public class ModelReaderTest {
 
     @Test
     public void validateAndCompileIliSameModel() {
-        ModelReader reader = new ModelReader();
         XtfDiffToolOptions options = createOptions(MODEL_DIR + "DataA1.xtf", MODEL_DIR + "DataA2.xtf");
-        TransferDescription td = reader.validateAndCompileIli(options);
+        TransferDescription td = ModelReader.validateAndCompileIli(options);
         assertNotNull(td);
     }
 
     @Test
     public void validateAndCompileIliSameModelV23() {
-        ModelReader reader = new ModelReader();
         XtfDiffToolOptions options = createOptions(MODEL_DIR + "DataA1_v23.xtf", MODEL_DIR + "DataA1_v23.xtf");
-        TransferDescription td = reader.validateAndCompileIli(options);
+        TransferDescription td = ModelReader.validateAndCompileIli(options);
         assertNotNull(td);
     }
 
     @Test
     public void validateAndCompileIliDifferentModelOrder() {
-        ModelReader reader = new ModelReader();
         XtfDiffToolOptions options = createOptions(MODEL_DIR + "DataB1.xtf", MODEL_DIR + "DataB2.xtf");
-        TransferDescription td = reader.validateAndCompileIli(options);
+        TransferDescription td = ModelReader.validateAndCompileIli(options);
         assertNotNull(td);
     }
 
     @Test
     public void validateAndCompileIliDifferentModel() {
-        ModelReader reader = new ModelReader();
         XtfDiffToolOptions options = createOptions(MODEL_DIR + "DataA1.xtf", MODEL_DIR + "DataB1.xtf");
-        IllegalStateException exception = assertThrowsExactly(IllegalStateException.class, () -> reader.validateAndCompileIli(options));
+        IllegalStateException exception = assertThrowsExactly(IllegalStateException.class, () -> ModelReader.validateAndCompileIli(options));
         assertEquals("XTF files use different INTERLIS models", exception.getMessage());
     }
 
     @Test
     public void validateAndCompileIliDifferentVersion() {
-        ModelReader reader = new ModelReader();
         XtfDiffToolOptions options = createOptions(MODEL_DIR + "DataA1_v23.xtf", MODEL_DIR + "DataA1.xtf");
-        IllegalStateException exception = assertThrowsExactly(IllegalStateException.class, () -> reader.validateAndCompileIli(options));
+        IllegalStateException exception = assertThrowsExactly(IllegalStateException.class, () -> ModelReader.validateAndCompileIli(options));
         assertEquals("XTF files use different INTERLIS versions", exception.getMessage());
     }
 
