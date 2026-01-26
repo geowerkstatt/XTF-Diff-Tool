@@ -21,8 +21,8 @@ public final class ModelValidatorTest {
     public void setUp() {
         Configuration config = new Configuration();
         config.addFileEntry(new FileEntry(MODEL_FILE, FileEntryKind.ILIMODELFILE));
-        TransferDescription transfer = ch.interlis.ili2c.Main.runCompiler(config);
-        validator = new ModelValidator(transfer);
+        TransferDescription transferDescription = ch.interlis.ili2c.Main.runCompiler(config);
+        validator = new ModelValidator(transferDescription);
     }
 
     @ParameterizedTest

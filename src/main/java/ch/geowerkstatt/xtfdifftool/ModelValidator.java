@@ -10,15 +10,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ModelValidator {
-    private final TransferDescription transfer;
+    private final TransferDescription transferDescription;
     private final Map<String, Boolean> validatedClasses = new HashMap<>();
 
     /**
      * Creates a new ModelValidator for the given transfer description.
-     * @param transfer The INTERLIS transfer description.
+     * @param transferDescription The INTERLIS transfer description.
      */
-    public ModelValidator(TransferDescription transfer) {
-        this.transfer = transfer;
+    public ModelValidator(TransferDescription transferDescription) {
+        this.transferDescription = transferDescription;
     }
 
     /**
@@ -31,7 +31,7 @@ public final class ModelValidator {
     }
 
     private boolean validateClassHasStableOid(String className) {
-        Element classElement = transfer.getElement(className);
+        Element classElement = transferDescription.getElement(className);
         if (!(classElement instanceof AbstractClassDef<?> classDef)) {
             System.err.println("Error: Class or Association \"" + className + "\" not found.");
             return false;

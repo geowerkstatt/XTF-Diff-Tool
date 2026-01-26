@@ -22,12 +22,12 @@ public final class XtfAnalyzer {
 
     /**
      * Creates a new XtfAnalyzer for the given object streams.
-     * @param transfer The INTERLIS transfer description.
+     * @param transferDescription The INTERLIS transfer description.
      * @param firstObjects The objects of the first transfer.
      * @param secondObjects The objects of the second transfer.
      */
-    public XtfAnalyzer(TransferDescription transfer, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
-        this.modelValidator = new ModelValidator(transfer);
+    public XtfAnalyzer(TransferDescription transferDescription, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
+        this.modelValidator = new ModelValidator(transferDescription);
         this.firstObjects = firstObjects.map(this::validateObject);
         this.secondObjects = secondObjects.map(this::validateObject);
     }
