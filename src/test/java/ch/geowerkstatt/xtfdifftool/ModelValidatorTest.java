@@ -30,16 +30,11 @@ public final class ModelValidatorTest {
             "Model.TopicMissingOid.ClassOid",
             "Model.TopicMissingOid.AssocOid",
             "Model.TopicOid.ClassOid",
+            "Model.TopicOid.ClassMissingOid",
+            "Model.TopicOidExtended.ClassMissingOidExtended",
+            "Model.TopicOidExtended.ClassOidExtended",
     })
     public void validateClassWithOid(String className) {
-        assertTrue(validateObjectHasStableOid(className));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "Model.TopicOid.ClassMissingOid",
-    })
-    public void validateClassInTopicWithOid(String className) {
         assertTrue(validateObjectHasStableOid(className));
     }
 
@@ -49,25 +44,9 @@ public final class ModelValidatorTest {
             "Model.TopicMissingOid.ClassNoOid",
             "Model.TopicOid.ClassNoOid",
             "Model.TopicOid.AssocMissingOid",
-    })
-    public void validateClassWithoutOid(String className) {
-        assertFalse(validateObjectHasStableOid(className));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "Model.TopicOidExtended.ClassMissingOidExtended",
-            "Model.TopicOidExtended.ClassOidExtended",
-    })
-    public void validateExtendedClassWithOid(String className) {
-        assertTrue(validateObjectHasStableOid(className));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
             "Model.TopicOidExtended.ClassNoOidExtended",
     })
-    public void validateExtendedClassWithoutOid(String className) {
+    public void validateClassWithoutOid(String className) {
         assertFalse(validateObjectHasStableOid(className));
     }
 
