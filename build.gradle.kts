@@ -21,6 +21,10 @@ dependencies {
     implementation("tools.jackson.core:jackson-databind")
     implementation("tools.jackson.core:jackson-core")
 
+    implementation(platform("org.apache.logging.log4j:log4j-bom:2.25.3"))
+    implementation("org.apache.logging.log4j:log4j-api")
+    implementation("org.apache.logging.log4j:log4j-core")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

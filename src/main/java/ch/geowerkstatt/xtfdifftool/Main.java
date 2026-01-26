@@ -1,5 +1,9 @@
 package ch.geowerkstatt.xtfdifftool;
 
+import ch.ehi.basics.logging.EhiLogger;
+import ch.ehi.basics.logging.StdListener;
+import ch.interlis.ili2c.metamodel.TransferDescription;
+import ch.interlis.iox_j.utility.IoxUtility;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -7,6 +11,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.help.HelpFormatter;
 import org.apache.commons.cli.help.TextHelpAppendable;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.appender.FileAppender;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +32,7 @@ public final class Main {
     private static final String OPTION_PROXY_PORT = "proxyPort";
     private static final String OPTION_VERSION = "version";
     private static final String VERSION;
+    private static final Logger LOGGER = LogManager.getLogger();
 
     static {
         String packageVersion = Main.class.getPackage().getImplementationVersion();
@@ -51,7 +62,8 @@ public final class Main {
                 System.exit(1);
             }
 
-            applyGlobalOptions(options.get());
+            configureProxy(options.get());
+            configureLogging(options.get());
             process(options.get());
         }
     }
@@ -65,7 +77,7 @@ public final class Main {
             XtfAnalyzer xtfAnalyzer = new XtfAnalyzer(firstReader.readObjects(), secondReader.readObjects());
             xtfAnalyzer.analyzeDifferences(diffWriter::writeChange);
         } catch (Exception e) {
-            System.err.println("Error processing XTF files: " + e.getMessage());
+            LOGGER.error("Error processing XTF files", e);
             System.exit(1);
         }
     }
@@ -112,7 +124,7 @@ public final class Main {
         ));
     }
 
-    private static void applyGlobalOptions(XtfDiffToolOptions options) {
+    private static void configureProxy(XtfDiffToolOptions options) {
         if (options.proxyHost().isPresent()) {
             System.setProperty("http.proxyHost", options.proxyHost().get());
             System.setProperty("https.proxyHost", options.proxyHost().get());
@@ -124,6 +136,32 @@ public final class Main {
         } else {
             System.setProperty("java.net.useSystemProxies", "true");
         }
+    }
+
+    private static void configureLogging(XtfDiffToolOptions options) {
+        Configurator.setRootLevel(Level.INFO);
+        if (options.logfile().isPresent()) {
+            var layout = PatternLayout.newBuilder()
+                    .withPattern("%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n")
+                    .build();
+            var fileAppender = FileAppender.newBuilder()
+                    .setName("Logfile")
+                    .setLayout(layout)
+                    .withFileName(options.logfile().get())
+                    .withAppend(false)
+                    .build();
+            var rootLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
+            rootLogger.get().addAppender(fileAppender, Level.INFO, null);
+            fileAppender.start();
+        }
+
+        EhiLogger.getInstance().addListener(new EhiLogAdapter());
+        EhiLogger.getInstance().removeListener(StdListener.getInstance());
+
+        LOGGER.info("XTF-Diff-Tool version {}", VERSION);
+        LOGGER.info("ili2c version {}", TransferDescription.getVersion());
+        LOGGER.info("iox-ili version {}", IoxUtility.getVersion());
+        LOGGER.info("Transfer files: {}, {}", options.firstXtfFile(), options.secondXtfFile());
     }
 
     private static Options createCliOptions() {
