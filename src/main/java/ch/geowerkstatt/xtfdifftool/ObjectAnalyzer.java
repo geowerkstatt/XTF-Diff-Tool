@@ -70,6 +70,7 @@ public final class ObjectAnalyzer {
                         ValueType.OBJECT,
                         object.getobjecttag(),
                         null,
+                        null,
                         null);
                 changeConsumer.accept(removeChange);
             } else {
@@ -86,6 +87,7 @@ public final class ObjectAnalyzer {
                         ChangeType.ADDED,
                         ValueType.OBJECT,
                         object.getobjecttag(),
+                        null,
                         null,
                         null);
                 changeConsumer.accept(addChange);

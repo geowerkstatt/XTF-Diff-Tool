@@ -50,12 +50,12 @@ public interface AttributeComparer {
         INCONCLUSIVE,
     }
 
-    record Result(Equality equality, String oldValue, String newValue) {
+    record Result(Equality equality, String attributePath, String oldValue, String newValue) {
         /** Constant for {@link Equality#INCONCLUSIVE} comparison Results. */
-        public static final Result INCONCLUSIVE = new Result(Equality.INCONCLUSIVE, null, null);
+        public static final Result INCONCLUSIVE = new Result(Equality.INCONCLUSIVE, null, null, null);
 
         /** Constant for {@link Equality#EQUAL} comparison Results. */
-        public static final Result EQUAL = new Result(Equality.EQUAL, null, null);
+        public static final Result EQUAL = new Result(Equality.EQUAL, null, null, null);
 
         /**
          * Create a {@link Change} from this {@link Result}.
@@ -66,7 +66,7 @@ public interface AttributeComparer {
             }
 
             var changeType = oldValue == null ? ChangeType.ADDED : newValue == null ? ChangeType.DELETED : ChangeType.CHANGED;
-            return new Change(oid, changeType, ValueType.ATTRIBUTE, tag, oldValue, newValue);
+            return new Change(oid, changeType, ValueType.ATTRIBUTE, tag, attributePath, oldValue, newValue);
         }
     }
 }
