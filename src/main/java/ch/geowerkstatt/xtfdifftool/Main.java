@@ -181,6 +181,7 @@ public final class Main {
         LOGGER.info("ili2c version {}", TransferDescription.getVersion());
         LOGGER.info("iox-ili version {}", IoxUtility.getVersion());
         LOGGER.info("Transfer files: {}, {}", options.firstXtfFile(), options.secondXtfFile());
+        LOGGER.info("Diff output file: {}", options.diffOutputFile());
     }
 
     private static Options createCliOptions() {
