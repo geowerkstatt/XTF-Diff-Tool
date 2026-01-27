@@ -30,7 +30,7 @@ public final class PrimitiveAttributeComparer implements AttributeComparer {
         var secondValues = getValues(attributeName, second);
 
         if (firstValues.size() != secondValues.size()) {
-            return new Result(Equality.DIFFERENT, attributeName, joinValues(firstValues), joinValues(secondValues));
+            return Result.different(attributeName, joinValues(firstValues), joinValues(secondValues));
         }
 
         if (!type.isOrdered()) {
@@ -40,7 +40,7 @@ public final class PrimitiveAttributeComparer implements AttributeComparer {
 
         for (var i = 0; i < firstValues.size(); i++) {
             if (!firstValues.get(i).equals(secondValues.get(i))) {
-                return new Result(Equality.DIFFERENT, attributeName, joinValues(firstValues), joinValues(secondValues));
+                return Result.different(attributeName, joinValues(firstValues), joinValues(secondValues));
             }
         }
 

@@ -10,6 +10,10 @@ java {
     }
 }
 
+checkstyle {
+    toolVersion = "13.0.0"
+}
+
 group = "ch.geowerkstatt.xtfdifftool"
 
 repositories {

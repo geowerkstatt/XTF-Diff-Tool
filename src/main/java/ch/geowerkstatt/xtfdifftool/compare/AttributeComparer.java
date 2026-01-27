@@ -1,10 +1,11 @@
 package ch.geowerkstatt.xtfdifftool.compare;
 
 import ch.geowerkstatt.xtfdifftool.diff.Change;
-import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
-import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
+
+import java.util.Collections;
+import java.util.List;
 
 public interface AttributeComparer {
     /**
@@ -35,7 +36,7 @@ public interface AttributeComparer {
      * @param first         The first IomObject
      * @param second        The second IomObject
      * @param attributeName The name of the attribute
-     * @return The result of the comparison as a {@link AttributeComparer.Result}.
+     * @return The result of the comparison as a {@link Result}.
      */
     Result compare(IomObject first, IomObject second, Type type, String attributeName);
 
@@ -50,23 +51,39 @@ public interface AttributeComparer {
         INCONCLUSIVE,
     }
 
-    record Result(Equality equality, String attributePath, String oldValue, String newValue) {
+    final class Result {
         /** Constant for {@link Equality#INCONCLUSIVE} comparison Results. */
-        public static final Result INCONCLUSIVE = new Result(Equality.INCONCLUSIVE, null, null, null);
+        public static final Result INCONCLUSIVE = new Result(Equality.INCONCLUSIVE, Collections.emptyList());
 
         /** Constant for {@link Equality#EQUAL} comparison Results. */
-        public static final Result EQUAL = new Result(Equality.EQUAL, null, null, null);
+        public static final Result EQUAL = new Result(Equality.EQUAL, Collections.emptyList());
 
-        /**
-         * Create a {@link Change} from this {@link Result}.
-         */
-        public Change toChange(String oid, String tag) {
-            if (equality != Equality.DIFFERENT) {
-                throw new IllegalStateException("Cannot convert " + equality + " Result to a Change");
-            }
+        private final Equality equality;
+        private final List<Change> changes;
 
-            var changeType = oldValue == null ? ChangeType.ADDED : newValue == null ? ChangeType.DELETED : ChangeType.CHANGED;
-            return new Change(oid, changeType, ValueType.ATTRIBUTE, tag, attributePath, oldValue, newValue);
+        private Result(Equality equality, List<Change> changes) {
+            this.equality = equality;
+            this.changes = changes;
+        }
+
+        /** Creates a Result indicating the compared objects are different. */
+        public static Result different(String attributeName, String oldValue, String newValue) {
+            return new Result(Equality.DIFFERENT, List.of(new Change(attributeName, oldValue, newValue)));
+        }
+
+        /** Creates a Result indicating the compared objects are different. */
+        public static Result different(List<Change> changes) {
+            return new Result(Equality.DIFFERENT, changes);
+        }
+
+        /** Returns the equality status of this result. */
+        public Equality equality() {
+            return equality;
+        }
+
+        /** Returns the list of changes. */
+        public List<Change> changes() {
+            return changes;
         }
     }
 }

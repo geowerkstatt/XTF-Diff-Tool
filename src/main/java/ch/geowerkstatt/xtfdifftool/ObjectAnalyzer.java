@@ -119,7 +119,7 @@ public final class ObjectAnalyzer {
                     var type = attribute.getDomainResolvingAll();
                     var result = AttributeComparer.compareAll(first, second, type, name);
                     switch (result.equality()) {
-                        case DIFFERENT -> changeConsumer.accept(result.toChange(first.getobjectoid(), first.getobjecttag()));
+                        case DIFFERENT -> result.changes().stream().map(c -> c.withObject(first)).forEach(changeConsumer);
                         case INCONCLUSIVE -> System.err.println("ERROR could not compare attribute " + name);
                         case null, default -> { }
                     }
