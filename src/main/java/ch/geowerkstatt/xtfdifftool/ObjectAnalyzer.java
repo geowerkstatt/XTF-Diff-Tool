@@ -6,8 +6,8 @@ import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.interlis.ili2c.metamodel.AttributeDef;
 import ch.interlis.ili2c.metamodel.Extendable;
-import ch.interlis.ili2c.metamodel.Table;
 import ch.interlis.ili2c.metamodel.TransferDescription;
+import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.iom.IomObject;
 
 import java.util.*;
@@ -109,7 +109,7 @@ public final class ObjectAnalyzer {
         }
 
         var element = transferDescription.getElement(first.getobjecttag());
-        if (element instanceof Table classElement) {
+        if (element instanceof Viewable<?> classElement) {
             for (Iterator<Extendable> it = classElement.getAttributes(); it.hasNext();) {
                 var attribute = (AttributeDef) it.next();
                 var name = attribute.getName();
