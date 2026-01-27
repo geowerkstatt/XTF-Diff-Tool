@@ -5,11 +5,14 @@ import ch.interlis.ili2c.metamodel.Domain;
 import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.iom.IomObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public final class ModelValidator {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final TransferDescription transferDescription;
     private final Map<String, Boolean> validatedClasses = new HashMap<>();
 
@@ -33,13 +36,13 @@ public final class ModelValidator {
     private boolean validateClassHasStableOid(String className) {
         Element classElement = transferDescription.getElement(className);
         if (!(classElement instanceof AbstractClassDef<?> classDef)) {
-            System.err.println("Error: Class or Association \"" + className + "\" not found.");
+            LOGGER.error("Class or Association \"{}\" not found.", className);
             return false;
         }
 
         Domain oid = classDef.getOid();
         if (oid == null) {
-            System.err.println("Warning: Class or Association \"" + className + "\" has no stable OID.");
+            LOGGER.warn("Class or Association \"{}\" has no stable OID.", className);
             return false;
         }
 
