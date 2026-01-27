@@ -20,7 +20,8 @@ public final class PrimitiveAttributeComparer implements AttributeComparer {
     }
 
     @Override
-    public Result compare(IomObject first, IomObject second, Type type, String attributeName) {
+    public Result compare(IomObject first, IomObject second, Type type, String attributePath) {
+        String attributeName = AttributeComparer.getAttributeName(attributePath);
         if (first.getattrobj(attributeName, 0) != null || second.getattrobj(attributeName, 0) != null) {
             // The attribute is not primitive
             return Result.INCONCLUSIVE;
@@ -30,7 +31,7 @@ public final class PrimitiveAttributeComparer implements AttributeComparer {
         var secondValues = getValues(attributeName, second);
 
         if (firstValues.size() != secondValues.size()) {
-            return Result.different(attributeName, joinValues(firstValues), joinValues(secondValues));
+            return Result.different(attributePath, joinValues(firstValues), joinValues(secondValues));
         }
 
         if (!type.isOrdered()) {
@@ -40,7 +41,7 @@ public final class PrimitiveAttributeComparer implements AttributeComparer {
 
         for (var i = 0; i < firstValues.size(); i++) {
             if (!firstValues.get(i).equals(secondValues.get(i))) {
-                return Result.different(attributeName, joinValues(firstValues), joinValues(secondValues));
+                return Result.different(attributePath, joinValues(firstValues), joinValues(secondValues));
             }
         }
 
