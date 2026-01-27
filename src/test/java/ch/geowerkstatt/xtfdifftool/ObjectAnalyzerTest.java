@@ -25,6 +25,7 @@ public final class ObjectAnalyzerTest {
     private static final String MODEL_FILE = "src/test/data/ObjectAnalyzerTest/Model.ili";
     private static final String INTERLIS_CLASS_NAME = "ObjectAnalyzerTest.Topic.Class";
     private static final String INTERLIS_CLASS_NAME_WITHOUT_ID = "ObjectAnalyzerTest.Topic.ClassWithoutId";
+    private static final String INTERLIS_STRUCT_NAME = "ObjectAnalyzerTest.Topic.Struct";
     private TransferDescription transferDescription;
 
     @BeforeEach
@@ -246,8 +247,45 @@ public final class ObjectAnalyzerTest {
         assertIterableEquals(Collections.emptyList(), changes);
     }
 
+    @Test
+    public void analyzeDifferentStructs() {
+        var first = List.of(createObject("o1", obj -> {
+            obj.addattrobj("struct", createStruct(struct -> {
+                struct.setattrvalue("text", "A");
+            }));
+        }), createObject("o2", obj -> {
+            obj.addattrobj("struct", createStruct(struct -> {
+                struct.setattrvalue("text", "B");
+            }));
+        }));
+        var second = List.of(createObject("o1", obj -> {
+            obj.addattrobj("struct", createStruct(struct -> {
+                struct.setattrvalue("text", "C");
+            }));
+        }), createObject("o2", obj -> {
+            obj.addattrobj("struct", createStruct(struct -> {
+                struct.setattrvalue("text", "B");
+            }));
+        }));
+
+        var expectedChanges = List.of(
+                new Change("o1", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "struct.text", "A", "C")
+        );
+
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+
+        assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
     private IomObject createObject(String oid, Consumer<Iom_jObject> configure) {
         var result = new Iom_jObject(INTERLIS_CLASS_NAME, oid);
+        configure.accept(result);
+        return result;
+    }
+
+    private IomObject createStruct(Consumer<Iom_jObject> configure) {
+        var result = new Iom_jObject(INTERLIS_STRUCT_NAME, null);
         configure.accept(result);
         return result;
     }
