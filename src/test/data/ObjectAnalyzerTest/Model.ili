@@ -4,6 +4,7 @@ MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
     TOPIC Topic =
         STRUCTURE Struct =
             text : TEXT;
+            text2 : TEXT;
         END Struct;
 
         CLASS Class =
@@ -14,6 +15,7 @@ MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             textList : LIST OF TEXT;
             textBag : BAG OF TEXT;
             struct : Struct;
+            structList : LIST OF Struct;
         END Class;
 
         CLASS ClassWithoutId =

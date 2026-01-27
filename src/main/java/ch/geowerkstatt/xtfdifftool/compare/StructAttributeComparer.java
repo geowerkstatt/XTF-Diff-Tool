@@ -31,32 +31,41 @@ public final class StructAttributeComparer implements AttributeComparer {
             return Result.INCONCLUSIVE;
         }
 
-        Table table = compositionType.getComponentType();
+        List<Change> changes = new ArrayList<>();
         String attributeName = AttributeComparer.getAttributeName(attributePath);
-        IomObject firstValue = first.getattrobj(attributeName, 0);
-        IomObject secondValue = second.getattrobj(attributeName, 0);
-        if (firstValue == null && secondValue == null) {
-            return Result.EQUAL;
-        } else if (firstValue == null) {
-            return Result.different(attributePath, null, table.getScopedName());
-        } else if (secondValue == null) {
-            return Result.different(attributePath, table.getScopedName(), null);
+        boolean isCollection = compositionType.getCardinality().getMaximum() > 1;
+        int firstCount = first.getattrvaluecount(attributeName);
+        int secondCount = second.getattrvaluecount(attributeName);
+        int maxCount = Math.max(firstCount, secondCount);
+
+        for (int i = 0; i < maxCount; i++) {
+            IomObject firstValue = i < firstCount ? first.getattrobj(attributeName, i) : null;
+            IomObject secondValue = i < secondCount ? second.getattrobj(attributeName, i) : null;
+            String structPath = isCollection ? attributePath + "[" + i + "]" : attributePath;
+            compareStructs(firstValue, secondValue, compositionType.getComponentType(), structPath, changes);
         }
 
-        List<Change> changes = new ArrayList<>();
+        return changes.isEmpty() ? Result.EQUAL : Result.different(changes);
+    }
+
+    private void compareStructs(IomObject first, IomObject second, Table table, String attributePath, List<Change> changes) {
+        if (first == null && second == null) {
+            return;
+        } else if (first == null) {
+            changes.add(new Change(attributePath, null, table.getScopedName()));
+            return;
+        } else if (second == null) {
+            changes.add(new Change(attributePath, table.getScopedName(), null));
+            return;
+        }
+
         for (Iterator<Extendable> it = table.getAttributes(); it.hasNext();) {
             if (it.next() instanceof AttributeDef attribute) {
-                var result = AttributeComparer.compareAll(firstValue, secondValue, attribute.getDomainResolvingAll(), attributePath + "." + attribute.getName());
+                Result result = AttributeComparer.compareAll(first, second, attribute.getDomainResolvingAll(), attributePath + "." + attribute.getName());
                 if (result.equality() == Equality.DIFFERENT) {
                     changes.addAll(result.changes());
                 }
             }
         }
-
-        if (!changes.isEmpty()) {
-            return Result.different(changes);
-        }
-
-        return Result.EQUAL;
     }
 }
