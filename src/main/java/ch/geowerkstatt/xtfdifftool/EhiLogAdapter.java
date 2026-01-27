@@ -14,10 +14,10 @@ public final class EhiLogAdapter implements LogListener {
     @Override
     public void logEvent(LogEvent logEvent) {
         switch (logEvent.getEventKind()) {
-            case LogEvent.ERROR -> LOGGER.error("{}", logEvent.getEventMsg());
-            case LogEvent.ADAPTION -> LOGGER.warn("{}", logEvent.getEventMsg());
-            case LogEvent.DEBUG_TRACE, LogEvent.STATE_TRACE -> LOGGER.trace("{}", logEvent.getEventMsg());
-            default -> LOGGER.info("{}", logEvent.getEventMsg());
+            case LogEvent.ERROR -> LOGGER.error(logEvent.getEventMsg());
+            case LogEvent.ADAPTION -> LOGGER.warn(logEvent.getEventMsg());
+            case LogEvent.DEBUG_TRACE, LogEvent.STATE_TRACE -> LOGGER.trace(logEvent.getEventMsg());
+            default -> LOGGER.info(logEvent.getEventMsg());
         }
     }
 }
