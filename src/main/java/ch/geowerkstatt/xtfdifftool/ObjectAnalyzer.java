@@ -1,9 +1,13 @@
 package ch.geowerkstatt.xtfdifftool;
 
+import ch.geowerkstatt.xtfdifftool.compare.AttributeComparer;
 import ch.geowerkstatt.xtfdifftool.diff.Change;
 import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
+import ch.interlis.ili2c.metamodel.AttributeDef;
+import ch.interlis.ili2c.metamodel.Extendable;
 import ch.interlis.ili2c.metamodel.TransferDescription;
+import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.iom.IomObject;
 
 import java.util.*;
@@ -19,6 +23,7 @@ public final class ObjectAnalyzer {
     private final Stream<AnalyzedObject> firstObjects;
     private final Stream<AnalyzedObject> secondObjects;
     private final ModelValidator modelValidator;
+    private final TransferDescription transferDescription;
 
     private static final class AnalyzedObject {
         private final IomObject object;
@@ -38,6 +43,7 @@ public final class ObjectAnalyzer {
      * @param secondObjects The objects of the second transfer.
      */
     public ObjectAnalyzer(TransferDescription transferDescription, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
+        this.transferDescription = transferDescription;
         this.modelValidator = new ModelValidator(transferDescription);
         this.firstObjects = firstObjects.map(this::validateObject);
         this.secondObjects = secondObjects.map(this::validateObject);
@@ -64,11 +70,12 @@ public final class ObjectAnalyzer {
                         ValueType.OBJECT,
                         object.getobjecttag(),
                         null,
+                        null,
                         null);
                 changeConsumer.accept(removeChange);
             } else {
                 matchingObject.visited = true;
-                comparePrimitiveAttributes(object, matchingObject.object, changeConsumer);
+                compareAttributes(object, matchingObject.object, changeConsumer);
             }
         });
 
@@ -80,6 +87,7 @@ public final class ObjectAnalyzer {
                         ChangeType.ADDED,
                         ValueType.OBJECT,
                         object.getobjecttag(),
+                        null,
                         null,
                         null);
                 changeConsumer.accept(addChange);
@@ -96,61 +104,27 @@ public final class ObjectAnalyzer {
         return new AnalyzedObject(iomObject, hasStableOid);
     }
 
-    /**
-     * Compare the primitive attributes of two IomObjects without knowledge of the INTERLIS model and report changes via the changeConsumer.
-     */
-    private void comparePrimitiveAttributes(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
-        var primitiveAttributesFirst = getPrimitiveAttributes(first);
-        var primitiveAttributesSecond = getPrimitiveAttributes(second);
+    private void compareAttributes(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
+        if (!first.getobjecttag().equals(second.getobjecttag())) {
+            System.err.println("WARNING: Matching Transfer Objects have Different INTERLIS classes. OID:" + first.getobjectoid());
+            return;
+        }
 
-        primitiveAttributesFirst.forEach((key, attribute) -> {
-            var matchingAttribute = primitiveAttributesSecond.get(key);
-            if (matchingAttribute == null) {
-                changeConsumer.accept(new Change(
-                        first.getobjectoid(),
-                        ChangeType.DELETED,
-                        ValueType.ATTRIBUTE,
-                        first.getobjecttag(),
-                        String.join(",", attribute),
-                        null));
-            } else {
-                primitiveAttributesSecond.remove(key);
-                if (!attribute.equals(matchingAttribute)) {
-                    changeConsumer.accept(new Change(
-                            first.getobjectoid(),
-                            ChangeType.CHANGED,
-                            ValueType.ATTRIBUTE,
-                            first.getobjecttag(),
-                            String.join(",", attribute),
-                            String.join(",", matchingAttribute)));
-                }
-            }
-        });
-
-        primitiveAttributesSecond.forEach((key, attribute) -> {
-            changeConsumer.accept(new Change(
-                    first.getobjectoid(),
-                    ChangeType.ADDED,
-                    ValueType.ATTRIBUTE,
-                    first.getobjecttag(),
-                    null,
-                    String.join(",", attribute)));
-        });
-    }
-
-    private HashMap<String, List<String>> getPrimitiveAttributes(IomObject object) {
-        var primitiveAttributes = new HashMap<String, List<String>>();
-        for (var i = 0; i < object.getattrcount(); i++) {
-            var name = object.getattrname(i);
-            var elementCount = object.getattrvaluecount(name);
-            for (var elementIndex = 0; elementIndex < elementCount; elementIndex++) {
-                var value = object.getattrprim(name, elementIndex);
-                if (value != null) {
-                    primitiveAttributes.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
+        var element = transferDescription.getElement(first.getobjecttag());
+        if (element instanceof Viewable<?> classElement) {
+            for (Iterator<Extendable> it = classElement.getAttributes(); it.hasNext();) {
+                var attribute = (AttributeDef) it.next();
+                var name = attribute.getName();
+                if (first.getattrvaluecount(name) != 0 || second.getattrvaluecount(name) != 0) {
+                    var type = attribute.getDomainResolvingAll();
+                    var result = AttributeComparer.compareAll(first, second, type, name);
+                    switch (result.equality()) {
+                        case DIFFERENT -> result.changes().stream().map(c -> c.withObject(first)).forEach(changeConsumer);
+                        case INCONCLUSIVE -> System.err.println("ERROR could not compare attribute " + name);
+                        case null, default -> { }
+                    }
                 }
             }
         }
-
-        return primitiveAttributes;
     }
 }

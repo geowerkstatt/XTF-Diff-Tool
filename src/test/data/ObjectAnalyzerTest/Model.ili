@@ -8,12 +8,14 @@ MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             text : TEXT;
             text2 : TEXT;
             textList : LIST OF TEXT;
+            textBag : BAG OF TEXT;
         END Class;
 
         CLASS ClassWithoutId =
             text : TEXT;
             text2 : TEXT;
             textList : LIST OF TEXT;
+            textBat : BAG OF TEXT;
         END ClassWithoutId;
     END Topic;
 END ObjectAnalyzerTest.

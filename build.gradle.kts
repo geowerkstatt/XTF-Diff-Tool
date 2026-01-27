@@ -4,6 +4,16 @@ plugins {
     id("checkstyle")
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+checkstyle {
+    toolVersion = "13.0.0"
+}
+
 group = "ch.geowerkstatt.xtfdifftool"
 
 repositories {
