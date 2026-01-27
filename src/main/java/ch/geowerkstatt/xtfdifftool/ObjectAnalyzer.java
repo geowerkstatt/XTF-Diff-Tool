@@ -9,6 +9,8 @@ import ch.interlis.ili2c.metamodel.Extendable;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.iom.IomObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -20,6 +22,7 @@ import java.util.stream.Stream;
  * Analyzes the differences between two INTERLIS transfers.
  */
 public final class ObjectAnalyzer {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final Stream<AnalyzedObject> firstObjects;
     private final Stream<AnalyzedObject> secondObjects;
     private final ModelValidator modelValidator;
@@ -106,7 +109,7 @@ public final class ObjectAnalyzer {
 
     private void compareAttributes(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
         if (!first.getobjecttag().equals(second.getobjecttag())) {
-            System.err.println("WARNING: Matching Transfer Objects have Different INTERLIS classes. OID:" + first.getobjectoid());
+            LOGGER.warn("Matching transfer objects have different INTERLIS classes. OID: {}", first.getobjectoid());
             return;
         }
 
@@ -120,7 +123,7 @@ public final class ObjectAnalyzer {
                     var result = AttributeComparer.compareAll(first, second, type, name);
                     switch (result.equality()) {
                         case DIFFERENT -> result.changes().stream().map(c -> c.withObject(first)).forEach(changeConsumer);
-                        case INCONCLUSIVE -> System.err.println("ERROR could not compare attribute " + name);
+                        case INCONCLUSIVE -> LOGGER.error("Could not compare attribute {} of {}", name, classElement.getName());
                         case null, default -> { }
                     }
                 }
