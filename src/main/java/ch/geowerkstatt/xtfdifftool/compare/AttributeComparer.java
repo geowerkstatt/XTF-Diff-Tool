@@ -61,6 +61,10 @@ public interface AttributeComparer {
          * Create a {@link Change} from this {@link Result}.
          */
         public Change toChange(String oid, String tag) {
+            if (equality != Equality.DIFFERENT) {
+                throw new IllegalStateException("Cannot convert " + equality + " Result to a Change");
+            }
+
             var changeType = oldValue == null ? ChangeType.ADDED : newValue == null ? ChangeType.DELETED : ChangeType.CHANGED;
             return new Change(oid, changeType, ValueType.ATTRIBUTE, tag, oldValue, newValue);
         }
