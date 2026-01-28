@@ -1,12 +1,14 @@
 package ch.geowerkstatt.xtfdifftool;
 
 import ch.ehi.basics.settings.Settings;
+import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.iom.IomObject;
 import ch.interlis.iox.EndTransferEvent;
 import ch.interlis.iox.IoxEvent;
 import ch.interlis.iox.IoxException;
 import ch.interlis.iox.IoxReader;
 import ch.interlis.iox.ObjectEvent;
+import ch.interlis.iox_j.IoxIliReader;
 import ch.interlis.iox_j.logging.LogEventFactory;
 import ch.interlis.iox_j.utility.ReaderFactory;
 
@@ -27,13 +29,17 @@ public final class XtfStreamReader implements AutoCloseable {
 
     /**
      * Creates a new reader for the INTERLIS transfer file.
+     * @param transferDescription The INTERLIS transfer description.
      * @param xtfFile The file to read from.
      * @throws IoxException If an error occurs while creating the transfer file reader.
      */
-    public XtfStreamReader(File xtfFile) throws IoxException {
+    public XtfStreamReader(TransferDescription transferDescription, File xtfFile) throws IoxException {
         LogEventFactory logEventFactory = new LogEventFactory();
         Settings settings = new Settings();
         this.reader = READER_FACTORY.createReader(xtfFile, logEventFactory, settings);
+        if (this.reader instanceof IoxIliReader ioxIliReader) {
+            ioxIliReader.setModel(transferDescription);
+        }
     }
 
     /**
