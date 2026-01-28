@@ -13,15 +13,16 @@ public interface AttributeComparer {
      */
     AttributeComparer[] COMPARERS = {
             PrimitiveAttributeComparer.getInstance(),
+            StructAttributeComparer.getInstance(),
     };
 
     /**
      * Compare the attribute with all {@link AttributeComparer#COMPARERS} until a comparer returns a conclusive result.
      * <p>May still return {@link Equality#INCONCLUSIVE} if no comparer is able to compare the attribute.</p>
      */
-    static Result compareAll(IomObject first, IomObject second, Type type, String attributeName) {
+    static Result compareAll(IomObject first, IomObject second, Type type, String attributePath) {
         for (var comparer : COMPARERS) {
-            var result = comparer.compare(first, second, type, attributeName);
+            var result = comparer.compare(first, second, type, attributePath);
             if (result.equality != Equality.INCONCLUSIVE) {
                 return result;
             }
@@ -31,14 +32,26 @@ public interface AttributeComparer {
     }
 
     /**
+     * Extracts the attribute name from the given attribute path.
+     *
+     * @param attributePath The attribute path
+     * @return The attribute name
+     */
+    static String getAttributeName(String attributePath) {
+        var lastIndex = attributePath.lastIndexOf('.');
+        return lastIndex == -1 ? attributePath : attributePath.substring(lastIndex + 1);
+    }
+
+    /**
      * Extracts the specified attribute's values from the given {@link IomObject}s and compares them.
      *
      * @param first         The first IomObject
      * @param second        The second IomObject
-     * @param attributeName The name of the attribute
+     * @param type          The INTERLIS type of the attribute
+     * @param attributePath The path of the attribute
      * @return The result of the comparison as a {@link Result}.
      */
-    Result compare(IomObject first, IomObject second, Type type, String attributeName);
+    Result compare(IomObject first, IomObject second, Type type, String attributePath);
 
     enum Equality {
         /** The compared objects are equal. */

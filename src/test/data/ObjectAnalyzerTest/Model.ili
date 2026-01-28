@@ -2,6 +2,11 @@ INTERLIS 2.4;
 
 MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
     TOPIC Topic =
+        STRUCTURE Struct =
+            text : TEXT;
+            text2 : TEXT;
+        END Struct;
+
         CLASS Class =
             OID AS INTERLIS.STANDARDOID;
 
@@ -9,13 +14,15 @@ MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             text2 : TEXT;
             textList : LIST OF TEXT;
             textBag : BAG OF TEXT;
+            struct : Struct;
+            structList : LIST OF Struct;
         END Class;
 
         CLASS ClassWithoutId =
             text : TEXT;
             text2 : TEXT;
             textList : LIST OF TEXT;
-            textBat : BAG OF TEXT;
+            textBag : BAG OF TEXT;
         END ClassWithoutId;
     END Topic;
 END ObjectAnalyzerTest.
