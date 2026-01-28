@@ -24,5 +24,16 @@ MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             textList : LIST OF TEXT;
             textBag : BAG OF TEXT;
         END ClassWithoutId;
+
+        CLASS ClassB =
+            OID AS INTERLIS.STANDARDOID;
+        END ClassB;
+
+        ASSOCIATION EmbeddedAssociation =
+            role1A -- {1} Class;
+            role1B -- ClassB;
+
+            value : TEXT;
+        END EmbeddedAssociation;
     END Topic;
 END ObjectAnalyzerTest.
