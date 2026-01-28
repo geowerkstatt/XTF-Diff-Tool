@@ -362,6 +362,44 @@ public final class ObjectAnalyzerTest {
         assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
     }
 
+    @Test
+    public void analyzeReferenceAttribute() {
+        var first = List.of(
+                createObject("o1"),
+                createObject("o2"),
+                createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
+                    var ref = createRef("o1");
+                    obj.addattrobj("ref", ref);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
+                    var ref = createRef("o1");
+                    obj.addattrobj("ref", ref);
+                })
+        );
+        var second = List.of(
+                createObject("o1"),
+                createObject("o2"),
+                createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
+                    var ref = createRef("o1");
+                    obj.addattrobj("ref", ref);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
+                    var ref = createRef("o2");
+                    obj.addattrobj("ref", ref);
+                })
+        );
+
+        var expectedChanges = List.of(
+                new Change("o4", ChangeType.DELETED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "ref", "o1", null),
+                new Change("o4", ChangeType.ADDED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "ref", null, "o2")
+        );
+
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+
+        assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
     private IomObject createObject(String oid, Consumer<Iom_jObject> configure) {
         return createObject(INTERLIS_CLASS_NAME, oid, configure);
     }

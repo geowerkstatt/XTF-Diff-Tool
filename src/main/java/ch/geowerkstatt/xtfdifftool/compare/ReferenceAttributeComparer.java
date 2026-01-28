@@ -1,7 +1,9 @@
 package ch.geowerkstatt.xtfdifftool.compare;
 
 import ch.geowerkstatt.xtfdifftool.diff.Change;
+import ch.interlis.ili2c.metamodel.ReferenceType;
 import ch.interlis.ili2c.metamodel.RoleDef;
+import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.iom.IomObject;
 import org.apache.logging.log4j.LogManager;
@@ -27,14 +29,34 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
     }
 
     @Override
+    public Result compare(IomObject first, IomObject second, Type type, String attributePath) {
+        // Attributes of type "REFERENCE TO ..."
+        if (!(type instanceof ReferenceType referenceType) || referenceType.getReferred() == null) {
+            return Result.INCONCLUSIVE;
+        }
+
+        return compareReferences(first, second, referenceType.getReferred(), attributePath);
+    }
+
+    @Override
     public Result compareRole(IomObject first, IomObject second, RoleDef role, boolean embedded, String attributePath) {
         if (!embedded) {
             LOGGER.warn("Found embedded value for non-embedded role: {}", role.getName());
             return Result.INCONCLUSIVE;
         }
 
-        Map<String, IomObject> firstRefs = getRefMap(first, role.getName());
-        Map<String, IomObject> secondRefs = getRefMap(second, role.getName());
+        if (!(role.getContainer() instanceof Viewable<?> viewable)) {
+            LOGGER.warn("Role {} is not part of a class, struct or association", role.getName());
+            return Result.INCONCLUSIVE;
+        }
+
+        return compareReferences(first, second, viewable, attributePath);
+    }
+
+    private Result compareReferences(IomObject first, IomObject second, Viewable<?> viewable, String attributePath) {
+        String name = AttributeComparer.getAttributeName(attributePath);
+        Map<String, IomObject> firstRefs = getRefMap(first, name);
+        Map<String, IomObject> secondRefs = getRefMap(second, name);
 
         List<Change> changes = new ArrayList<>();
         for (var entry : firstRefs.entrySet()) {
@@ -42,10 +64,8 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
             if (matchingEntry == null) {
                 changes.add(new Change(attributePath, entry.getKey(), null));
             } else {
-                if (role.getOppEnd().getContainer() instanceof Viewable<?> viewable) {
-                    String path = attributePath + "[" + entry.getKey() + "]";
-                    ObjectComparer.compareAllAttributes(viewable, entry.getValue(), matchingEntry, path, changes::add);
-                }
+                String path = attributePath + "[" + entry.getKey() + "]";
+                ObjectComparer.compareAllAttributes(viewable, entry.getValue(), matchingEntry, path, changes::add);
                 secondRefs.remove(entry.getKey());
             }
         }

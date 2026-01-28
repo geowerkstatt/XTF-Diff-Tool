@@ -27,6 +27,8 @@ MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
 
         CLASS ClassB =
             OID AS INTERLIS.STANDARDOID;
+
+            ref : REFERENCE TO Class;
         END ClassB;
 
         ASSOCIATION EmbeddedAssociation =
