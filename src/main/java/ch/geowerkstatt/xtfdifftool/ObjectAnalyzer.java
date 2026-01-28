@@ -76,7 +76,7 @@ public final class ObjectAnalyzer {
                 changeConsumer.accept(removeChange);
             } else {
                 matchingObject.visited = true;
-                compareAttributes(object, matchingObject.object, changeConsumer);
+                compareObjectValues(object, matchingObject.object, changeConsumer);
             }
         });
 
@@ -105,7 +105,7 @@ public final class ObjectAnalyzer {
         return new AnalyzedObject(iomObject, hasStableOid);
     }
 
-    private void compareAttributes(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
+    private void compareObjectValues(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
         if (!first.getobjecttag().equals(second.getobjecttag())) {
             LOGGER.warn("Matching transfer objects have different INTERLIS classes. OID: {}", first.getobjectoid());
             return;
@@ -113,7 +113,7 @@ public final class ObjectAnalyzer {
 
         var element = transferDescription.getElement(first.getobjecttag());
         if (element instanceof Viewable<?> classElement) {
-            ObjectComparer.compareAllAttributes(classElement, first, second, "", changeConsumer);
+            ObjectComparer.compareAllAttributesAndRoles(classElement, first, second, "", changeConsumer);
         }
     }
 }

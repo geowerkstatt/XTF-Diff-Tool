@@ -56,6 +56,6 @@ public final class StructAttributeComparer implements AttributeComparer {
             return;
         }
 
-        ObjectComparer.compareAllAttributes(table, first, second, attributePath, changes::add);
+        ObjectComparer.compareAllAttributesAndRoles(table, first, second, attributePath, changes::add);
     }
 }
