@@ -24,8 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 public final class ObjectAnalyzerTest {
     private static final String MODEL_FILE = "src/test/data/ObjectAnalyzerTest/Model.ili";
     private static final String INTERLIS_CLASS_NAME = "ObjectAnalyzerTest.Topic.Class";
+    private static final String INTERLIS_CLASS_NAME_B = "ObjectAnalyzerTest.Topic.ClassB";
     private static final String INTERLIS_CLASS_NAME_WITHOUT_ID = "ObjectAnalyzerTest.Topic.ClassWithoutId";
     private static final String INTERLIS_STRUCT_NAME = "ObjectAnalyzerTest.Topic.Struct";
+    private static final String INTERLIS_EMBEDDED_ASSOCIATION_NAME = "ObjectAnalyzerTest.Topic.EmbeddedAssociation";
     private TransferDescription transferDescription;
 
     @BeforeEach
@@ -310,8 +312,119 @@ public final class ObjectAnalyzerTest {
         assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
     }
 
+    @Test
+    public void analyzeEmbeddedAssociation() {
+        var first = List.of(
+                createObject("o1"),
+                createObject("o2"),
+                createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o1");
+                        assoc.setattrvalue("value", "ABC");
+                    });
+                    obj.addattrobj("role1A", role);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
+                    var role = createRef("o2");
+                    obj.addattrobj("role1A", role);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o5", obj -> {
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o2");
+                        assoc.setattrvalue("value", "some text");
+                    });
+                    obj.addattrobj("role1A", role);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o6", obj -> {
+                    var role = createRef("o2");
+                    obj.addattrobj("role1A", role);
+                })
+        );
+        var second = List.of(
+                createObject("o1"),
+                createObject("o2"),
+                createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o1");
+                        assoc.setattrvalue("value", "ABC");
+                    });
+                    obj.addattrobj("role1A", role);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
+                    var role = createRef("o1");
+                    obj.addattrobj("role1A", role);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o5", obj -> {
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o2");
+                        assoc.setattrvalue("value", "some other text");
+                    });
+                    obj.addattrobj("role1A", role);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o6", obj -> {
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o2");
+                        assoc.setattrvalue("value", "new value");
+                    });
+                    obj.addattrobj("role1A", role);
+                })
+        );
+
+        var expectedChanges = List.of(
+                new Change("o4", ChangeType.DELETED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "role1A", "o2", null),
+                new Change("o4", ChangeType.ADDED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "role1A", null, "o1"),
+                new Change("o2", ChangeType.DELETED, ValueType.REFERENCE, INTERLIS_CLASS_NAME, "role1B", "o4", null),
+                new Change("o1", ChangeType.ADDED, ValueType.REFERENCE, INTERLIS_CLASS_NAME, "role1B", null, "o4"),
+                new Change("o5", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A[o2].value", "some text", "some other text"),
+                new Change("o6", ChangeType.ADDED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A[o2].value", null, "new value")
+        );
+
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+
+        assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
+    @Test
+    public void analyzeReferenceAttribute() {
+        var first = List.of(
+                createObject("o1"),
+                createObject("o2"),
+                createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
+                    obj.addattrobj("ref", createRef("o1"));
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
+                    obj.addattrobj("ref", createRef("o1"));
+                })
+        );
+        var second = List.of(
+                createObject("o1"),
+                createObject("o2"),
+                createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
+                    obj.addattrobj("ref", createRef("o1"));
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
+                    obj.addattrobj("ref", createRef("o2"));
+                })
+        );
+
+        var expectedChanges = List.of(
+                new Change("o4", ChangeType.DELETED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "ref", "o1", null),
+                new Change("o4", ChangeType.ADDED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "ref", null, "o2")
+        );
+
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+
+        assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
     private IomObject createObject(String oid, Consumer<Iom_jObject> configure) {
-        var result = new Iom_jObject(INTERLIS_CLASS_NAME, oid);
+        return createObject(INTERLIS_CLASS_NAME, oid, configure);
+    }
+
+    private IomObject createObject(String className, String oid, Consumer<Iom_jObject> configure) {
+        var result = new Iom_jObject(className, oid);
         configure.accept(result);
         return result;
     }
@@ -324,6 +437,12 @@ public final class ObjectAnalyzerTest {
 
     private IomObject createObject(String oid) {
         return new Iom_jObject(INTERLIS_CLASS_NAME, oid);
+    }
+
+    private IomObject createRef(String targetOid) {
+        var ref = new Iom_jObject(Iom_jObject.REF, null);
+        ref.setobjectrefoid(targetOid);
+        return ref;
     }
 
     private Change createChange(String oid, ChangeType type) {

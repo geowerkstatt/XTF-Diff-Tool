@@ -1,15 +1,12 @@
 package ch.geowerkstatt.xtfdifftool.compare;
 
 import ch.geowerkstatt.xtfdifftool.diff.Change;
-import ch.interlis.ili2c.metamodel.AttributeDef;
 import ch.interlis.ili2c.metamodel.CompositionType;
-import ch.interlis.ili2c.metamodel.Extendable;
 import ch.interlis.ili2c.metamodel.Table;
 import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public final class StructAttributeComparer implements AttributeComparer {
@@ -52,20 +49,13 @@ public final class StructAttributeComparer implements AttributeComparer {
         if (first == null && second == null) {
             return;
         } else if (first == null) {
-            changes.add(new Change(attributePath, null, table.getScopedName()));
+            changes.add(Change.attribute(attributePath, null, table.getScopedName()));
             return;
         } else if (second == null) {
-            changes.add(new Change(attributePath, table.getScopedName(), null));
+            changes.add(Change.attribute(attributePath, table.getScopedName(), null));
             return;
         }
 
-        for (Iterator<Extendable> it = table.getAttributes(); it.hasNext();) {
-            if (it.next() instanceof AttributeDef attribute) {
-                Result result = AttributeComparer.compareAll(first, second, attribute.getDomainResolvingAll(), attributePath + "." + attribute.getName());
-                if (result.equality() == Equality.DIFFERENT) {
-                    changes.addAll(result.changes());
-                }
-            }
-        }
+        ObjectComparer.compareAllAttributesAndRoles(table, first, second, attributePath, changes::add);
     }
 }

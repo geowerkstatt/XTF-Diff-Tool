@@ -1,6 +1,7 @@
 package ch.geowerkstatt.xtfdifftool.compare;
 
 import ch.geowerkstatt.xtfdifftool.diff.Change;
+import ch.interlis.ili2c.metamodel.RoleDef;
 import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
 
@@ -14,6 +15,7 @@ public interface AttributeComparer {
     AttributeComparer[] COMPARERS = {
             PrimitiveAttributeComparer.getInstance(),
             StructAttributeComparer.getInstance(),
+            ReferenceAttributeComparer.getInstance(),
     };
 
     /**
@@ -23,6 +25,21 @@ public interface AttributeComparer {
     static Result compareAll(IomObject first, IomObject second, Type type, String attributePath) {
         for (var comparer : COMPARERS) {
             var result = comparer.compare(first, second, type, attributePath);
+            if (result.equality != Equality.INCONCLUSIVE) {
+                return result;
+            }
+        }
+
+        return Result.INCONCLUSIVE;
+    }
+
+    /**
+     * Compare the role with all {@link AttributeComparer#COMPARERS} until a comparer returns a conclusive result.
+     * <p>May still return {@link Equality#INCONCLUSIVE} if no comparer is able to compare the role.</p>
+     */
+    static Result compareAll(IomObject first, IomObject second, RoleDef role, boolean embedded, String attributePath) {
+        for (var comparer : COMPARERS) {
+            var result = comparer.compareRole(first, second, role, embedded, attributePath);
             if (result.equality != Equality.INCONCLUSIVE) {
                 return result;
             }
@@ -51,7 +68,23 @@ public interface AttributeComparer {
      * @param attributePath The path of the attribute
      * @return The result of the comparison as a {@link Result}.
      */
-    Result compare(IomObject first, IomObject second, Type type, String attributePath);
+    default Result compare(IomObject first, IomObject second, Type type, String attributePath) {
+        return Result.INCONCLUSIVE;
+    }
+
+    /**
+     * Extracts the specified role's values from the given {@link IomObject}s and compares them.
+     *
+     * @param first         The first IomObject
+     * @param second        The second IomObject
+     * @param role          The INTERLIS role definition
+     * @param embedded      Whether the role is embedded
+     * @param attributePath The path of the attribute
+     * @return The result of the comparison as a {@link Result}.
+     */
+    default Result compareRole(IomObject first, IomObject second, RoleDef role, boolean embedded, String attributePath) {
+        return Result.INCONCLUSIVE;
+    }
 
     enum Equality {
         /** The compared objects are equal. */
@@ -81,7 +114,7 @@ public interface AttributeComparer {
 
         /** Creates a Result indicating the compared objects are different. */
         public static Result different(String attributeName, String oldValue, String newValue) {
-            return new Result(Equality.DIFFERENT, List.of(new Change(attributeName, oldValue, newValue)));
+            return new Result(Equality.DIFFERENT, List.of(Change.attribute(attributeName, oldValue, newValue)));
         }
 
         /** Creates a Result indicating the compared objects are different. */

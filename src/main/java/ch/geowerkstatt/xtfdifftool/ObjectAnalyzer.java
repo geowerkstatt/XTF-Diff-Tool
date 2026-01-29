@@ -1,11 +1,9 @@
 package ch.geowerkstatt.xtfdifftool;
 
-import ch.geowerkstatt.xtfdifftool.compare.AttributeComparer;
+import ch.geowerkstatt.xtfdifftool.compare.ObjectComparer;
 import ch.geowerkstatt.xtfdifftool.diff.Change;
 import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
-import ch.interlis.ili2c.metamodel.AttributeDef;
-import ch.interlis.ili2c.metamodel.Extendable;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.iom.IomObject;
@@ -78,7 +76,7 @@ public final class ObjectAnalyzer {
                 changeConsumer.accept(removeChange);
             } else {
                 matchingObject.visited = true;
-                compareAttributes(object, matchingObject.object, changeConsumer);
+                compareObjectValues(object, matchingObject.object, changeConsumer);
             }
         });
 
@@ -107,7 +105,7 @@ public final class ObjectAnalyzer {
         return new AnalyzedObject(iomObject, hasStableOid);
     }
 
-    private void compareAttributes(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
+    private void compareObjectValues(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
         if (!first.getobjecttag().equals(second.getobjecttag())) {
             LOGGER.warn("Matching transfer objects have different INTERLIS classes. OID: {}", first.getobjectoid());
             return;
@@ -115,19 +113,7 @@ public final class ObjectAnalyzer {
 
         var element = transferDescription.getElement(first.getobjecttag());
         if (element instanceof Viewable<?> classElement) {
-            for (Iterator<Extendable> it = classElement.getAttributes(); it.hasNext();) {
-                var attribute = (AttributeDef) it.next();
-                var name = attribute.getName();
-                if (first.getattrvaluecount(name) != 0 || second.getattrvaluecount(name) != 0) {
-                    var type = attribute.getDomainResolvingAll();
-                    var result = AttributeComparer.compareAll(first, second, type, name);
-                    switch (result.equality()) {
-                        case DIFFERENT -> result.changes().stream().map(c -> c.withObject(first)).forEach(changeConsumer);
-                        case INCONCLUSIVE -> LOGGER.error("Could not compare attribute {} of {}", name, classElement.getName());
-                        case null, default -> { }
-                    }
-                }
-            }
+            ObjectComparer.compareAllAttributesAndRoles(classElement, first, second, "", changeConsumer);
         }
     }
 }

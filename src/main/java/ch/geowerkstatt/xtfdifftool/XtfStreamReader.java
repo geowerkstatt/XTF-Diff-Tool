@@ -29,6 +29,7 @@ public final class XtfStreamReader implements AutoCloseable {
 
     /**
      * Creates a new reader for the INTERLIS transfer file.
+     * @param transferDescription The INTERLIS transfer description.
      * @param xtfFile The file to read from.
      * @throws IoxException If an error occurs while creating the transfer file reader.
      */
