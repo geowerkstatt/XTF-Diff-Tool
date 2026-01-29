@@ -12,18 +12,20 @@ public interface AttributeComparer {
     /**
      * A collection of all known comparers.
      */
-    AttributeComparer[] COMPARERS = {
-            PrimitiveAttributeComparer.getInstance(),
-            StructAttributeComparer.getInstance(),
-            ReferenceAttributeComparer.getInstance(),
+    static AttributeComparer[] getComparers() {
+        return new AttributeComparer[] {
+                PrimitiveAttributeComparer.getInstance(),
+                StructAttributeComparer.getInstance(),
+                ReferenceAttributeComparer.getInstance(),
+        };
     };
 
     /**
-     * Compare the attribute with all {@link AttributeComparer#COMPARERS} until a comparer returns a conclusive result.
+     * Compare the attribute with all {@link AttributeComparer#getComparers()} until a comparer returns a conclusive result.
      * <p>May still return {@link Equality#INCONCLUSIVE} if no comparer is able to compare the attribute.</p>
      */
     static Result compareAll(IomObject first, IomObject second, Type type, String attributePath) {
-        for (var comparer : COMPARERS) {
+        for (var comparer : getComparers()) {
             var result = comparer.compare(first, second, type, attributePath);
             if (result.equality != Equality.INCONCLUSIVE) {
                 return result;
@@ -34,11 +36,11 @@ public interface AttributeComparer {
     }
 
     /**
-     * Compare the role with all {@link AttributeComparer#COMPARERS} until a comparer returns a conclusive result.
+     * Compare the role with all {@link AttributeComparer#getComparers()} until a comparer returns a conclusive result.
      * <p>May still return {@link Equality#INCONCLUSIVE} if no comparer is able to compare the role.</p>
      */
     static Result compareAll(IomObject first, IomObject second, RoleDef role, boolean embedded, String attributePath) {
-        for (var comparer : COMPARERS) {
+        for (var comparer : getComparers()) {
             var result = comparer.compareRole(first, second, role, embedded, attributePath);
             if (result.equality != Equality.INCONCLUSIVE) {
                 return result;
