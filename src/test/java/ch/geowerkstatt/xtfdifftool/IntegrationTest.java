@@ -17,7 +17,7 @@ import ch.interlis.iox_j.logging.LogEventFactory;
 import ch.interlis.iox_j.utility.ReaderFactory;
 import ch.interlis.iox_j.validator.ValidationConfig;
 import ch.interlis.iox_j.validator.Validator;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
 
@@ -42,8 +42,8 @@ public final class IntegrationTest {
     private static final String XTF_FILE_1_23 = TEST_DIR + "DiffToolTest1_2.3.xtf";
     private static final String XTF_FILE_2_23 = TEST_DIR + "DiffToolTest2_2.3.xtf";
 
-    @BeforeEach
-    public void init() {
+    @BeforeAll
+    public static void initAll() {
         var _ = new File(TEST_OUT_DIR).mkdirs();
 
         var files = new File(TEST_OUT_DIR).listFiles();
