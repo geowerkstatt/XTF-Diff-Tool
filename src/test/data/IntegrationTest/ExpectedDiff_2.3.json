@@ -1,0 +1,128 @@
+[
+  {
+    "oid": "62738c65-ca45-4934-9699-f000ad2d1c05",
+    "changeType": "deleted",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Number",
+    "oldValue": "42.00",
+    "newValue": "56.00"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Text",
+    "oldValue": "DOLPHIN",
+    "newValue": "SHARK"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "MText",
+    "oldValue": "AXOLOTL\nGUINEA PIG",
+    "newValue": "PENGUIN\nGUINEA PIG"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Enum",
+    "oldValue": "red.crimson",
+    "newValue": "green"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Alignment",
+    "oldValue": "Right",
+    "newValue": "Center"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Date",
+    "oldValue": "2026-01-01T10:42:00.000",
+    "newValue": "2026-01-01T12:43:00.000"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Blackbox",
+    "oldValue": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAZRJREFUWIW9l7tKA0EUhr9dyKJmQSNEa+OtUhJ7C61TCbYWgi8Q0NqUXvABrETwDbTVxtooQRAV0gqiCEZFBX+LIATMZi8zmwPTzZnvO2dmmR2H1EN5YB6YAaaBKWAYGAL8tKAl0C6oDvoBKXjYg/qgCui6O9C6gHKgKugpHthYQA5oBfSQDGwkoALo3AycWEBLoGc78FgCckF79sCxBOSBjuzDIwnIA52kAw8VkAM6SA8eLpDCnkcW0HL6cMkJgBeAC2AwpEXG4XaAO8BhL+ABodVetD5gC5QDboAR22X5NClzzAJnFLlkjAZDvPyrvmq7wgnutM+a3hjoOKEdngU92gL3864tNvRFpuvEdoGKLfg497piNtLkdoG6DXiRmh4YjZzwB5+zVXkceLvArim8jw/VKMZOtNb+bdYTJQLKE/rr3H1Mcht62oOGS+vREHAnRIt1dsjwnTRdmybVZ2nqFT/xAi6tp1LiKHOMTzNxvgtMmggscmqSjovhxVOiZixg9EIdo2Ek4IA+AS/pAl94Jl8Av3XPRwaoSMXqAAAAAElFTkSuQmCC",
+    "newValue": "UklGRsoCAABXRUJQVlA4WAoAAAAYAAAAHwAAHwAAVlA4TOoBAAAvH8AHEKekqG0jqfwxz9SPPTBMAEG2zfwFbvvOv9q2bZgxnXmDJQEhJCAGyBFAJSATIDAIDCEFkII0CygIKTIFKWBBNgUQUmygMg5IhpA6UhD4mE/UkKByAeT0wcFnrg8WMCHFpQwILAhUmvtPKDKD4zA3naMSRgFBkmTTVj/r27Zt27Zt27Zx+2vHV+dF/AVE9H8Cfr/d/PNNN3/9OxsTkhuGkz9Y4CBnGt8EFWGd5UFkUixFNAzy0lLJphjem5ZF7JttWywMZX8aB6MlEVx2BtxdmE9n8piySH0vJbfc8Uv8qFi72XnPlAT0w6Pj7Sx4igKVNnOdCFt9lMSRT9MZfk8kj46F7GTVTB48v5JkASJbL/TNAIBxVBYBwBB3VZKdGO5drbZf09ozMnMl8wKA8E3Iq9RInk+XdcrsMPuFF04rdKm9pvsBlnLZxYNEsry1IRpYVWMUPMqv1+qpOgf4liy0P2kYbXl4LDSEXLzIpL7cQgCopQZyJQABF4khZ/PXbd1ByBqww3ysaRvwO2lDTjOWDD5jQNpGYDU1sdRzf8+KtVSs+GMoHki4/NAhnT6FIejVhcV4ROwakfpEHeSWD+q2gZl8YK248ZP6+NB02QGM18NvhBo1kbye7T26PPykOJH/wN+3m38BRVhJRroAAABFeGlmAABJSSoACAAAAAYAEgEDAAEAAAABAAAAGgEFAAEAAABWAAAAGwEFAAEAAABeAAAAKAEDAAEAAAACAAAAEwIDAAEAAAABAAAAaYcEAAEAAABmAAAAAAAAAN+TBADoAwAA35MEAOgDAAAGAACQBwAEAAAAMDIxMAGRBwAEAAAAAQIDAACgBwAEAAAAMDEwMAGgAwABAAAA//8AAAKgBAABAAAAIAAAAAOgBAABAAAAIAAAAAAAAAA="
+  },
+  {
+    "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
+    "attributePath": "Struct.Text",
+    "oldValue": "WOODPECKER",
+    "newValue": "DINGO"
+  },
+  {
+    "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
+    "attributePath": "StructList[0].Text",
+    "oldValue": "SNAKE",
+    "newValue": "CAIMAN"
+  },
+  {
+    "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
+    "attributePath": "StructList[1].Text",
+    "oldValue": "CAIMAN",
+    "newValue": "SNAKE"
+  },
+  {
+    "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
+    "attributePath": "StructBag[0].Text",
+    "oldValue": "KINGFISHER",
+    "newValue": "STARFISH"
+  },
+  {
+    "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
+    "attributePath": "StructBag[1].Text",
+    "oldValue": "RACCOON",
+    "newValue": "SNAKE"
+  },
+  {
+    "oid": "418a27f5-c11c-4e14-902d-85e1647d2a07",
+    "changeType": "added",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
+  }
+]

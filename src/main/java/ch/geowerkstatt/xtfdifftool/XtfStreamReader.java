@@ -37,8 +37,8 @@ public final class XtfStreamReader implements AutoCloseable {
         LogEventFactory logEventFactory = new LogEventFactory();
         Settings settings = new Settings();
         this.reader = READER_FACTORY.createReader(xtfFile, logEventFactory, settings);
-        if (this.reader instanceof IoxIliReader ioxIliReader) {
-            ioxIliReader.setModel(transferDescription);
+        if (this.reader instanceof IoxIliReader iliReader) {
+            iliReader.setModel(transferDescription);
         }
     }
 
