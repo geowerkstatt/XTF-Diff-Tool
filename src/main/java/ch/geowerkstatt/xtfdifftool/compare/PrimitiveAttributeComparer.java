@@ -1,13 +1,19 @@
 package ch.geowerkstatt.xtfdifftool.compare;
 
+import ch.interlis.ili2c.metamodel.NumericType;
 import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class PrimitiveAttributeComparer implements AttributeComparer {
     private static final PrimitiveAttributeComparer INSTANCE = new PrimitiveAttributeComparer();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private PrimitiveAttributeComparer() {
     }
@@ -27,8 +33,8 @@ public final class PrimitiveAttributeComparer implements AttributeComparer {
             return Result.INCONCLUSIVE;
         }
 
-        var firstValues = getValues(attributeName, first);
-        var secondValues = getValues(attributeName, second);
+        var firstValues = getValues(attributeName, first, type);
+        var secondValues = getValues(attributeName, second, type);
 
         if (firstValues.size() != secondValues.size()) {
             return Result.different(attributePath, joinValues(firstValues), joinValues(secondValues));
@@ -48,10 +54,14 @@ public final class PrimitiveAttributeComparer implements AttributeComparer {
         return Result.EQUAL;
     }
 
-    private List<String> getValues(String attributeName, IomObject obj) {
+    private List<String> getValues(String attributeName, IomObject obj, Type type) {
         var values = new ArrayList<String>();
         for (var i = 0; i < obj.getattrvaluecount(attributeName); i++) {
-            values.add(obj.getattrprim(attributeName, i));
+            var value = obj.getattrprim(attributeName, i);
+            if (value != null && type instanceof NumericType numericType) {
+                value = roundValue(value, numericType);
+            }
+            values.add(value);
         }
 
         return values;
@@ -59,5 +69,24 @@ public final class PrimitiveAttributeComparer implements AttributeComparer {
 
     private String joinValues(List<String> values) {
         return values.isEmpty() ? null : String.join(",", values);
+    }
+
+    private String roundValue(String value, NumericType numericType) {
+        var minimum = numericType.getMinimum();
+        if (minimum == null) {
+            LOGGER.warn("Missing minimum value to round numeric type {}", numericType.getName());
+            return value;
+        }
+
+        var numberValue = new BigDecimal(value);
+        var roundedValue = roundNumber(numberValue, minimum.getAccuracy());
+        return roundedValue.toPlainString();
+    }
+
+    private static BigDecimal roundNumber(BigDecimal value, int precision) {
+        var isNegative = value.signum() == -1;
+        return isNegative
+                ? value.setScale(precision, RoundingMode.HALF_DOWN)
+                : value.setScale(precision, RoundingMode.HALF_UP);
     }
 }

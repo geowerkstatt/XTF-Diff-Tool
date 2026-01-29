@@ -235,6 +235,48 @@ public final class ObjectAnalyzerTest {
     }
 
     @Test
+    public void analyzeRoundNumericAttribute() {
+        var first = List.of(
+                createObject("o1", obj -> {
+                    obj.setattrvalue("number", "42.4");
+                    obj.setattrvalue("numberTwoDecimals", "-1.004");
+                }),
+                createObject("o2", obj -> {
+                    obj.setattrvalue("number", "-2.5");
+                    obj.setattrvalue("numberTwoDecimals", "0.005");
+                }),
+                createObject("o3", obj -> {
+                    obj.setattrvalue("number", "0.9");
+                    obj.setattrvalue("numberTwoDecimals", "6.789");
+                })
+        );
+        var second = List.of(
+                createObject("o1", obj -> {
+                    obj.setattrvalue("number", "42");
+                    obj.setattrvalue("numberTwoDecimals", "-1");
+                }),
+                createObject("o2", obj -> {
+                    obj.setattrvalue("number", "-2");
+                    obj.setattrvalue("numberTwoDecimals", "0.01");
+                }),
+                createObject("o3", obj -> {
+                    obj.setattrvalue("number", "9.0");
+                    obj.setattrvalue("numberTwoDecimals", "6.8");
+                })
+        );
+
+        var expectedChanges = List.of(
+                new Change("o3", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "number", "1", "9"),
+                new Change("o3", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME, "numberTwoDecimals", "6.79", "6.80")
+        );
+
+        ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
+        List<Change> changes = getChanges(analyzer);
+
+        assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
+    @Test
     public void analyzeIgnoresObjectsWithoutId() {
         List<IomObject> first = List.of(
                 new Iom_jObject(INTERLIS_CLASS_NAME_WITHOUT_ID, "123"),
