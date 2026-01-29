@@ -114,7 +114,7 @@ public interface AttributeComparer {
 
         /** Creates a Result indicating the compared objects are different. */
         public static Result different(String attributeName, String oldValue, String newValue) {
-            return new Result(Equality.DIFFERENT, List.of(new Change(attributeName, oldValue, newValue)));
+            return new Result(Equality.DIFFERENT, List.of(Change.attribute(attributeName, oldValue, newValue)));
         }
 
         /** Creates a Result indicating the compared objects are different. */

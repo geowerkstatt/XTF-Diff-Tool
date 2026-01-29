@@ -62,7 +62,7 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
         for (var entry : firstRefs.entrySet()) {
             IomObject matchingEntry = secondRefs.get(entry.getKey());
             if (matchingEntry == null) {
-                changes.add(new Change(attributePath, entry.getKey(), null));
+                changes.add(Change.reference(attributePath, entry.getKey(), null));
             } else {
                 String path = attributePath + "[" + entry.getKey() + "]";
                 ObjectComparer.compareAllAttributes(viewable, entry.getValue(), matchingEntry, path, changes::add);
@@ -71,7 +71,7 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
         }
 
         for (var entry : secondRefs.entrySet()) {
-            changes.add(new Change(attributePath, null, entry.getKey()));
+            changes.add(Change.reference(attributePath, null, entry.getKey()));
         }
 
         return changes.isEmpty() ? Result.EQUAL : Result.different(changes);

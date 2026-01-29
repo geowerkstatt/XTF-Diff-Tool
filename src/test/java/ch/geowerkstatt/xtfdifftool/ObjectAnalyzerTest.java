@@ -351,8 +351,8 @@ public final class ObjectAnalyzerTest {
         );
 
         var expectedChanges = List.of(
-                new Change("o4", ChangeType.DELETED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A", "o2", null),
-                new Change("o4", ChangeType.ADDED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A", null, "o1"),
+                new Change("o4", ChangeType.DELETED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "role1A", "o2", null),
+                new Change("o4", ChangeType.ADDED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "role1A", null, "o1"),
                 new Change("o5", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A[o2].value", "some text", "some other text")
         );
 
@@ -390,8 +390,8 @@ public final class ObjectAnalyzerTest {
         );
 
         var expectedChanges = List.of(
-                new Change("o4", ChangeType.DELETED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "ref", "o1", null),
-                new Change("o4", ChangeType.ADDED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "ref", null, "o2")
+                new Change("o4", ChangeType.DELETED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "ref", "o1", null),
+                new Change("o4", ChangeType.ADDED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "ref", null, "o2")
         );
 
         ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());

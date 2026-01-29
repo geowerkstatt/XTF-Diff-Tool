@@ -23,13 +23,27 @@ public record Change(
         String newValue) {
 
     /**
-     * Construct a new change from an attributePath, old and new value.
+     * Construct a new change for an attribute from an attributePath, old and new value.
      */
-    public Change(String attributePath, String oldValue, String newValue) {
-        this(
+    public static Change attribute(String attributePath, String oldValue, String newValue) {
+        return new Change(
                 null,
                 oldValue == null ? ChangeType.ADDED : newValue == null ? ChangeType.DELETED : ChangeType.CHANGED,
                 ValueType.ATTRIBUTE,
+                null,
+                attributePath,
+                oldValue,
+                newValue);
+    }
+
+    /**
+     * Construct a new change for a reference from an attributePath, old and new value.
+     */
+    public static Change reference(String attributePath, String oldValue, String newValue) {
+        return new Change(
+                null,
+                oldValue == null ? ChangeType.ADDED : newValue == null ? ChangeType.DELETED : ChangeType.CHANGED,
+                ValueType.REFERENCE,
                 null,
                 attributePath,
                 oldValue,

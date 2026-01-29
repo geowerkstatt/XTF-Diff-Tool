@@ -49,10 +49,10 @@ public final class StructAttributeComparer implements AttributeComparer {
         if (first == null && second == null) {
             return;
         } else if (first == null) {
-            changes.add(new Change(attributePath, null, table.getScopedName()));
+            changes.add(Change.attribute(attributePath, null, table.getScopedName()));
             return;
         } else if (second == null) {
-            changes.add(new Change(attributePath, table.getScopedName(), null));
+            changes.add(Change.attribute(attributePath, table.getScopedName(), null));
             return;
         }
 
