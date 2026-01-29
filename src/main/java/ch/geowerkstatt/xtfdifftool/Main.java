@@ -84,8 +84,8 @@ public final class Main {
             TransferDescription transferDescription = ModelReader.validateAndCompileIli(firstXtfPath, secondXtfPath, options.modelDir());
 
             try (
-                    XtfStreamReader firstReader = new XtfStreamReader(firstXtfPath.toFile());
-                    XtfStreamReader secondReader = new XtfStreamReader(secondXtfPath.toFile());
+                    XtfStreamReader firstReader = new XtfStreamReader(transferDescription, firstXtfPath.toFile());
+                    XtfStreamReader secondReader = new XtfStreamReader(transferDescription, secondXtfPath.toFile());
                     JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
             ) {
                 ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
