@@ -6,6 +6,7 @@ import ch.interlis.ili2c.metamodel.RoleDef;
 import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.iom.IomObject;
+import ch.interlis.iom_j.Iom_jObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -64,8 +65,11 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
             if (matchingEntry == null) {
                 changes.add(Change.reference(attributePath, entry.getKey(), null));
             } else {
-                String path = attributePath + "[" + entry.getKey() + "]";
-                ObjectComparer.compareAllAttributes(viewable, entry.getValue(), matchingEntry, path, changes::add);
+                // Embedded associations are marked as REF unless they contain attributes
+                if (!entry.getValue().getobjecttag().equals(Iom_jObject.REF) || !matchingEntry.getobjecttag().equals(Iom_jObject.REF)) {
+                    String path = attributePath + "[" + entry.getKey() + "]";
+                    ObjectComparer.compareAllAttributes(viewable, entry.getValue(), matchingEntry, path, changes::add);
+                }
                 secondRefs.remove(entry.getKey());
             }
         }

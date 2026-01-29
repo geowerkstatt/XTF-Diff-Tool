@@ -27,6 +27,7 @@ public final class ObjectAnalyzerTest {
     private static final String INTERLIS_CLASS_NAME_B = "ObjectAnalyzerTest.Topic.ClassB";
     private static final String INTERLIS_CLASS_NAME_WITHOUT_ID = "ObjectAnalyzerTest.Topic.ClassWithoutId";
     private static final String INTERLIS_STRUCT_NAME = "ObjectAnalyzerTest.Topic.Struct";
+    private static final String INTERLIS_EMBEDDED_ASSOCIATION_NAME = "ObjectAnalyzerTest.Topic.EmbeddedAssociation";
     private TransferDescription transferDescription;
 
     @BeforeEach
@@ -317,8 +318,10 @@ public final class ObjectAnalyzerTest {
                 createObject("o1"),
                 createObject("o2"),
                 createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
-                    var role = createRef("o1");
-                    role.setattrvalue("value", "ABC");
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o1");
+                        assoc.setattrvalue("value", "ABC");
+                    });
                     obj.addattrobj("role1A", role);
                 }),
                 createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
@@ -326,8 +329,14 @@ public final class ObjectAnalyzerTest {
                     obj.addattrobj("role1A", role);
                 }),
                 createObject(INTERLIS_CLASS_NAME_B, "o5", obj -> {
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o2");
+                        assoc.setattrvalue("value", "some text");
+                    });
+                    obj.addattrobj("role1A", role);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o6", obj -> {
                     var role = createRef("o2");
-                    role.setattrvalue("value", "some text");
                     obj.addattrobj("role1A", role);
                 })
         );
@@ -335,8 +344,10 @@ public final class ObjectAnalyzerTest {
                 createObject("o1"),
                 createObject("o2"),
                 createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
-                    var role = createRef("o1");
-                    role.setattrvalue("value", "ABC");
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o1");
+                        assoc.setattrvalue("value", "ABC");
+                    });
                     obj.addattrobj("role1A", role);
                 }),
                 createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
@@ -344,8 +355,17 @@ public final class ObjectAnalyzerTest {
                     obj.addattrobj("role1A", role);
                 }),
                 createObject(INTERLIS_CLASS_NAME_B, "o5", obj -> {
-                    var role = createRef("o2");
-                    role.setattrvalue("value", "some other text");
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o2");
+                        assoc.setattrvalue("value", "some other text");
+                    });
+                    obj.addattrobj("role1A", role);
+                }),
+                createObject(INTERLIS_CLASS_NAME_B, "o6", obj -> {
+                    var role = createObject(INTERLIS_EMBEDDED_ASSOCIATION_NAME, null, assoc -> {
+                        assoc.setobjectrefoid("o2");
+                        assoc.setattrvalue("value", "new value");
+                    });
                     obj.addattrobj("role1A", role);
                 })
         );
@@ -353,7 +373,8 @@ public final class ObjectAnalyzerTest {
         var expectedChanges = List.of(
                 new Change("o4", ChangeType.DELETED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "role1A", "o2", null),
                 new Change("o4", ChangeType.ADDED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "role1A", null, "o1"),
-                new Change("o5", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A[o2].value", "some text", "some other text")
+                new Change("o5", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A[o2].value", "some text", "some other text"),
+                new Change("o6", ChangeType.ADDED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A[o2].value", null, "new value")
         );
 
         ObjectAnalyzer analyzer = new ObjectAnalyzer(transferDescription, first.stream(), second.stream());
@@ -368,24 +389,20 @@ public final class ObjectAnalyzerTest {
                 createObject("o1"),
                 createObject("o2"),
                 createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
-                    var ref = createRef("o1");
-                    obj.addattrobj("ref", ref);
+                    obj.addattrobj("ref", createRef("o1"));
                 }),
                 createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
-                    var ref = createRef("o1");
-                    obj.addattrobj("ref", ref);
+                    obj.addattrobj("ref", createRef("o1"));
                 })
         );
         var second = List.of(
                 createObject("o1"),
                 createObject("o2"),
                 createObject(INTERLIS_CLASS_NAME_B, "o3", obj -> {
-                    var ref = createRef("o1");
-                    obj.addattrobj("ref", ref);
+                    obj.addattrobj("ref", createRef("o1"));
                 }),
                 createObject(INTERLIS_CLASS_NAME_B, "o4", obj -> {
-                    var ref = createRef("o2");
-                    obj.addattrobj("ref", ref);
+                    obj.addattrobj("ref", createRef("o2"));
                 })
         );
 
