@@ -67,6 +67,9 @@ MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
         CLASS D =
         END D;
 
+        CLASS E =
+        END E;
+
         STRUCTURE ReferenceB =
             Ref: REFERENCE TO B;
         END ReferenceB;
@@ -90,6 +93,12 @@ MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
 
             text : TextDomain;
         END A_D;
+
+        !! Eingebettete Beziehung ohne Attribute
+        ASSOCIATION A_E =
+            RoleA -- {0..1} A;
+            RoleE -- {0..*} E;
+        END A_E;
 
     END ReferencesTopic;
 
