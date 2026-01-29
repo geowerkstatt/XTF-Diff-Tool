@@ -36,7 +36,7 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
             return Result.INCONCLUSIVE;
         }
 
-        return compareReferences(first, second, referenceType.getReferred(), attributePath);
+        return compareReferences(first, second, referenceType.getReferred(), attributePath, null);
     }
 
     @Override
@@ -51,10 +51,10 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
             return Result.INCONCLUSIVE;
         }
 
-        return compareReferences(first, second, viewable, attributePath);
+        return compareReferences(first, second, viewable, attributePath, role);
     }
 
-    private Result compareReferences(IomObject first, IomObject second, Viewable<?> viewable, String attributePath) {
+    private Result compareReferences(IomObject first, IomObject second, Viewable<?> viewable, String attributePath, RoleDef associationRole) {
         String name = AttributeComparer.getAttributeName(attributePath);
         Map<String, IomObject> firstRefs = getRefMap(first, name);
         Map<String, IomObject> secondRefs = getRefMap(second, name);
@@ -64,6 +64,11 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
             IomObject matchingEntry = secondRefs.get(entry.getKey());
             if (matchingEntry == null) {
                 changes.add(Change.reference(attributePath, entry.getKey(), null));
+                if (associationRole != null) {
+                    var className = getClassNameOfRole(associationRole);
+                    var oppositeRole = associationRole.getOppEnd();
+                    changes.add(Change.reference(entry.getValue().getobjectrefoid(), className, oppositeRole.getName(), first.getobjectoid(), null));
+                }
             } else {
                 // Embedded associations are marked as REF unless they contain attributes
                 if (!entry.getValue().getobjecttag().equals(Iom_jObject.REF) || !matchingEntry.getobjecttag().equals(Iom_jObject.REF)) {
@@ -76,6 +81,11 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
 
         for (var entry : secondRefs.entrySet()) {
             changes.add(Change.reference(attributePath, null, entry.getKey()));
+            if (associationRole != null) {
+                var className = getClassNameOfRole(associationRole);
+                var oppositeRole = associationRole.getOppEnd();
+                changes.add(Change.reference(entry.getValue().getobjectrefoid(), className, oppositeRole.getName(), null, first.getobjectoid()));
+            }
         }
 
         return changes.isEmpty() ? Result.EQUAL : Result.different(changes);
@@ -89,5 +99,14 @@ public final class ReferenceAttributeComparer implements AttributeComparer {
             map.put(refObj.getobjectrefoid(), refObj);
         }
         return map;
+    }
+
+    private String getClassNameOfRole(RoleDef role) {
+        var it = role.iteratorReference();
+        if (it.hasNext()) {
+            var referred = it.next().getReferred();
+            return referred != null ? referred.getScopedName() : null;
+        }
+        return null;
     }
 }

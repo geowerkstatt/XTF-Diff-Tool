@@ -58,7 +58,7 @@ public final class ObjectComparer {
             };
             if (result != null) {
                 switch (result.equality()) {
-                    case DIFFERENT -> result.changes().stream().map(c -> c.withObject(first)).forEach(changeConsumer);
+                    case DIFFERENT -> result.changes().stream().map(c -> c.oid() == null ? c.withObject(first) : c).forEach(changeConsumer);
                     case INCONCLUSIVE -> LOGGER.error("Could not compare attribute or role {} of {}", name, viewable.getName());
                     case null, default -> { }
                 }

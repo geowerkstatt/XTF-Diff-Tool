@@ -40,11 +40,18 @@ public record Change(
      * Construct a new change for a reference from an attributePath, old and new value.
      */
     public static Change reference(String attributePath, String oldValue, String newValue) {
+        return Change.reference(null, null, attributePath, oldValue, newValue);
+    }
+
+    /**
+     * Construct a new change for a reference from an oid, interlisName, attributePath, old and new value.
+     */
+    public static Change reference(String oid, String interlisName, String attributePath, String oldValue, String newValue) {
         return new Change(
-                null,
+                oid,
                 oldValue == null ? ChangeType.ADDED : newValue == null ? ChangeType.DELETED : ChangeType.CHANGED,
                 ValueType.REFERENCE,
-                null,
+                interlisName,
                 attributePath,
                 oldValue,
                 newValue);

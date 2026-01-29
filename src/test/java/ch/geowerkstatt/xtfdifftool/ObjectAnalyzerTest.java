@@ -373,6 +373,8 @@ public final class ObjectAnalyzerTest {
         var expectedChanges = List.of(
                 new Change("o4", ChangeType.DELETED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "role1A", "o2", null),
                 new Change("o4", ChangeType.ADDED, ValueType.REFERENCE, INTERLIS_CLASS_NAME_B, "role1A", null, "o1"),
+                new Change("o2", ChangeType.DELETED, ValueType.REFERENCE, INTERLIS_CLASS_NAME, "role1B", "o4", null),
+                new Change("o1", ChangeType.ADDED, ValueType.REFERENCE, INTERLIS_CLASS_NAME, "role1B", null, "o4"),
                 new Change("o5", ChangeType.CHANGED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A[o2].value", "some text", "some other text"),
                 new Change("o6", ChangeType.ADDED, ValueType.ATTRIBUTE, INTERLIS_CLASS_NAME_B, "role1A[o2].value", null, "new value")
         );
