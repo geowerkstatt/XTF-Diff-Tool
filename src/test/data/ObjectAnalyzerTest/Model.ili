@@ -16,6 +16,8 @@ MODEL ObjectAnalyzerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             textBag : BAG OF TEXT;
             struct : Struct;
             structList : LIST OF Struct;
+            number : -100 .. 100;
+            numberTwoDecimals : -100.00 .. 100.00;
         END Class;
 
         CLASS ClassWithoutId =
