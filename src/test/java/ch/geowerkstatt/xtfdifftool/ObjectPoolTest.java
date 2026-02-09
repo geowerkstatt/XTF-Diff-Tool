@@ -32,7 +32,7 @@ public final class ObjectPoolTest {
     }
 
     @Test
-    public void EmbeddedAssociation() {
+    public void embeddedAssociation() {
         List<IomObject> objects = List.of(
                 new Iom_jObject(TOPIC_ASSOCIATIONS + ".Main", "oMain"),
                 IomObjectHelper.createObject(TOPIC_ASSOCIATIONS + ".A", "oA1", obj -> {
@@ -55,7 +55,7 @@ public final class ObjectPoolTest {
     }
 
     @Test
-    public void EmbeddedAssociationWithAttributes() {
+    public void embeddedAssociationWithAttributes() {
         List<IomObject> objects = List.of(
                 new Iom_jObject(TOPIC_ASSOCIATIONS + ".Main", "oMain"),
                 IomObjectHelper.createObject(TOPIC_ASSOCIATIONS + ".B", "oB", obj -> {
@@ -73,7 +73,7 @@ public final class ObjectPoolTest {
     }
 
     @Test
-    public void StandaloneAssociation() {
+    public void standaloneAssociation() {
         List<IomObject> objects = List.of(
                 new Iom_jObject(TOPIC_ASSOCIATIONS + ".Main", "oMain"),
                 new Iom_jObject(TOPIC_ASSOCIATIONS + ".C", "oC"),
@@ -104,7 +104,7 @@ public final class ObjectPoolTest {
     }
 
     @Test
-    public void StandaloneAssociationWithOid() {
+    public void standaloneAssociationWithOid() {
         List<IomObject> objects = List.of(
                 new Iom_jObject(TOPIC_ASSOCIATIONS + ".Main", "oMain"),
                 new Iom_jObject(TOPIC_ASSOCIATIONS + ".E", "oE1"),
@@ -135,7 +135,7 @@ public final class ObjectPoolTest {
     }
 
     @Test
-    public void StandaloneAssociationWithRoleToUnstableId() {
+    public void standaloneAssociationWithRoleToUnstableId() {
         List<IomObject> objects = List.of(
                 new Iom_jObject(TOPIC_ASSOCIATIONS + ".Main", "oMain"),
                 new Iom_jObject(TOPIC_ASSOCIATIONS + ".F", "oUnstableF"),

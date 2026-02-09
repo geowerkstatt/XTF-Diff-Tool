@@ -1,6 +1,12 @@
 package ch.geowerkstatt.xtfdifftool;
 
-import ch.interlis.ili2c.metamodel.*;
+import ch.interlis.ili2c.metamodel.AbstractClassDef;
+import ch.interlis.ili2c.metamodel.AssociationDef;
+import ch.interlis.ili2c.metamodel.AttributeDef;
+import ch.interlis.ili2c.metamodel.Domain;
+import ch.interlis.ili2c.metamodel.Element;
+import ch.interlis.ili2c.metamodel.RoleDef;
+import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.iom.IomObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,9 +18,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * Manages the INTERLIS objects from a Transfer
+ * Manages the INTERLIS objects from a Transfer.
  */
-public class ObjectPool {
+public final class ObjectPool {
     private static final Logger LOGGER = LogManager.getLogger();
     private final TransferDescription transferDescription;
     private final Map<String, Boolean> hasStableOidCache = new HashMap<>();
@@ -22,6 +28,9 @@ public class ObjectPool {
     private final Collection<AnalyzedObject> objects;
     private final Map<String, AnalyzedObject> objectsByStableOID;
 
+    /**
+     * Creates a new instance of the ObjectPool.
+     */
     public ObjectPool(Stream<IomObject> objects, TransferDescription transferDescription) {
         this.transferDescription = transferDescription;
         this.objects = objects
@@ -29,7 +38,13 @@ public class ObjectPool {
                 .toList();
         this.objectsByStableOID = this.objects.stream()
                 .filter(o -> o.hasStableOid)
-                .collect(Collectors.toMap(o -> o.object.getobjectoid(), Function.identity(), (a, _) -> { throw new IllegalStateException("Duplicate TID encountered " + a.object.getobjectoid()); }, LinkedHashMap::new));
+                .collect(Collectors.toMap(
+                        o -> o.object.getobjectoid(),
+                        Function.identity(),
+                        (a, _) -> {
+                            throw new IllegalStateException("Duplicate TID encountered " + a.object.getobjectoid());
+                        },
+                        LinkedHashMap::new));
 
         var groups = this.objects.stream().collect(Collectors.groupingBy(o -> o.object.getobjecttag()));
         for (var entry : groups.entrySet()) {
@@ -37,23 +52,50 @@ public class ObjectPool {
         }
     }
 
+    /**
+     * Gets an object by its transfer identifier (TID).
+     *
+     * @param tid The transfer identifier of the object.
+     * @return The IomObject with the specified TID, or {@code null} if not found.
+     */
     public IomObject getObject(String tid) {
         var analyzedObject = objectsByStableOID.get(tid);
         return analyzedObject == null ? null : analyzedObject.object;
     }
 
+    /**
+     * Returns a stream of all objects that have a stable OID.
+     *
+     * @return A stream of IomObjects with stable OIDs.
+     */
     public Stream<IomObject> objectsWithStableOid() {
         return objectsByStableOID.values().stream().map(o -> o.object);
     }
 
+    /**
+     * Returns a stream of all objects that have a stable OID and have not been visited yet.
+     *
+     * @return A stream of unvisited IomObjects with stable OIDs.
+     */
     public Stream<IomObject> objectsWithStableOidUnvisited() {
         return objectsByStableOID.values().stream().filter(o -> !o.visited).map(o -> o.object);
     }
 
+    /**
+     * Marks an object as visited.
+     *
+     * @param object The IomObject to mark as visited.
+     */
     public void markVisited(IomObject object) {
         objectsByStableOID.get(object.getobjectoid()).visited = true;
     }
 
+    /**
+     * Gets the associations for an object identified by its transfer identifier (TID).
+     *
+     * @param tid The transfer identifier of the object.
+     * @return A map of role names to lists of associated object TIDs, or an empty map if not found.
+     */
     public Map<String, List<String>> getAssociations(String tid) {
         var analyzedObject = objectsByStableOID.get(tid);
         return analyzedObject == null ? Collections.emptyMap() : analyzedObject.associations;
@@ -61,6 +103,7 @@ public class ObjectPool {
 
     /**
      * Validates that the INTERLIS class of the given IomObject has a stable OID.
+     *
      * @param iomObject The IomObject to validate.
      * @return True if the class has a stable OID.
      */
@@ -105,11 +148,11 @@ public class ObjectPool {
         // Analyze Associations and Roles
         var roleDefs = new ArrayList<RoleDef>();
         var embeddedRoleDefs = new HashMap<RoleDef, RoleDef>();
-        for (var it = classDef.getAttributesAndRoles2(); it.hasNext(); ) {
+        for (var it = classDef.getAttributesAndRoles2(); it.hasNext();) {
             var viewableElement = it.next();
             if (viewableElement.obj instanceof RoleDef role && validateRoleHasTargetWithStableOid(role)) {
                 if (viewableElement.embedded) {
-                    var association = (AssociationDef)role.getContainer();
+                    var association = (AssociationDef) role.getContainer();
                     if (toStream(association.getAttributesAndRoles2()).anyMatch(a -> a.obj instanceof AttributeDef)) {
                         // Attributes of embedded association are not compared, because the association has no OID
                         LOGGER.warn("Embedded association \"{}\" has attributes that are not compared.", association.getScopedName());
@@ -175,19 +218,19 @@ public class ObjectPool {
         return classDef;
     }
 
+    private <T> Stream<T> toStream(Iterator<T> iterator) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false);
+    }
+
     private static final class AnalyzedObject {
-        public final IomObject object;
-        public final boolean hasStableOid;
-        public boolean visited;
-        public Map<String, List<String>> associations = new HashMap<>();
+        private final IomObject object;
+        private final boolean hasStableOid;
+        private final Map<String, List<String>> associations = new HashMap<>();
+        private boolean visited;
 
         AnalyzedObject(IomObject object, boolean hasStableOid) {
             this.object = object;
             this.hasStableOid = hasStableOid;
         }
-    }
-
-    private <T> Stream<T> toStream(Iterator<T> iterator) {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.ORDERED), false);
     }
 }

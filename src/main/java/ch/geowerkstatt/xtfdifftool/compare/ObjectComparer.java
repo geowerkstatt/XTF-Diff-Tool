@@ -3,7 +3,6 @@ package ch.geowerkstatt.xtfdifftool.compare;
 import ch.geowerkstatt.xtfdifftool.diff.Change;
 import ch.interlis.ili2c.metamodel.AttributeDef;
 import ch.interlis.ili2c.metamodel.Element;
-import ch.interlis.ili2c.metamodel.RoleDef;
 import ch.interlis.ili2c.metamodel.Viewable;
 import ch.interlis.ili2c.metamodel.ViewableTransferElement;
 import ch.interlis.iom.IomObject;
