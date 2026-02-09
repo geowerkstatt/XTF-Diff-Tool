@@ -21,49 +21,30 @@ import java.util.stream.Stream;
  */
 public final class ObjectAnalyzer {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final Stream<AnalyzedObject> firstObjects;
-    private final Stream<AnalyzedObject> secondObjects;
-    private final ModelValidator modelValidator;
+    private final ObjectPool firstObjects;
+    private final ObjectPool secondObjects;
     private final TransferDescription transferDescription;
-
-    private static final class AnalyzedObject {
-        private final IomObject object;
-        private final boolean hasStableOid;
-        private boolean visited;
-
-        AnalyzedObject(IomObject object, boolean hasStableOid) {
-            this.object = object;
-            this.hasStableOid = hasStableOid;
-        }
-    }
 
     /**
      * Creates a new ObjectAnalyzer for the given object streams.
+     *
      * @param transferDescription The INTERLIS transfer description.
-     * @param firstObjects The objects of the first transfer.
-     * @param secondObjects The objects of the second transfer.
+     * @param firstObjects        The objects of the first transfer.
+     * @param secondObjects       The objects of the second transfer.
      */
     public ObjectAnalyzer(TransferDescription transferDescription, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
         this.transferDescription = transferDescription;
-        this.modelValidator = new ModelValidator(transferDescription);
-        this.firstObjects = firstObjects.map(this::validateObject);
-        this.secondObjects = secondObjects.map(this::validateObject);
+        this.firstObjects = new ObjectPool(firstObjects, transferDescription);
+        this.secondObjects = new ObjectPool(secondObjects, transferDescription);
     }
 
     /**
      * Analyzes the differences between the two streams and passes each change to the {@code changeConsumer}.
      */
     public void analyzeDifferences(Consumer<Change> changeConsumer) {
-        Map<String, AnalyzedObject> secondObjectMap = createObjectMap(secondObjects);
-
-        firstObjects.forEach(analyzedObject -> {
-            if (!analyzedObject.hasStableOid) {
-                return;
-            }
-
-            IomObject object = analyzedObject.object;
+        firstObjects.objectsWithStableOid().forEach(object -> {
             String oid = object.getobjectoid();
-            AnalyzedObject matchingObject = secondObjectMap.get(oid);
+            var matchingObject = secondObjects.getObject(oid);
             if (matchingObject == null) {
                 Change removeChange = new Change(
                         oid,
@@ -75,34 +56,23 @@ public final class ObjectAnalyzer {
                         null);
                 changeConsumer.accept(removeChange);
             } else {
-                matchingObject.visited = true;
-                compareObjectValues(object, matchingObject.object, changeConsumer);
+                secondObjects.markVisited(matchingObject);
+                compareObjectValues(object, matchingObject, changeConsumer);
+                compareAssociationReferences(object, matchingObject, changeConsumer);
             }
         });
 
-        for (AnalyzedObject remainingObject : secondObjectMap.values()) {
-            if (remainingObject.hasStableOid && !remainingObject.visited) {
-                IomObject object = remainingObject.object;
-                Change addChange = new Change(
-                        object.getobjectoid(),
-                        ChangeType.ADDED,
-                        ValueType.OBJECT,
-                        object.getobjecttag(),
-                        null,
-                        null,
-                        null);
-                changeConsumer.accept(addChange);
-            }
-        }
-    }
-
-    private Map<String, AnalyzedObject> createObjectMap(Stream<AnalyzedObject> objects) {
-        return objects.collect(Collectors.toMap(analyzedObject -> analyzedObject.object.getobjectoid(), Function.identity()));
-    }
-
-    private AnalyzedObject validateObject(IomObject iomObject) {
-        boolean hasStableOid = modelValidator.validateObjectHasStableOid(iomObject);
-        return new AnalyzedObject(iomObject, hasStableOid);
+        secondObjects.objectsWithStableOidUnvisited().forEach(object -> {
+            Change addChange = new Change(
+                    object.getobjectoid(),
+                    ChangeType.ADDED,
+                    ValueType.OBJECT,
+                    object.getobjecttag(),
+                    null,
+                    null,
+                    null);
+            changeConsumer.accept(addChange);
+        });
     }
 
     private void compareObjectValues(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
@@ -115,5 +85,62 @@ public final class ObjectAnalyzer {
         if (element instanceof Viewable<?> classElement) {
             ObjectComparer.compareAllAttributesAndRoles(classElement, first, second, "", changeConsumer);
         }
+    }
+
+    private void compareAssociationReferences(IomObject first, IomObject second, Consumer<Change> changeConsumer) {
+        var firstAssociations = firstObjects.getAssociations(first.getobjectoid());
+        var secondAssociations = secondObjects.getAssociations(second.getobjectoid());
+
+        for (var entry : firstAssociations.entrySet()) {
+            var refs = entry.getValue();
+            var matchingRefs = secondAssociations.get(entry.getKey());
+            if (matchingRefs == null) {
+                changeConsumer.accept(new Change(
+                        first.getobjectoid(),
+                        ChangeType.DELETED,
+                        ValueType.REFERENCE,
+                        first.getobjecttag(),
+                        entry.getKey(),
+                        String.join(",", refs),
+                        null));
+            } else {
+                secondAssociations.remove(entry.getKey());
+                if (matchingRefs.size() == refs.size()) {
+                    Collections.sort(refs);
+                    Collections.sort(matchingRefs);
+
+                    for (var i = 0; i < refs.size(); i++) {
+                        if (!refs.get(i).equals(matchingRefs.get(i))) {
+                            changeConsumer.accept(createReferenceChange(first, entry.getKey(), refs, matchingRefs));
+                            continue;
+                        }
+                    }
+                } else {
+                    changeConsumer.accept(createReferenceChange(first, entry.getKey(), refs, matchingRefs));
+                }
+            }
+        }
+
+        for (var entry : secondAssociations.entrySet()) {
+            changeConsumer.accept(new Change(
+                    second.getobjectoid(),
+                    ChangeType.ADDED,
+                    ValueType.REFERENCE,
+                    second.getobjecttag(),
+                    entry.getKey(),
+                    null,
+                    String.join(",", entry.getValue())));
+        }
+    }
+
+    private Change createReferenceChange(IomObject object, String role, List<String> oldRefs, List<String> newRefs) {
+        return new Change(
+                object.getobjectoid(),
+                ChangeType.CHANGED,
+                ValueType.REFERENCE,
+                object.getobjecttag(),
+                role,
+                String.join(",", oldRefs),
+                String.join(",", newRefs));
     }
 }

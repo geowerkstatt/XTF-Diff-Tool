@@ -53,7 +53,6 @@ public final class ObjectComparer {
             var path = attributePath.isEmpty() ? name : attributePath + "." + name;
             var result = switch (viewableElement.obj) {
                 case AttributeDef attribute -> AttributeComparer.compareAll(first, second, attribute.getDomainResolvingAll(), path);
-                case RoleDef roleDef -> includeRoles ? AttributeComparer.compareAll(first, second, roleDef, viewableElement.embedded, path) : null;
                 default -> null;
             };
             if (result != null) {
