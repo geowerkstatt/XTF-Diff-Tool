@@ -62,6 +62,8 @@ MODEL Model AT "mailto:noreply@localhost" VERSION "2026-01-22" =
         CLASS C = END C;
         CLASS D = END D;
         CLASS E = END E;
+        CLASS F = NO OID; END F;
+        CLASS G = END G;
 
         ASSOCIATION Embedded =
             RoleMain -- {0..1} Main;
@@ -84,6 +86,12 @@ MODEL Model AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             RoleMain -- {0..1} Main;
             RoleE -- {0..*} E;
         END StandaloneWithOid;
+
+        ASSOCIATION StandaloneWithRoleToUnstableId (OID) =
+            RoleMain -- {0..1} Main;
+            RoleF -- {0..*} F;
+            RoleG -- {0..*} G;
+        END StandaloneWithRoleToUnstableId;
 
     END TopicAssociations;
 END Model.

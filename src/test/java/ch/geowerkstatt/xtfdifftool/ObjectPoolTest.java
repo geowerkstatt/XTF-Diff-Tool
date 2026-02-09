@@ -134,6 +134,32 @@ public final class ObjectPoolTest {
                 () -> assertThat(pool.getAssociations("oE2")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
     }
 
+    @Test
+    public void StandaloneAssociationWithRoleToUnstableId() {
+        List<IomObject> objects = List.of(
+                new Iom_jObject(TOPIC_ASSOCIATIONS + ".Main", "oMain"),
+                new Iom_jObject(TOPIC_ASSOCIATIONS + ".F", "oUnstableF"),
+                new Iom_jObject(TOPIC_ASSOCIATIONS + ".G", "oG"),
+                IomObjectHelper.createObject(TOPIC_ASSOCIATIONS + ".StandaloneWithRoleToUnstableId", "oAssoc", obj -> {
+                    obj.addattrobj("RoleMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMain");
+                    }));
+                    obj.addattrobj("RoleF", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oUnstableF");
+                    }));
+                    obj.addattrobj("RoleG", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oG");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertThat(pool.getAssociations("oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleG", List.of("oG"))),
+                () -> assertThat(pool.getAssociations("oUnstableF")).containsExactlyInAnyOrderEntriesOf(Map.of()),
+                () -> assertThat(pool.getAssociations("oG")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
             "Model.TopicMissingOid.ClassOid",
