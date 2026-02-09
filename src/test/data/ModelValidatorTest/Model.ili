@@ -50,4 +50,40 @@ MODEL Model AT "mailto:noreply@localhost" VERSION "2026-01-22" =
         CLASS ClassOidExtended EXTENDS ClassOid =
         END ClassOidExtended;
     END TopicOidExtended;
+
+    TOPIC TopicAssociations =
+        OID AS INTERLIS.STANDARDOID;
+
+        CLASS Main =
+        END Main;
+
+        CLASS A = END A;
+        CLASS B = END B;
+        CLASS C = END C;
+        CLASS D = END D;
+        CLASS E = END E;
+
+        ASSOCIATION Embedded =
+            RoleMain -- {0..1} Main;
+            RoleA -- {0..*} A;
+        END Embedded;
+
+        ASSOCIATION EmbeddedWithAttribute =
+            RoleMain -- {0..1} Main;
+            RoleB -- {0..*} B;
+            Attr: TEXT*20;
+        END EmbeddedWithAttribute;
+
+        ASSOCIATION Standalone =
+            RoleMain -- {0..1} Main;
+            RoleC -- {0..*} C;
+            RoleD -- {0..*} D;
+        END Standalone;
+
+        ASSOCIATION StandaloneWithOid (OID) =
+            RoleMain -- {0..1} Main;
+            RoleE -- {0..*} E;
+        END StandaloneWithOid;
+
+    END TopicAssociations;
 END Model.
