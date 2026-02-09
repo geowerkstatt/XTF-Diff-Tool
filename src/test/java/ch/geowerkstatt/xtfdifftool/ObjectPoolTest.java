@@ -49,9 +49,9 @@ public final class ObjectPoolTest {
 
         var pool = new ObjectPool(objects.stream(), transferDescription);
         assertAll(
-                () -> assertThat(pool.getObject("oMain").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleA", List.of("oA1", "oA2"))),
-                () -> assertThat(pool.getObject("oA1").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))),
-                () -> assertThat(pool.getObject("oA2").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
+                () -> assertThat(pool.getAssociations("oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleA", List.of("oA1", "oA2"))),
+                () -> assertThat(pool.getAssociations("oA1")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))),
+                () -> assertThat(pool.getAssociations("oA2")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
     }
 
     @Test
@@ -68,8 +68,8 @@ public final class ObjectPoolTest {
 
         var pool = new ObjectPool(objects.stream(), transferDescription);
         assertAll(
-                () -> assertThat(pool.getObject("oMain").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleB", List.of("oB"))),
-                () -> assertThat(pool.getObject("oB").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
+                () -> assertThat(pool.getAssociations("oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleB", List.of("oB"))),
+                () -> assertThat(pool.getAssociations("oB")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
     }
 
     @Test
@@ -97,10 +97,10 @@ public final class ObjectPoolTest {
 
         var pool = new ObjectPool(objects.stream(), transferDescription);
         assertAll(
-                () -> assertThat(pool.getObject("oMain").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleC", List.of("oC"), "RoleD", List.of("oD1", "oD2"))),
-                () -> assertThat(pool.getObject("oC").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"), "RoleD", List.of("oD1", "oD2"))),
-                () -> assertThat(pool.getObject("oD1").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"), "RoleC", List.of("oC"))),
-                () -> assertThat(pool.getObject("oD2").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"), "RoleC", List.of("oC"))));
+                () -> assertThat(pool.getAssociations("oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleC", List.of("oC"), "RoleD", List.of("oD1", "oD2"))),
+                () -> assertThat(pool.getAssociations("oC")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"), "RoleD", List.of("oD1", "oD2"))),
+                () -> assertThat(pool.getAssociations("oD1")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"), "RoleC", List.of("oC"))),
+                () -> assertThat(pool.getAssociations("oD2")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"), "RoleC", List.of("oC"))));
     }
 
     @Test
@@ -129,9 +129,9 @@ public final class ObjectPoolTest {
 
         var pool = new ObjectPool(objects.stream(), transferDescription);
         assertAll(
-                () -> assertThat(pool.getObject("oMain").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleE", List.of("oE1", "oE2"))),
-                () -> assertThat(pool.getObject("oE1").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))),
-                () -> assertThat(pool.getObject("oE2").associations).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
+                () -> assertThat(pool.getAssociations("oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleE", List.of("oE1", "oE2"))),
+                () -> assertThat(pool.getAssociations("oE1")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))),
+                () -> assertThat(pool.getAssociations("oE2")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
     }
 
     @ParameterizedTest

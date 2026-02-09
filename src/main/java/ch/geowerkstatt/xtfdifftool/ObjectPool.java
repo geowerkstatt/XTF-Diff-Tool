@@ -37,8 +37,9 @@ public class ObjectPool {
         }
     }
 
-    public AnalyzedObject getObject(String tid) {
-        return objectsByTID.get(tid);
+    public IomObject getObject(String tid) {
+        var analyzedObject = objectsByTID.get(tid);
+        return analyzedObject == null ? null : analyzedObject.object;
     }
 
     public Stream<IomObject> objectsWithStableOid() {
@@ -47,6 +48,14 @@ public class ObjectPool {
 
     public Stream<IomObject> objectsWithStableOidUnvisited() {
         return objectsByTID.values().stream().filter(o -> !o.visited).map(o -> o.object);
+    }
+
+    public void markVisited(IomObject object) {
+        objectsByTID.get(object.getobjectoid()).visited = true;
+    }
+
+    public Map<String, List<String>> getAssociations(String tid) {
+        return objectsByTID.get(tid).associations;
     }
 
     /**
@@ -76,7 +85,6 @@ public class ObjectPool {
     private void analyzeAssociations(String tag, List<AnalyzedObject> objects) {
         var classDef = getClassOrAssociationDef(tag);
         if (classDef == null && hasClassStableOid(tag)) {
-            LOGGER.warn("Could not find tag \"{}\" in transferdescription", tag);
             return;
         }
 
@@ -153,7 +161,7 @@ public class ObjectPool {
         return classDef;
     }
 
-    public static final class AnalyzedObject {
+    private static final class AnalyzedObject {
         public final IomObject object;
         public final boolean hasStableOid;
         public boolean visited;
