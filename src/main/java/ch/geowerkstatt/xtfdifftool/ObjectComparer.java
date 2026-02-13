@@ -1,11 +1,15 @@
 package ch.geowerkstatt.xtfdifftool;
 
+import ch.ehi.basics.settings.Settings;
 import ch.geowerkstatt.xtfdifftool.diff.Change;
 import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.geowerkstatt.xtfdifftool.value.ObjectValue;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.iom.IomObject;
+import ch.interlis.iox.IoxException;
+import ch.interlis.iox_j.ObjectEvent;
+import ch.interlis.iox_j.filter.Rounder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,8 +32,9 @@ public final class ObjectComparer {
      * @param secondObjects       The objects of the second transfer.
      */
     public ObjectComparer(TransferDescription transferDescription, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
-        this.firstObjects = new ObjectPool(firstObjects, transferDescription);
-        this.secondObjects = new ObjectPool(secondObjects, transferDescription);
+        var rounder = new RounderFacade(transferDescription);
+        this.firstObjects = new ObjectPool(firstObjects.map(rounder::roundIomObj), transferDescription);
+        this.secondObjects = new ObjectPool(secondObjects.map(rounder::roundIomObj), transferDescription);
     }
 
     /**
@@ -60,6 +65,23 @@ public final class ObjectComparer {
             changes.forEach(changeConsumer);
         } catch (Exception ex) {
             LOGGER.error("Could not compare class {}", first.getTag(), ex);
+        }
+    }
+
+    private record RounderFacade(Rounder rounder) {
+        private RounderFacade(TransferDescription rounder) {
+            this(new Rounder(rounder, new Settings()));
+        }
+
+        public IomObject roundIomObj(IomObject input) {
+            try {
+                var event = new ObjectEvent(input);
+                rounder.filter(event);
+            } catch (IoxException e) {
+                LOGGER.debug("Could not round object with id {}", input.getobjectoid(), e);
+            }
+
+            return input;
         }
     }
 }
