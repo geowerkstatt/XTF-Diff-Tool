@@ -1,5 +1,123 @@
 [
   {
+    "oid": "978edfe5-0d40-4985-8ecb-f11154b8d2e6",
+    "changeType": "deleted",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.ReferencesTopic.B",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
+  },
+  {
+    "oid": "0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b",
+    "changeType": "deleted",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.ReferencesTopic.D",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
+  },
+  {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RefAttr.Ref",
+    "oldValue": "978edfe5-0d40-4985-8ecb-f11154b8d2e6",
+    "newValue": "fa24ef16-0492-4e67-b73e-07b1bb71ed51"
+  },
+  {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleC",
+    "oldValue": [
+      "b716cf01-5701-4e03-9f15-365dbefb3b9c",
+      "e9bf4330-8d4d-4f99-b1f9-6f87d22f8f5e"
+    ],
+    "newValue": [
+      "e9bf4330-8d4d-4f99-b1f9-6f87d22f8f5e"
+    ]
+  },
+  {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleD",
+    "oldValue": [
+      "0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b",
+      "ed08b778-5672-4fd4-a672-cb6e545e586d"
+    ],
+    "newValue": [
+      "e3a06b3b-7257-4631-8719-6a4016736b77",
+      "ed08b778-5672-4fd4-a672-cb6e545e586d"
+    ]
+  },
+  {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleE",
+    "oldValue": [
+      "1f19e044-61aa-4e21-ad37-e88fd0e7d39a",
+      "c380a740-7883-421c-8f47-5be6b1f5dfd9"
+    ],
+    "newValue": [
+      "1f19e044-61aa-4e21-ad37-e88fd0e7d39a"
+    ]
+  },
+  {
+    "oid": "d8023e76-e7da-4448-b5f6-059374245af0",
+    "changeType": "added",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleC",
+    "oldValue": null,
+    "newValue": [
+      "b716cf01-5701-4e03-9f15-365dbefb3b9c"
+    ]
+  },
+  {
+    "oid": "d8023e76-e7da-4448-b5f6-059374245af0",
+    "changeType": "added",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleE",
+    "oldValue": null,
+    "newValue": [
+      "c380a740-7883-421c-8f47-5be6b1f5dfd9"
+    ]
+  },
+  {
+    "oid": "b716cf01-5701-4e03-9f15-365dbefb3b9c",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.C",
+    "attributePath": "RoleA",
+    "oldValue": [
+      "707eb89d-6839-4964-a8bf-5d099e496ad3"
+    ],
+    "newValue": [
+      "d8023e76-e7da-4448-b5f6-059374245af0"
+    ]
+  },
+  {
+    "oid": "c380a740-7883-421c-8f47-5be6b1f5dfd9",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.E",
+    "attributePath": "RoleA",
+    "oldValue": [
+      "707eb89d-6839-4964-a8bf-5d099e496ad3"
+    ],
+    "newValue": [
+      "d8023e76-e7da-4448-b5f6-059374245af0"
+    ]
+  },
+  {
     "oid": "62738c65-ca45-4934-9699-f000ad2d1c05",
     "changeType": "deleted",
     "valueType": "object",
@@ -115,6 +233,24 @@
     "attributePath": "StructBag[1].Text",
     "oldValue": "RACCOON",
     "newValue": "SNAKE"
+  },
+  {
+    "oid": "fa24ef16-0492-4e67-b73e-07b1bb71ed51",
+    "changeType": "added",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.ReferencesTopic.B",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
+  },
+  {
+    "oid": "e3a06b3b-7257-4631-8719-6a4016736b77",
+    "changeType": "added",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.ReferencesTopic.D",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
   },
   {
     "oid": "418a27f5-c11c-4e14-902d-85e1647d2a07",

@@ -27,6 +27,7 @@ public final class ObjectComparerTest {
     private static final String CLASS_NAME_WITHOUT_ID = TOPIC + ".ClassWithoutId";
     private static final String STRUCT_NAME = TOPIC + ".Struct";
     private static final String EMBEDDED_ASSOCIATION_NAME = TOPIC + ".EmbeddedAssociation";
+    private static final String STANDALONE_ASSOCIATION_NAME = TOPIC + ".StandaloneAssociation";
     private TransferDescription transferDescription;
 
     @BeforeEach
@@ -452,6 +453,49 @@ public final class ObjectComparerTest {
 
         var expectedChanges = List.of(
                 new TestChange("o4", ChangeType.CHANGED, ValueType.REFERENCE, CLASS_NAME_B, "ref", "\"o1\"", "\"o2\"")
+        );
+
+        assertComparison(first, second, expectedChanges);
+    }
+
+    @Test
+    public void analyzeStandaloneAssociation() {
+        var first = List.of(
+                createObject(CLASS_NAME, "oA1"),
+                createObject(CLASS_NAME_B, "oB1"),
+                createObject(CLASS_NAME_B, "oB2"),
+                createObject(STANDALONE_ASSOCIATION_NAME, "oAssoc1", obj -> {
+                    obj.addattrobj("roleA", createRef("oA1"));
+                    obj.addattrobj("roleB", createRef("oB1"));
+                    obj.addattrvalue("value", "SLUG");
+                }),
+                createObject(STANDALONE_ASSOCIATION_NAME, "oAssoc2", obj -> {
+                    obj.addattrobj("roleA", createRef("oA1"));
+                    obj.addattrobj("roleB", createRef("oB2"));
+                    obj.addattrvalue("value", "DODO");
+                })
+        );
+        var second = List.of(
+                createObject(CLASS_NAME, "oA1"),
+                createObject(CLASS_NAME_B, "oB2"),
+                createObject(CLASS_NAME_B, "oB3"),
+                createObject(STANDALONE_ASSOCIATION_NAME, "oAssoc1", obj -> {
+                    obj.addattrobj("roleA", createRef("oA1"));
+                    obj.addattrobj("roleB", createRef("oB3"));
+                    obj.addattrvalue("value", "SLUG");
+                }),
+                createObject(STANDALONE_ASSOCIATION_NAME, "oAssoc2", obj -> {
+                    obj.addattrobj("roleA", createRef("oA1"));
+                    obj.addattrobj("roleB", createRef("oB2"));
+                    obj.addattrvalue("value", "MOTH");
+                })
+        );
+
+        var expectedChanges = List.of(
+                new TestChange("oB1", ChangeType.DELETED, ValueType.OBJECT, CLASS_NAME_B, null, null, null),
+                new TestChange("oB3", ChangeType.ADDED, ValueType.OBJECT, CLASS_NAME_B, null, null, null),
+                new TestChange("oA1", ChangeType.CHANGED, ValueType.REFERENCE, CLASS_NAME, "roleB", "[\"oB1\",\"oB2\"]", "[\"oB2\",\"oB3\"]"),
+                new TestChange("oAssoc2", ChangeType.CHANGED, ValueType.ATTRIBUTE, STANDALONE_ASSOCIATION_NAME, "value", "\"DODO\"", "\"MOTH\"")
         );
 
         assertComparison(first, second, expectedChanges);

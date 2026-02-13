@@ -14,12 +14,14 @@ import java.util.*;
 public final class ObjectValue extends Value {
     @JsonValue
     private final Map<String, Value> values;
+    private final Map<String, CollectionValue> associations;
     private final String oid;
 
     ObjectValue(String tag, String oid, Map<String, Value> values) {
         super(tag);
         this.oid = oid;
         this.values = values;
+        associations = new LinkedHashMap<>();
     }
 
     /**
@@ -52,6 +54,14 @@ public final class ObjectValue extends Value {
         return factory.createValue(value);
     }
 
+    /**
+     * Add an association reference to this {@link ObjectValue}.
+     */
+    public void addReference(String roleName, String refOid) {
+        var role = associations.computeIfAbsent(roleName, _ -> new CollectionValue());
+        role.addValue(new ReferenceValue(refOid));
+    }
+
     public String getOid() {
         return oid;
     }
@@ -62,6 +72,10 @@ public final class ObjectValue extends Value {
 
     public Map<String, Value> getValues() {
         return values;
+    }
+
+    public Map<String, CollectionValue> getAssociations() {
+        return associations;
     }
 
     @Override
@@ -102,6 +116,8 @@ public final class ObjectValue extends Value {
         }
 
         var changes = new ArrayList<>(getChanges(values, otherObject.values));
+        changes.addAll(getChanges(associations, otherObject.associations));
+
         return changes;
     }
 

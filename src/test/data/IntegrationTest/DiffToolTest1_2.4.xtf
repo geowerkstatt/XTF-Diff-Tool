@@ -2,6 +2,18 @@
 <ili:headersection><ili:models><ili:model>DiffToolTest</ili:model></ili:models><ili:sender>ili2gpkg-5.5.0-a63de657a43b4ef80b3400f35d088f91ea36fe98</ili:sender></ili:headersection>
 <ili:datasection>
 <DiffToolTest:ReferencesTopic ili:bid="_cad40f48-2c94-4e63-bbc0-cae9edddd820">
+<DiffToolTest:B ili:tid="978edfe5-0d40-4985-8ecb-f11154b8d2e6"></DiffToolTest:B>
+<DiffToolTest:D ili:tid="ed08b778-5672-4fd4-a672-cb6e545e586d"></DiffToolTest:D>
+<DiffToolTest:D ili:tid="0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b"></DiffToolTest:D>
+<DiffToolTest:A ili:tid="707eb89d-6839-4964-a8bf-5d099e496ad3"><DiffToolTest:RefAttr ili:ref="978edfe5-0d40-4985-8ecb-f11154b8d2e6"></DiffToolTest:RefAttr></DiffToolTest:A>
+<DiffToolTest:A ili:tid="d8023e76-e7da-4448-b5f6-059374245af0"></DiffToolTest:A>
+<DiffToolTest:A_D><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleA><DiffToolTest:RoleD ili:ref="ed08b778-5672-4fd4-a672-cb6e545e586d"></DiffToolTest:RoleD><DiffToolTest:text>ALLIGATOR</DiffToolTest:text></DiffToolTest:A_D>
+<DiffToolTest:A_D><DiffToolTest:RoleA ili:ref="d8023e76-e7da-4448-b5f6-059374245af0"></DiffToolTest:RoleA><DiffToolTest:RoleD ili:ref="ed08b778-5672-4fd4-a672-cb6e545e586d"></DiffToolTest:RoleD><DiffToolTest:text>RHINOCEROS</DiffToolTest:text></DiffToolTest:A_D>
+<DiffToolTest:A_D><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleA><DiffToolTest:RoleD ili:ref="0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b"></DiffToolTest:RoleD><DiffToolTest:text>BUFFALO</DiffToolTest:text></DiffToolTest:A_D>
+<DiffToolTest:C ili:tid="e9bf4330-8d4d-4f99-b1f9-6f87d22f8f5e"><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"><DiffToolTest:A_C><DiffToolTest:text>JACKAL</DiffToolTest:text></DiffToolTest:A_C></DiffToolTest:RoleA></DiffToolTest:C>
+<DiffToolTest:C ili:tid="b716cf01-5701-4e03-9f15-365dbefb3b9c"><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"><DiffToolTest:A_C><DiffToolTest:text>KOALA</DiffToolTest:text></DiffToolTest:A_C></DiffToolTest:RoleA></DiffToolTest:C>
+<DiffToolTest:E ili:tid="1f19e044-61aa-4e21-ad37-e88fd0e7d39a"><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleA></DiffToolTest:E>
+<DiffToolTest:E ili:tid="c380a740-7883-421c-8f47-5be6b1f5dfd9"><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleA></DiffToolTest:E>
 </DiffToolTest:ReferencesTopic>
 <DiffToolTest:TypesTopic ili:bid="_9d871155-0057-4098-9bda-b8046b3c2bd9">
 <DiffToolTest:PrimitiveTypes ili:tid="62738c65-ca45-4934-9699-f000ad2d1c05"><DiffToolTest:Number>13.00</DiffToolTest:Number></DiffToolTest:PrimitiveTypes>

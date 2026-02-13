@@ -2,6 +2,18 @@
 <HEADERSECTION SENDER="ili2gpkg-5.5.0-a63de657a43b4ef80b3400f35d088f91ea36fe98" VERSION="2.3"><MODELS><MODEL NAME="DiffToolTest" VERSION="2026-01-21" URI="mailto:noreply@localhost"></MODEL></MODELS></HEADERSECTION>
 <DATASECTION>
 <DiffToolTest.ReferencesTopic BID="_cad40f48-2c94-4e63-bbc0-cae9edddd820">
+<DiffToolTest.ReferencesTopic.B TID="fa24ef16-0492-4e67-b73e-07b1bb71ed51"></DiffToolTest.ReferencesTopic.B>
+<DiffToolTest.ReferencesTopic.D TID="ed08b778-5672-4fd4-a672-cb6e545e586d"></DiffToolTest.ReferencesTopic.D>
+<DiffToolTest.ReferencesTopic.D TID="e3a06b3b-7257-4631-8719-6a4016736b77"></DiffToolTest.ReferencesTopic.D>
+<DiffToolTest.ReferencesTopic.A TID="707eb89d-6839-4964-a8bf-5d099e496ad3"><RefAttr><DiffToolTest.ReferencesTopic.ReferenceB><Ref REF="fa24ef16-0492-4e67-b73e-07b1bb71ed51"></Ref></DiffToolTest.ReferencesTopic.ReferenceB></RefAttr></DiffToolTest.ReferencesTopic.A>
+<DiffToolTest.ReferencesTopic.A TID="d8023e76-e7da-4448-b5f6-059374245af0"></DiffToolTest.ReferencesTopic.A>
+<DiffToolTest.ReferencesTopic.A_D><RoleA REF="707eb89d-6839-4964-a8bf-5d099e496ad3"></RoleA><RoleD REF="e3a06b3b-7257-4631-8719-6a4016736b77"></RoleD><text>BUFFALO</text></DiffToolTest.ReferencesTopic.A_D>
+<DiffToolTest.ReferencesTopic.A_D><RoleA REF="707eb89d-6839-4964-a8bf-5d099e496ad3"></RoleA><RoleD REF="ed08b778-5672-4fd4-a672-cb6e545e586d"></RoleD><text>ALLIGATOR</text></DiffToolTest.ReferencesTopic.A_D>
+<DiffToolTest.ReferencesTopic.A_D><RoleA REF="d8023e76-e7da-4448-b5f6-059374245af0"></RoleA><RoleD REF="ed08b778-5672-4fd4-a672-cb6e545e586d"></RoleD><text>RHINOCEROS</text></DiffToolTest.ReferencesTopic.A_D>
+<DiffToolTest.ReferencesTopic.C TID="e9bf4330-8d4d-4f99-b1f9-6f87d22f8f5e"><RoleA REF="707eb89d-6839-4964-a8bf-5d099e496ad3"><DiffToolTest.ReferencesTopic.A_C><text>GRIZZLY</text></DiffToolTest.ReferencesTopic.A_C></RoleA></DiffToolTest.ReferencesTopic.C>
+<DiffToolTest.ReferencesTopic.C TID="b716cf01-5701-4e03-9f15-365dbefb3b9c"><RoleA REF="d8023e76-e7da-4448-b5f6-059374245af0"><DiffToolTest.ReferencesTopic.A_C><text>KOALA</text></DiffToolTest.ReferencesTopic.A_C></RoleA></DiffToolTest.ReferencesTopic.C>
+<DiffToolTest.ReferencesTopic.E TID="1f19e044-61aa-4e21-ad37-e88fd0e7d39a"><RoleA REF="707eb89d-6839-4964-a8bf-5d099e496ad3"></RoleA></DiffToolTest.ReferencesTopic.E>
+<DiffToolTest.ReferencesTopic.E TID="c380a740-7883-421c-8f47-5be6b1f5dfd9"><RoleA REF="d8023e76-e7da-4448-b5f6-059374245af0"></RoleA></DiffToolTest.ReferencesTopic.E>
 </DiffToolTest.ReferencesTopic>
 <DiffToolTest.TypesTopic BID="_9d871155-0057-4098-9bda-b8046b3c2bd9">
 <DiffToolTest.TypesTopic.PrimitiveTypes TID="418a27f5-c11c-4e14-902d-85e1647d2a07"><Number>13.00</Number></DiffToolTest.TypesTopic.PrimitiveTypes>

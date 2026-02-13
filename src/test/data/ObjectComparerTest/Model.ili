@@ -44,6 +44,15 @@ MODEL ObjectComparerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
 
             value : TEXT;
         END EmbeddedAssociation;
+
+        ASSOCIATION StandaloneAssociation =
+            OID AS INTERLIS.STANDARDOID;
+
+            roleA -- {1} Class;
+            roleB -- ClassB;
+
+            value : TEXT;
+        END StandaloneAssociation;
     END Topic;
 
 END ObjectComparerTest.
