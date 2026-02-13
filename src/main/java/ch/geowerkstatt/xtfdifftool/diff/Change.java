@@ -1,6 +1,7 @@
 package ch.geowerkstatt.xtfdifftool.diff;
 
-import ch.interlis.iom.IomObject;
+import ch.geowerkstatt.xtfdifftool.value.ObjectValue;
+import ch.geowerkstatt.xtfdifftool.value.Value;
 
 /**
  * A change detected between two XTF files.
@@ -19,48 +20,31 @@ public record Change(
         ValueType valueType,
         String interlisName,
         String attributePath,
-        String oldValue,
-        String newValue) {
+        Value oldValue,
+        Value newValue) {
 
     /**
      * Construct a new change for an attribute from an attributePath, old and new value.
      */
-    public static Change attribute(String attributePath, String oldValue, String newValue) {
-        return new Change(
-                null,
-                oldValue == null ? ChangeType.ADDED : newValue == null ? ChangeType.DELETED : ChangeType.CHANGED,
-                ValueType.ATTRIBUTE,
-                null,
-                attributePath,
-                oldValue,
-                newValue);
-    }
+    public static Change attribute(String attributePath, Value oldValue, Value newValue) {
+        var changeType = oldValue == null ? ChangeType.ADDED : newValue == null ? ChangeType.DELETED : ChangeType.CHANGED;
+        var valueType = oldValue == null ? newValue.getValueType() : oldValue.getValueType();
 
-    /**
-     * Construct a new change for a reference from an attributePath, old and new value.
-     */
-    public static Change reference(String attributePath, String oldValue, String newValue) {
-        return Change.reference(null, null, attributePath, oldValue, newValue);
-    }
-
-    /**
-     * Construct a new change for a reference from an oid, interlisName, attributePath, old and new value.
-     */
-    public static Change reference(String oid, String interlisName, String attributePath, String oldValue, String newValue) {
-        return new Change(
-                oid,
-                oldValue == null ? ChangeType.ADDED : newValue == null ? ChangeType.DELETED : ChangeType.CHANGED,
-                ValueType.REFERENCE,
-                interlisName,
-                attributePath,
-                oldValue,
-                newValue);
+        return new Change(null, changeType, valueType, null, attributePath, oldValue, newValue);
     }
 
     /**
      * Get a new Change where the oid and tag properties are set according to the object.
      */
-    public Change withObject(IomObject object) {
-        return new Change(object.getobjectoid(), changeType, valueType, object.getobjecttag(), attributePath, oldValue, newValue);
+    public Change withObject(ObjectValue object) {
+        return new Change(object.getOid(), changeType, valueType, object.getTag(), attributePath, oldValue, newValue);
+    }
+
+    /**
+     * Get a new Change where the attribute path is prefixed with the given base attribute name.
+     */
+    public Change withBaseAttribute(String attributeName) {
+        var combinedPath = attributePath.isEmpty() ? attributeName : attributeName + "." + attributePath;
+        return new Change(oid, changeType, valueType, interlisName, combinedPath, oldValue, newValue);
     }
 }

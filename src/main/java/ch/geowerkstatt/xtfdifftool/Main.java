@@ -88,8 +88,8 @@ public final class Main {
                     XtfStreamReader secondReader = new XtfStreamReader(transferDescription, secondXtfPath.toFile());
                     JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
             ) {
-                ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
-                objectAnalyzer.analyzeDifferences(change -> {
+                ObjectComparer objectComparer = new ObjectComparer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
+                objectComparer.analyzeDifferences(change -> {
                     diffWriter.writeChange(change);
                     changeCount[0]++;
                 });

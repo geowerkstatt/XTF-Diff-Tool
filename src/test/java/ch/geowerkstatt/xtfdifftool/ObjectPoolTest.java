@@ -10,19 +10,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.stream.Stream;
 
-public final class ModelValidatorTest {
-    private static final String MODEL_FILE = "src/test/data/ModelValidatorTest/Model.ili";
-    private ModelValidator validator;
+import static org.junit.jupiter.api.Assertions.*;
+
+public final class ObjectPoolTest {
+    private static final String MODEL_FILE = "src/test/data/ObjectPoolTest/Model.ili";
+    private TransferDescription transferDescription;
 
     @BeforeEach
     public void setUp() {
         Configuration config = new Configuration();
         config.addFileEntry(new FileEntry(MODEL_FILE, FileEntryKind.ILIMODELFILE));
-        TransferDescription transferDescription = ch.interlis.ili2c.Main.runCompiler(config);
-        validator = new ModelValidator(transferDescription);
+        transferDescription = ch.interlis.ili2c.Main.runCompiler(config);
     }
 
     @ParameterizedTest
@@ -52,6 +52,7 @@ public final class ModelValidatorTest {
 
     private boolean validateObjectHasStableOid(String className) {
         IomObject object = new Iom_jObject(className, "o1");
-        return validator.validateObjectHasStableOid(object);
+        var pool = new ObjectPool(Stream.of(object), transferDescription);
+        return pool.objectsWithStableOid().count() == 1L;
     }
 }
