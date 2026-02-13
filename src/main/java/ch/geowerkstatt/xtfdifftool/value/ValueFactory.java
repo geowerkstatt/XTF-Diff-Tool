@@ -11,6 +11,7 @@ public final class ValueFactory {
             CollectionValue::createValue,
             ReferenceValue::createValue,
             ObjectValue::createValue,
+            GeometryValue::createValue,
             PrimitiveValue::createValue,
     };
 

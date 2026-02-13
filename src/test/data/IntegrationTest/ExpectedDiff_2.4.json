@@ -135,45 +135,18 @@
     "changeType": "changed",
     "valueType": "attribute",
     "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "Number",
-    "oldValue": "42.00",
-    "newValue": "56.00"
-  },
-  {
-    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
-    "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "Text",
-    "oldValue": "DOLPHIN",
-    "newValue": "SHARK"
-  },
-  {
-    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
-    "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "MText",
-    "oldValue": "AXOLOTL\nGUINEA PIG",
-    "newValue": "PENGUIN\nGUINEA PIG"
-  },
-  {
-    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
-    "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "Enum",
-    "oldValue": "red.crimson",
-    "newValue": "green"
-  },
-  {
-    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
-    "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
     "attributePath": "Alignment",
     "oldValue": "Right",
     "newValue": "Center"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Blackbox",
+    "oldValue": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAZRJREFUWIW9l7tKA0EUhr9dyKJmQSNEa+OtUhJ7C61TCbYWgi8Q0NqUXvABrETwDbTVxtooQRAV0gqiCEZFBX+LIATMZi8zmwPTzZnvO2dmmR2H1EN5YB6YAaaBKWAYGAL8tKAl0C6oDvoBKXjYg/qgCui6O9C6gHKgKugpHthYQA5oBfSQDGwkoALo3AycWEBLoGc78FgCckF79sCxBOSBjuzDIwnIA52kAw8VkAM6SA8eLpDCnkcW0HL6cMkJgBeAC2AwpEXG4XaAO8BhL+ABodVetD5gC5QDboAR22X5NClzzAJnFLlkjAZDvPyrvmq7wgnutM+a3hjoOKEdngU92gL3864tNvRFpuvEdoGKLfg497piNtLkdoG6DXiRmh4YjZzwB5+zVXkceLvArim8jw/VKMZOtNb+bdYTJQLKE/rr3H1Mcht62oOGS+vREHAnRIt1dsjwnTRdmybVZ2nqFT/xAi6tp1LiKHOMTzNxvgtMmggscmqSjovhxVOiZixg9EIdo2Ek4IA+AS/pAl94Jl8Av3XPRwaoSMXqAAAAAElFTkSuQmCC",
+    "newValue": "UklGRsoCAABXRUJQVlA4WAoAAAAYAAAAHwAAHwAAVlA4TOoBAAAvH8AHEKekqG0jqfwxz9SPPTBMAEG2zfwFbvvOv9q2bZgxnXmDJQEhJCAGyBFAJSATIDAIDCEFkII0CygIKTIFKWBBNgUQUmygMg5IhpA6UhD4mE/UkKByAeT0wcFnrg8WMCHFpQwILAhUmvtPKDKD4zA3naMSRgFBkmTTVj/r27Zt27Zt27Zx+2vHV+dF/AVE9H8Cfr/d/PNNN3/9OxsTkhuGkz9Y4CBnGt8EFWGd5UFkUixFNAzy0lLJphjem5ZF7JttWywMZX8aB6MlEVx2BtxdmE9n8piySH0vJbfc8Uv8qFi72XnPlAT0w6Pj7Sx4igKVNnOdCFt9lMSRT9MZfk8kj46F7GTVTB48v5JkASJbL/TNAIBxVBYBwBB3VZKdGO5drbZf09ozMnMl8wKA8E3Iq9RInk+XdcrsMPuFF04rdKm9pvsBlnLZxYNEsry1IRpYVWMUPMqv1+qpOgf4liy0P2kYbXl4LDSEXLzIpL7cQgCopQZyJQABF4khZ/PXbd1ByBqww3ysaRvwO2lDTjOWDD5jQNpGYDU1sdRzf8+KtVSs+GMoHki4/NAhnT6FIejVhcV4ROwakfpEHeSWD+q2gZl8YK248ZP6+NB02QGM18NvhBo1kbye7T26PPykOJH/wN+3m38BRVhJRroAAABFeGlmAABJSSoACAAAAAYAEgEDAAEAAAABAAAAGgEFAAEAAABWAAAAGwEFAAEAAABeAAAAKAEDAAEAAAACAAAAEwIDAAEAAAABAAAAaYcEAAEAAABmAAAAAAAAAN+TBADoAwAA35MEAOgDAAAGAACQBwAEAAAAMDIxMAGRBwAEAAAAAQIDAACgBwAEAAAAMDEwMAGgAwABAAAA//8AAAKgBAABAAAAIAAAAAOgBAABAAAAIAAAAAAAAAA="
   },
   {
     "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
@@ -189,18 +162,49 @@
     "changeType": "changed",
     "valueType": "attribute",
     "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "Blackbox",
-    "oldValue": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAZRJREFUWIW9l7tKA0EUhr9dyKJmQSNEa+OtUhJ7C61TCbYWgi8Q0NqUXvABrETwDbTVxtooQRAV0gqiCEZFBX+LIATMZi8zmwPTzZnvO2dmmR2H1EN5YB6YAaaBKWAYGAL8tKAl0C6oDvoBKXjYg/qgCui6O9C6gHKgKugpHthYQA5oBfSQDGwkoALo3AycWEBLoGc78FgCckF79sCxBOSBjuzDIwnIA52kAw8VkAM6SA8eLpDCnkcW0HL6cMkJgBeAC2AwpEXG4XaAO8BhL+ABodVetD5gC5QDboAR22X5NClzzAJnFLlkjAZDvPyrvmq7wgnutM+a3hjoOKEdngU92gL3864tNvRFpuvEdoGKLfg497piNtLkdoG6DXiRmh4YjZzwB5+zVXkceLvArim8jw/VKMZOtNb+bdYTJQLKE/rr3H1Mcht62oOGS+vREHAnRIt1dsjwnTRdmybVZ2nqFT/xAi6tp1LiKHOMTzNxvgtMmggscmqSjovhxVOiZixg9EIdo2Ek4IA+AS/pAl94Jl8Av3XPRwaoSMXqAAAAAElFTkSuQmCC",
-    "newValue": "UklGRsoCAABXRUJQVlA4WAoAAAAYAAAAHwAAHwAAVlA4TOoBAAAvH8AHEKekqG0jqfwxz9SPPTBMAEG2zfwFbvvOv9q2bZgxnXmDJQEhJCAGyBFAJSATIDAIDCEFkII0CygIKTIFKWBBNgUQUmygMg5IhpA6UhD4mE/UkKByAeT0wcFnrg8WMCHFpQwILAhUmvtPKDKD4zA3naMSRgFBkmTTVj/r27Zt27Zt27Zx+2vHV+dF/AVE9H8Cfr/d/PNNN3/9OxsTkhuGkz9Y4CBnGt8EFWGd5UFkUixFNAzy0lLJphjem5ZF7JttWywMZX8aB6MlEVx2BtxdmE9n8piySH0vJbfc8Uv8qFi72XnPlAT0w6Pj7Sx4igKVNnOdCFt9lMSRT9MZfk8kj46F7GTVTB48v5JkASJbL/TNAIBxVBYBwBB3VZKdGO5drbZf09ozMnMl8wKA8E3Iq9RInk+XdcrsMPuFF04rdKm9pvsBlnLZxYNEsry1IRpYVWMUPMqv1+qpOgf4liy0P2kYbXl4LDSEXLzIpL7cQgCopQZyJQABF4khZ/PXbd1ByBqww3ysaRvwO2lDTjOWDD5jQNpGYDU1sdRzf8+KtVSs+GMoHki4/NAhnT6FIejVhcV4ROwakfpEHeSWD+q2gZl8YK248ZP6+NB02QGM18NvhBo1kbye7T26PPykOJH/wN+3m38BRVhJRroAAABFeGlmAABJSSoACAAAAAYAEgEDAAEAAAABAAAAGgEFAAEAAABWAAAAGwEFAAEAAABeAAAAKAEDAAEAAAACAAAAEwIDAAEAAAABAAAAaYcEAAEAAABmAAAAAAAAAN+TBADoAwAA35MEAOgDAAAGAACQBwAEAAAAMDIxMAGRBwAEAAAAAQIDAACgBwAEAAAAMDEwMAGgAwABAAAA//8AAAKgBAABAAAAIAAAAAOgBAABAAAAIAAAAAAAAAA="
+    "attributePath": "Enum",
+    "oldValue": "red.crimson",
+    "newValue": "green"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "MText",
+    "oldValue": "AXOLOTL\nGUINEA PIG",
+    "newValue": "PENGUIN\nGUINEA PIG"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Number",
+    "oldValue": "42.00",
+    "newValue": "56.00"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Text",
+    "oldValue": "DOLPHIN",
+    "newValue": "SHARK"
   },
   {
     "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
     "changeType": "changed",
-    "valueType": "attribute",
+    "valueType": "geometry",
     "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
-    "attributePath": "TextBag",
-    "oldValue": "CHEETAH,WALLABY",
-    "newValue": "CHEETAH,GIBBON"
+    "attributePath": "CoordBag",
+    "oldValue": [
+      "POINT (2600138.07 1199618.42)"
+    ],
+    "newValue": [
+      "POINT (2601138.07 1200618.42)"
+    ]
   },
   {
     "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
@@ -216,18 +220,125 @@
     "changeType": "changed",
     "valueType": "attribute",
     "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
-    "attributePath": "StructBag[0].Text",
-    "oldValue": "SNAKE",
-    "newValue": "STARFISH"
+    "attributePath": "StructBag",
+    "oldValue": [
+      {
+        "Text": "CAIMAN"
+      },
+      {
+        "Text": "SNAKE"
+      }
+    ],
+    "newValue": [
+      {
+        "Text": "SNAKE"
+      },
+      {
+        "Text": "STARFISH"
+      }
+    ]
   },
   {
     "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
     "changeType": "changed",
     "valueType": "attribute",
     "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
-    "attributePath": "StructBag[1].Text",
-    "oldValue": "CAIMAN",
-    "newValue": "SNAKE"
+    "attributePath": "TextBag",
+    "oldValue": [
+      "CHEETAH",
+      "WALLABY"
+    ],
+    "newValue": [
+      "CHEETAH",
+      "GIBBON"
+    ]
+  },
+  {
+    "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
+    "attributePath": "TextList",
+    "oldValue": [
+      "KINGFISHER",
+      "RACCOON"
+    ],
+    "newValue": [
+      "RACCOON",
+      "KINGFISHER"
+    ]
+  },
+  {
+    "oid": "982a979f-b94f-4f50-b579-db656afc4a1f",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "Point",
+    "oldValue": "POINT (2635184.85 1227915.54)",
+    "newValue": "POINT (2636184.85 1228915.54)"
+  },
+  {
+    "oid": "c5c910e5-f158-440a-bad3-e2efe173f6e4",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "MultiPoint",
+    "oldValue": "MULTIPOINT ((2682712.306 1248632.642), (2646043.912 1248937.306), (2635380.699 1244345.5960000001))",
+    "newValue": "MULTIPOINT ((2683712.306 1249632.642), (2647043.912 1249937.306), (2636380.699 1245345.5960000001))"
+  },
+  {
+    "oid": "257be841-a1b9-46d2-b764-c9361ae8b1f9",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "Line",
+    "oldValue": "COMPOUNDCURVE ((2683386.92 1246043.01, 2686520.6 1237860.62, 2697662.57 1230896.89, 2708630.44 1229852.33))",
+    "newValue": "COMPOUNDCURVE ((2684386.92 1247043.01, 2687520.6 1238860.62, 2698662.57 1231896.89, 2709630.44 1230852.33))"
+  },
+  {
+    "oid": "3a93aece-e0b0-4fad-a071-b963938ccbf6",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "MultiLine",
+    "oldValue": "MULTILINESTRING ((2666782.93 1178030.71, 2690941.93 1178030.71, 2690941.93 1153871.71), (2721139.93 1184069.71, 2696980.93 1184069.71, 2696980.93 1208228.71))",
+    "newValue": "MULTILINESTRING ((2566782.93 1178030.71, 2590941.93 1178030.71, 2590941.93 1153871.71), (2621139.93 1184069.71, 2596980.93 1184069.71, 2596980.93 1208228.71))"
+  },
+  {
+    "oid": "ee09a2d7-1ca4-4d14-b25e-95e7d4b4e8ae",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "Surface",
+    "oldValue": "CURVEPOLYGON (COMPOUNDCURVE (CIRCULARSTRING (2649177.59 1234030.57, 2671287.44 1210963.21, 2688783.81 1233769.43), (2688783.81 1233769.43, 2670068.78 1247696.89, 2649177.59 1234030.57)))",
+    "newValue": "CURVEPOLYGON (COMPOUNDCURVE (CIRCULARSTRING (2650177.59 1235030.57, 2672287.44 1211963.21, 2689783.81 1234769.43), (2689783.81 1234769.43, 2671068.78 1248696.89, 2650177.59 1235030.57)))"
+  },
+  {
+    "oid": "a9bf5ce5-4ed5-48dd-b50a-e93cbee7b4b5",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "MultiSurface",
+    "oldValue": "MULTIPOLYGON (((2666782.93 1278030.71, 2690941.93 1278030.71, 2690941.93 1253871.71, 2666782.93 1278030.71)), ((2721139.93 1284069.71, 2696980.93 1284069.71, 2696980.93 1308228.71, 2721139.93 1284069.71)))",
+    "newValue": "MULTIPOLYGON (((2566782.93 1278030.71, 2590941.93 1278030.71, 2590941.93 1253871.71, 2566782.93 1278030.71)), ((2621139.93 1284069.71, 2596980.93 1284069.71, 2596980.93 1308228.71, 2621139.93 1284069.71)))"
+  },
+  {
+    "oid": "58d4171a-22f3-4c64-8106-d0ca1c91baee",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "Area",
+    "oldValue": "CURVEPOLYGON (COMPOUNDCURVE (CIRCULARSTRING (2649177.59 1234030.57, 2671287.44 1210963.21, 2688783.81 1233769.43), (2688783.81 1233769.43, 2670068.78 1247696.89, 2649177.59 1234030.57)))",
+    "newValue": "CURVEPOLYGON (COMPOUNDCURVE (CIRCULARSTRING (2650177.59 1235030.57, 2672287.44 1211963.21, 2689783.81 1234769.43), (2689783.81 1234769.43, 2671068.78 1248696.89, 2650177.59 1235030.57)))"
+  },
+  {
+    "oid": "d622cefa-a4e2-45bd-8d75-80a14e4ab957",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "MultiArea",
+    "oldValue": "MULTIPOLYGON (((2666782.93 1278030.71, 2690941.93 1278030.71, 2690941.93 1253871.71, 2666782.93 1278030.71)), ((2721139.93 1284069.71, 2696980.93 1284069.71, 2696980.93 1308228.71, 2721139.93 1284069.71)))",
+    "newValue": "MULTIPOLYGON (((2566782.93 1278030.71, 2590941.93 1278030.71, 2590941.93 1253871.71, 2566782.93 1278030.71)), ((2621139.93 1284069.71, 2596980.93 1284069.71, 2596980.93 1308228.71, 2621139.93 1284069.71)))"
   },
   {
     "oid": "fa24ef16-0492-4e67-b73e-07b1bb71ed51",

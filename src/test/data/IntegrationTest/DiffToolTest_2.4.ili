@@ -45,7 +45,11 @@ MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
             Point: Coord2;
             MultiPoint: MultiCoord2;
             Line: POLYLINE WITH (STRAIGHTS, ARCS) VERTEX Coord2;
+            MultiLine: MULTIPOLYLINE WITH (STRAIGHTS, ARCS) VERTEX Coord2;
             Surface: SURFACE WITH (STRAIGHTS, ARCS) VERTEX Coord2 WITHOUT OVERLAPS > 0.002;
+            MultiSurface: MULTISURFACE WITH (STRAIGHTS, ARCS) VERTEX Coord2 WITHOUT OVERLAPS > 0.002;
+            Area: AREA WITH (STRAIGHTS, ARCS) VERTEX Coord2 WITHOUT OVERLAPS > 0.002;
+            MultiArea: MULTIAREA WITH (STRAIGHTS, ARCS) VERTEX Coord2 WITHOUT OVERLAPS > 0.002;
         END GeometryTypes;
 
         CLASS UnstableIds =

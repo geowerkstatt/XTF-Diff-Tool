@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createCoord;
+import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createMultiCoord;
 import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createObject;
 import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createRef;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +30,7 @@ public final class ObjectComparerTest {
     private static final String STRUCT_NAME = TOPIC + ".Struct";
     private static final String EMBEDDED_ASSOCIATION_NAME = TOPIC + ".EmbeddedAssociation";
     private static final String STANDALONE_ASSOCIATION_NAME = TOPIC + ".StandaloneAssociation";
+    private static final String GEOMETRY_CLASS = "ObjectComparerTest.Geometry.Class";
     private TransferDescription transferDescription;
 
     @BeforeEach
@@ -497,6 +500,87 @@ public final class ObjectComparerTest {
                 new TestChange("oA1", ChangeType.CHANGED, ValueType.REFERENCE, CLASS_NAME, "roleB", "[\"oB1\",\"oB2\"]", "[\"oB2\",\"oB3\"]"),
                 new TestChange("oAssoc2", ChangeType.CHANGED, ValueType.ATTRIBUTE, STANDALONE_ASSOCIATION_NAME, "value", "\"DODO\"", "\"MOTH\"")
         );
+
+        assertComparison(first, second, expectedChanges);
+    }
+
+    @Test
+    public void analyzePointChange() {
+        final String attribute = "Point3";
+
+        var first = List.of(createObject(GEOMETRY_CLASS, "o1", obj -> {
+            obj.addattrobj(attribute, createCoord("20", "30", "54"));
+        }));
+        var second = List.of(createObject(GEOMETRY_CLASS, "o1", obj -> {
+            obj.addattrobj(attribute, createCoord("20", "30", "59"));
+        }));
+
+        var expectedChanges = List.of(new TestChange("o1", ChangeType.CHANGED, ValueType.GEOMETRY, GEOMETRY_CLASS, attribute, """
+                "POINT (20 30 54)\"""", """
+                "POINT (20 30 59)\""""));
+
+        assertComparison(first, second, expectedChanges);
+    }
+
+    @Test
+    public void analyzePointListChange() {
+        final String attribute = "Point3List";
+
+        var first = List.of(createObject(GEOMETRY_CLASS, "o1", obj -> {
+            obj.addattrobj(attribute, createCoord("20", "30", "54"));
+            obj.addattrobj(attribute, createCoord("10", "15", "27"));
+        }));
+        var second = List.of(createObject(GEOMETRY_CLASS, "o1", obj -> {
+            obj.addattrobj(attribute, createCoord("10", "15", "27"));
+            obj.addattrobj(attribute, createCoord("20", "30", "54"));
+        }));
+
+        var expectedChanges = List.of(new TestChange("o1", ChangeType.CHANGED, ValueType.GEOMETRY, GEOMETRY_CLASS, attribute, """
+                ["POINT (20 30 54)","POINT (10 15 27)"]""", """
+                ["POINT (10 15 27)","POINT (20 30 54)"]"""));
+
+        assertComparison(first, second, expectedChanges);
+    }
+
+    @Test
+    public void analyzePointBagChange() {
+        final String attribute = "Point3Bag";
+
+        var first = List.of(createObject(GEOMETRY_CLASS, "o1", obj -> {
+            obj.addattrobj(attribute, createCoord("20", "30", "54"));
+            obj.addattrobj(attribute, createCoord("10", "15", "27"));
+            obj.addattrobj(attribute, createCoord("30", "45", "81"));
+        }));
+        var second = List.of(createObject(GEOMETRY_CLASS, "o1", obj -> {
+            obj.addattrobj(attribute, createCoord("9.995", "15", "27"));
+            obj.addattrobj(attribute, createCoord("30.0049", "45", "81"));
+            obj.addattrobj(attribute, createCoord("20", "30", "54"));
+        }));
+
+        List<TestChange> expectedChanges = Collections.emptyList();
+
+        assertComparison(first, second, expectedChanges);
+    }
+
+    @Test
+    public void analyzeMultiPointChange() {
+        final String attribute = "MultiPoint3";
+
+        var first = List.of(createObject(GEOMETRY_CLASS, "o1", obj -> {
+            obj.addattrobj(attribute, createMultiCoord(
+                    createCoord("20", "30", "54"),
+                    createCoord("10", "15", "27"),
+                    createCoord("30", "45", "81")));
+        }));
+        var second = List.of(createObject(GEOMETRY_CLASS, "o1", obj -> {
+            obj.addattrobj(attribute, createMultiCoord(
+                    createCoord("9.995", "15", "27"),
+                    createCoord("30", "45", "81")));
+        }));
+
+        var expectedChanges = List.of(new TestChange("o1", ChangeType.CHANGED, ValueType.GEOMETRY, GEOMETRY_CLASS, attribute, """
+                "MULTIPOINT ((20 30 54), (10 15 27), (30 45 81))\"""", """
+                "MULTIPOINT ((9.995 15 27), (30 45 81))\""""));
 
         assertComparison(first, second, expectedChanges);
     }

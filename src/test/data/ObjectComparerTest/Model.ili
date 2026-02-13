@@ -55,4 +55,31 @@ MODEL ObjectComparerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
         END StandaloneAssociation;
     END Topic;
 
+    TOPIC Geometry =
+
+        DOMAIN
+            !!@ CRS = EPSG:2056
+            Coord3 = COORD
+            0.00 .. 100.00 [INTERLIS.m],
+            0.00 .. 100.00 [INTERLIS.m],
+            -100.00 .. 100.00 [INTERLIS.m],
+            ROTATION 2 -> 1;
+
+            !!@ CRS = EPSG:2056
+            MultiCoord3 = MULTICOORD
+            0.00 .. 100.00 [INTERLIS.m],
+            0.00 .. 100.00 [INTERLIS.m],
+            -100.00 .. 100.00 [INTERLIS.m],
+            ROTATION 2 -> 1;
+
+        CLASS Class =
+            OID AS INTERLIS.STANDARDOID;
+            Point3: Coord3;
+            Point3List : LIST OF Coord3;
+            Point3Bag : BAG OF Coord3;
+            MultiPoint3: MultiCoord3;
+        END Class;
+
+    END Geometry;
+
 END ObjectComparerTest.
