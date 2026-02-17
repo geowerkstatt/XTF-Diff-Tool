@@ -22,6 +22,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.jspecify.annotations.NonNull;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.Optional;
+
 public final class GeometryValue implements Value {
 
     @JsonValue
@@ -35,7 +37,7 @@ public final class GeometryValue implements Value {
      * Create a {@link GeometryValue} from an {@link IomObject} attribute.
      * @see ValueFactory.CreateValue#createValue(IomObject, String, Integer, Type, ValueFactory) ValueFactory.CreateValue
      */
-    public static GeometryValue createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
+    public static Optional<GeometryValue> createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
         var geometryObject = obj.getattrobj(attributeName, index == null ? 0 : index);
 
         try {
@@ -50,10 +52,10 @@ public final class GeometryValue implements Value {
             };
 
             if (geometry == null) {
-                return null;
+                return Optional.empty();
             } else {
                 var wktValue = new WKTWriterJtsext(3).write(geometry);
-                return new GeometryValue(wktValue);
+                return Optional.of(new GeometryValue(wktValue));
             }
         } catch (IoxException | Iox2jtsException e) {
             throw new RuntimeException(e);

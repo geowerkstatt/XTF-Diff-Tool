@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -37,9 +38,10 @@ public final class ObjectPool {
         var objectList = objects.toList();
         this.objectsByStableOID = objectList.stream()
                 .filter(o -> hasClassStableOid(o.getobjecttag()))
+                .map(o ->  factory.createValue(o).orElseThrow(() -> new IllegalArgumentException("Could not create Value from object with Id " + o.getobjectoid())))
                 .collect(Collectors.toMap(
-                        IomObject::getobjectoid,
-                        factory::createValue,
+                        ObjectValue::getOid,
+                        Function.identity(),
                         (a, _) -> {
                             throw new IllegalStateException("Duplicate TID encountered " + a.getOid());
                         },

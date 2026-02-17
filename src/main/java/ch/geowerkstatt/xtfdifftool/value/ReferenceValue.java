@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import org.jspecify.annotations.NonNull;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.Optional;
+
 public final class ReferenceValue implements Value {
     @JsonValue
     private final String value;
@@ -20,13 +22,13 @@ public final class ReferenceValue implements Value {
      * Create a {@link ReferenceValue} from an {@link IomObject} attribute.
      * @see ValueFactory.CreateValue#createValue(IomObject, String, Integer, Type, ValueFactory) ValueFactory.CreateValue
      */
-    public static ReferenceValue createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
+    public static Optional<ReferenceValue> createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
         if (!(type.resolveAliases() instanceof ReferenceType)) {
-            return null;
+            return Optional.empty();
         }
 
         var refObject = obj.getattrobj(attributeName, index == null ? 0 : index);
-        return new ReferenceValue(refObject.getobjectrefoid());
+        return Optional.of(new ReferenceValue(refObject.getobjectrefoid()));
     }
 
     @Override

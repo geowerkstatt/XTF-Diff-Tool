@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import org.jspecify.annotations.NonNull;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.Optional;
+
 public final class PrimitiveValue implements Value {
     @JsonValue
     private final String value;
@@ -19,13 +21,13 @@ public final class PrimitiveValue implements Value {
      * Create a {@link PrimitiveValue} from an {@link IomObject} attribute.
      * @see ValueFactory.CreateValue#createValue(IomObject, String, Integer, Type, ValueFactory) ValueFactory.CreateValue
      */
-    public static PrimitiveValue createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
+    public static Optional<PrimitiveValue> createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
         var value = obj.getattrprim(attributeName, index == null ? 0 : index);
         if (value == null) {
-            return null;
+            return Optional.empty();
         }
 
-        return new PrimitiveValue(value);
+        return Optional.of(new PrimitiveValue(value));
     }
 
     @Override

@@ -6,6 +6,9 @@ import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public final class ValueFactory {
     private final CreateValue[] factories = {
             CollectionValue::createValue,
@@ -27,13 +30,13 @@ public final class ValueFactory {
     /**
      * Creates an {@link ObjectValue} for the supplied {@link IomObject}.
      */
-    public ObjectValue createValue(IomObject obj) {
+    public Optional<ObjectValue> createValue(IomObject obj) {
         Element element = transferDescription.getElement(obj.getobjecttag());
         if (!(element instanceof AbstractClassDef<?> classDef)) {
-            return null;
+            return Optional.empty();
         }
 
-        return ObjectValue.createValue(obj, classDef, this);
+        return Optional.of(ObjectValue.createValue(obj, classDef, this));
     }
 
     /**
@@ -46,14 +49,11 @@ public final class ValueFactory {
      * @return the created {@link Value}
      */
     public Value createValue(IomObject obj, String attributeName, Integer index, Type type) {
-        for (var factory : factories) {
-            var result = factory.createValue(obj, attributeName, index, type, this);
-            if (result != null) {
-                return result;
-            }
-        }
-
-        throw new IllegalArgumentException("Unsupported type: " + type.resolveAliases().getClass().getName());
+        return Arrays.stream(factories)
+                .map(f -> f.createValue(obj, attributeName, index, type, this))
+                .flatMap(Optional::stream)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported type: " + type.resolveAliases().getClass().getName()));
     }
 
     @FunctionalInterface
@@ -61,7 +61,7 @@ public final class ValueFactory {
         /**
          * Create a {@link Value} from an {@link IomObject} attribute.
          */
-        Value createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory);
+        Optional<? extends Value> createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory);
     }
 
 }

@@ -10,6 +10,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public final class CollectionValue implements Value {
     @JsonValue
@@ -42,9 +43,9 @@ public final class CollectionValue implements Value {
      * Create a {@link CollectionValue} from an {@link IomObject} attribute.
      * @see ValueFactory.CreateValue#createValue(IomObject, String, Integer, Type, ValueFactory) ValueFactory.CreateValue
      */
-    public static CollectionValue createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
+    public static Optional<CollectionValue> createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
         if (type.getCardinality().getMaximum() == 1 || index != null) {
-            return null;
+            return Optional.empty();
         }
 
         var baseType = type.resolveAliases();
@@ -53,7 +54,7 @@ public final class CollectionValue implements Value {
             values.add(factory.createValue(obj, attributeName, i, baseType));
         }
 
-        return new CollectionValue(values, type.isOrdered());
+        return Optional.of(new CollectionValue(values, type.isOrdered()));
     }
 
     @Override

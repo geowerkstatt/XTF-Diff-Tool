@@ -48,9 +48,9 @@ public final class ObjectValue implements Value {
      * Create a {@link ObjectValue} from an {@link IomObject} attribute.
      * @see ValueFactory.CreateValue#createValue(IomObject, String, Integer, Type, ValueFactory) ValueFactory.CreateValue
      */
-    public static Value createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
+    public static Optional<ObjectValue> createValue(IomObject obj, String attributeName, Integer index, Type type, ValueFactory factory) {
         if (!(type.resolveAliases() instanceof CompositionType)) {
-            return null;
+            return Optional.empty();
         }
 
         var value = obj.getattrobj(attributeName, index == null ? 0 : index);
