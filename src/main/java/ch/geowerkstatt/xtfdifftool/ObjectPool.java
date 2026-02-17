@@ -109,73 +109,98 @@ public final class ObjectPool {
         return true;
     }
 
+    /**
+     * Record to hold partitioned role definitions.
+     *
+     * @param embeddedRoles Map of embedded roles to their opposite roles.
+     * @param standaloneRoles List of standalone role definitions.
+     */
+    private record AssociationRoles(Map<RoleDef, RoleDef> embeddedRoles, List<RoleDef> standaloneRoles) { }
+
     private void analyzeAssociations(String tag, List<IomObject> objects) {
         var classDef = getClassOrAssociationDef(tag);
         if (classDef == null) {
             return;
         }
 
-        // Analyze Associations and Roles
-        var roleDefs = new ArrayList<RoleDef>();
-        var embeddedRoleDefs = new HashMap<RoleDef, RoleDef>();
-        for (var it = classDef.getAttributesAndRoles2(); it.hasNext();) {
-            var viewableElement = it.next();
-            if (viewableElement.obj instanceof RoleDef role && validateRoleHasTargetWithStableOid(role)) {
-                if (viewableElement.embedded) {
-                    var association = (AssociationDef) role.getContainer();
-                    if (toStream(association.getAttributesAndRoles2()).anyMatch(a -> a.obj instanceof AttributeDef)) {
-                        // Attributes of embedded association are not compared, because the association has no OID
-                        LOGGER.warn("Embedded association \"{}\" has attributes that are not compared.", association.getScopedName());
-                    }
-                    embeddedRoleDefs.put(role, role.getOppEnd());
-                } else {
-                    roleDefs.add(role);
-                }
-            }
-        }
+        var partitionedRoles = analyzeRoles(classDef);
+        processEmbeddedRoles(partitionedRoles.embeddedRoles(), objects);
+        processStandaloneAssociations(partitionedRoles.standaloneRoles(), objects);
+    }
 
-        // Handle embedded roles
-        for (var embeddedRoleDef : embeddedRoleDefs.entrySet()) {
-            var role = embeddedRoleDef.getKey();
-            var oppositeRole = embeddedRoleDef.getValue();
+    /**
+     * Analyze roles into embedded and standalone roles.
+     */
+    private AssociationRoles analyzeRoles(AbstractClassDef<?> classDef) {
+        var embeddedRoles = new HashMap<RoleDef, RoleDef>();
+        var standaloneRoles = new ArrayList<RoleDef>();
 
-            for (var object : objects) {
-                if (object.getattrvaluecount(role.getName()) > 0) {
-                    var oppositeRef = object.getattrobj(role.getName(), 0).getobjectrefoid();
-                    var thisRef = object.getobjectoid();
-                    objectsByStableOID.get(thisRef).addReference(role.getName(), oppositeRef);
-                    objectsByStableOID.get(oppositeRef).addReference(oppositeRole.getName(), thisRef);
-                }
-            }
-        }
-
-        // Handle roles of standalone association
-        if (!roleDefs.isEmpty()) {
-            for (var analyzedObject : objects) {
-                // Gather referenced OIDs of each role
-                var roles = new HashMap<String, List<String>>();
-                for (var roleDef : roleDefs) {
-                    var refs = roles.computeIfAbsent(roleDef.getName(), _ -> new ArrayList<>());
-                    for (var i = 0; i < analyzedObject.getattrvaluecount(roleDef.getName()); i++) {
-                        refs.add(analyzedObject.getattrobj(roleDef.getName(), i).getobjectrefoid());
-                    }
-                }
-
-                // Add connections
-                for (var entry : roles.entrySet()) {
-                    for (var otherEntry : roles.entrySet()) {
-                        if (entry != otherEntry) {
-                            var roleB = otherEntry.getKey();
-                            for (var refA : entry.getValue()) {
-                                for (var refB : otherEntry.getValue()) {
-                                    objectsByStableOID.get(refA).addReference(roleB, refB);
-                                }
-                            }
+        toStream(classDef.getAttributesAndRoles2())
+                .filter(viewableElement -> viewableElement.obj instanceof RoleDef role && validateRoleHasTargetWithStableOid(role))
+                .forEach(viewableElement -> {
+                    var role = (RoleDef) viewableElement.obj;
+                    if (viewableElement.embedded) {
+                        var association = (AssociationDef) role.getContainer();
+                        if (toStream(association.getAttributesAndRoles2()).anyMatch(a -> a.obj instanceof AttributeDef)) {
+                            // Attributes of embedded association are not compared, because the association has no OID
+                            LOGGER.warn("Embedded association \"{}\" has attributes that are not compared.", association.getScopedName());
                         }
+                        embeddedRoles.put(role, role.getOppEnd());
+                    } else {
+                        standaloneRoles.add(role);
                     }
-                }
-            }
+                });
+
+        return new AssociationRoles(embeddedRoles, standaloneRoles);
+    }
+
+    /**
+     * Processes embedded roles and adds bidirectional references between objects.
+     */
+    private void processEmbeddedRoles(Map<RoleDef, RoleDef> embeddedRoles, List<IomObject> objects) {
+        embeddedRoles.forEach((role, oppositeRole) ->
+                objects.stream()
+                        .filter(object -> object.getattrvaluecount(role.getName()) > 0)
+                        .forEach(object -> {
+                            var oppositeRef = object.getattrobj(role.getName(), 0).getobjectrefoid();
+                            var thisRef = object.getobjectoid();
+                            objectsByStableOID.get(thisRef).addReference(role.getName(), oppositeRef);
+                            objectsByStableOID.get(oppositeRef).addReference(oppositeRole.getName(), thisRef);
+                        })
+        );
+    }
+
+    /**
+     * Processes standalone associations and adds cross-role references.
+     */
+    private void processStandaloneAssociations(List<RoleDef> standaloneRoles, List<IomObject> objects) {
+        if (standaloneRoles.isEmpty()) {
+            return;
         }
+
+        objects.forEach(object -> {
+            // Gather referenced OIDs of each role
+            var roleReferences = standaloneRoles.stream()
+                    .collect(Collectors.toMap(
+                            RoleDef::getName,
+                            roleDef -> getAttrObj(object, roleDef.getName()).stream().map(IomObject::getobjectrefoid).toList()
+                    ));
+
+            // Add cross-role connections
+            roleReferences.forEach((roleNameA, refsA) ->
+                    roleReferences.entrySet().stream()
+                            .filter(entry -> !entry.getKey().equals(roleNameA))
+                            .forEach(entry -> {
+                                var roleNameB = entry.getKey();
+                                var refsB = entry.getValue();
+                                refsA.forEach(refA ->
+                                        refsB.forEach(refB ->
+                                                objectsByStableOID.get(refA).addReference(roleNameB, refB)
+                                        )
+                                );
+                            })
+            );
+        });
     }
 
     private AbstractClassDef<?> getClassOrAssociationDef(String className) {
@@ -186,6 +211,15 @@ public final class ObjectPool {
         }
 
         return classDef;
+    }
+
+    private List<IomObject> getAttrObj(IomObject object, String attributeName) {
+        var result = new ArrayList<IomObject>();
+        for (var i = 0; i < object.getattrvaluecount(attributeName); i++) {
+            result.add(object.getattrobj(attributeName, i));
+        }
+
+        return result;
     }
 
     private <T> Stream<T> toStream(Iterator<T> iterator) {
