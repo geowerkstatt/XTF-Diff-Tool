@@ -6,8 +6,9 @@ import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jspecify.annotations.NonNull;
+import tools.jackson.databind.ObjectMapper;
 
-public final class ReferenceValue extends Value {
+public final class ReferenceValue implements Value {
     @JsonValue
     private final String value;
 
@@ -40,5 +41,10 @@ public final class ReferenceValue extends Value {
     @Override
     public ValueType getValueType() {
         return ValueType.REFERENCE;
+    }
+
+    @Override
+    public String toString() {
+        return new ObjectMapper().writeValueAsString(this);
     }
 }

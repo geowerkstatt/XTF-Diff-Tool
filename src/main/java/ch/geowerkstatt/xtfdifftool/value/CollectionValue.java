@@ -5,12 +5,13 @@ import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jspecify.annotations.NonNull;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class CollectionValue extends Value {
+public final class CollectionValue implements Value {
     @JsonValue
     private final List<Value> values;
     private final boolean isOrdered;
@@ -80,5 +81,10 @@ public final class CollectionValue extends Value {
     public ValueType getValueType() {
         // Assume all values have the same ValueType
         return values.isEmpty() ? ValueType.ATTRIBUTE : values.getFirst().getValueType();
+    }
+
+    @Override
+    public String toString() {
+        return new ObjectMapper().writeValueAsString(this);
     }
 }

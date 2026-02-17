@@ -1,11 +1,13 @@
 package ch.geowerkstatt.xtfdifftool.value;
 
+import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jspecify.annotations.NonNull;
+import tools.jackson.databind.ObjectMapper;
 
-public final class PrimitiveValue extends Value {
+public final class PrimitiveValue implements Value {
     @JsonValue
     private final String value;
 
@@ -33,5 +35,15 @@ public final class PrimitiveValue extends Value {
         }
 
         return value.compareTo(otherPrimitive.value);
+    }
+
+    @Override
+    public ValueType getValueType() {
+        return ValueType.ATTRIBUTE;
+    }
+
+    @Override
+    public String toString() {
+        return new ObjectMapper().writeValueAsString(this);
     }
 }

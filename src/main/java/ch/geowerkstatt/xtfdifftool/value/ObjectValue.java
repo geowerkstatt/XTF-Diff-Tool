@@ -1,6 +1,7 @@
 package ch.geowerkstatt.xtfdifftool.value;
 
 import ch.geowerkstatt.xtfdifftool.diff.Change;
+import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.interlis.ili2c.metamodel.AbstractClassDef;
 import ch.interlis.ili2c.metamodel.AttributeDef;
 import ch.interlis.ili2c.metamodel.CompositionType;
@@ -8,10 +9,11 @@ import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jspecify.annotations.NonNull;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
-public final class ObjectValue extends Value {
+public final class ObjectValue implements Value {
     @JsonValue
     private final Map<String, Value> values;
     private final Map<String, CollectionValue> associations;
@@ -122,6 +124,11 @@ public final class ObjectValue extends Value {
         return changes;
     }
 
+    @Override
+    public ValueType getValueType() {
+        return ValueType.ATTRIBUTE;
+    }
+
     private List<Change> getChanges(Map<String, ? extends Value> first, Map<String, ? extends Value> second) {
         var changes = new ArrayList<Change>();
         for (var key : getCombinedKeys(first.keySet(), second.keySet())) {
@@ -141,5 +148,10 @@ public final class ObjectValue extends Value {
         var combined = new TreeSet<>(firstKeys);
         combined.addAll(secondKeys);
         return combined;
+    }
+
+    @Override
+    public String toString() {
+        return new ObjectMapper().writeValueAsString(this);
     }
 }

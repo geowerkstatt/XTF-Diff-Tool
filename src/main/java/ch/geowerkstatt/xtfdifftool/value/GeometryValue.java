@@ -20,8 +20,9 @@ import ch.interlis.iox_j.logging.LogEventFactory;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.vividsolutions.jts.geom.Geometry;
 import org.jspecify.annotations.NonNull;
+import tools.jackson.databind.ObjectMapper;
 
-public final class GeometryValue extends Value {
+public final class GeometryValue implements Value {
 
     @JsonValue
     private final String wktValue;
@@ -71,5 +72,10 @@ public final class GeometryValue extends Value {
     @Override
     public ValueType getValueType() {
         return ValueType.GEOMETRY;
+    }
+
+    @Override
+    public String toString() {
+        return new ObjectMapper().writeValueAsString(this);
     }
 }
