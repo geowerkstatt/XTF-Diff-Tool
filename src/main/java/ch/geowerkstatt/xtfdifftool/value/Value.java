@@ -2,26 +2,14 @@ package ch.geowerkstatt.xtfdifftool.value;
 
 import ch.geowerkstatt.xtfdifftool.diff.Change;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
-import org.jspecify.annotations.NonNull;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
 public abstract class Value implements Comparable<Value> {
     private static final ObjectMapper OBJECT_MAPPER =  new ObjectMapper();
-    protected String tag;
 
-    protected Value(String tag) {
-        this.tag = tag;
-    }
-
-    /**
-     * Compares the {@link Value}s according to their tag.
-     * Subclasses that override this method must call {@code super.compareTo()} to ensure a consistent ordering.
-     */
-    @Override
-    public int compareTo(@NonNull Value o) {
-        return tag.compareTo(o.tag);
+    protected Value() {
     }
 
     /**

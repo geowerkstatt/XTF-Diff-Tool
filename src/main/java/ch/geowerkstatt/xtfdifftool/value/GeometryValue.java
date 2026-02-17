@@ -27,7 +27,6 @@ public final class GeometryValue extends Value {
     private final String wktValue;
 
     GeometryValue(String wktValue) {
-        super("COORD");
         this.wktValue = wktValue;
     }
 
@@ -62,11 +61,6 @@ public final class GeometryValue extends Value {
 
     @Override
     public int compareTo(@NonNull Value o) {
-        var superComparison = super.compareTo(o);
-        if (superComparison != 0) {
-            return superComparison;
-        }
-
         if (!(o instanceof GeometryValue otherCoord)) {
             throw new IllegalStateException("Cannot compare " + this.getClass().getSimpleName() + " with " + o.getClass().getSimpleName());
         }

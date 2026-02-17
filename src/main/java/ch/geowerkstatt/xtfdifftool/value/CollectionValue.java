@@ -16,7 +16,6 @@ public final class CollectionValue extends Value {
     private final boolean isOrdered;
 
     CollectionValue(List<Value> values, boolean isOrdered) {
-        super("BAG/LIST");
         this.values = values;
         this.isOrdered = isOrdered;
         if (!isOrdered) {
@@ -58,11 +57,6 @@ public final class CollectionValue extends Value {
 
     @Override
     public int compareTo(@NonNull Value o) {
-        var superComparison = super.compareTo(o);
-        if (superComparison != 0) {
-            return superComparison;
-        }
-
         if (!(o instanceof CollectionValue otherCollection)) {
             throw new IllegalStateException("Cannot compare " + this.getClass().getSimpleName() + " with " + o.getClass().getSimpleName());
         }

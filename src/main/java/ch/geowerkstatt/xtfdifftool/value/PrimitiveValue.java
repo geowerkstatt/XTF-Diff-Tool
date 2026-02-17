@@ -10,7 +10,6 @@ public final class PrimitiveValue extends Value {
     private final String value;
 
     PrimitiveValue(String value) {
-        super("PRIMITIVE");
         this.value = value;
     }
 
@@ -29,11 +28,6 @@ public final class PrimitiveValue extends Value {
 
     @Override
     public int compareTo(@NonNull Value o) {
-        var superComparison = super.compareTo(o);
-        if (superComparison != 0) {
-            return superComparison;
-        }
-
         if (!(o instanceof PrimitiveValue otherPrimitive)) {
             throw new IllegalStateException("Cannot compare " + this.getClass().getSimpleName() + " with " + o.getClass().getSimpleName());
         }

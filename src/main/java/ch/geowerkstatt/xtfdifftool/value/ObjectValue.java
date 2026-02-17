@@ -16,9 +16,10 @@ public final class ObjectValue extends Value {
     private final Map<String, Value> values;
     private final Map<String, CollectionValue> associations;
     private final String oid;
+    private final String tag;
 
     ObjectValue(String tag, String oid, Map<String, Value> values) {
-        super(tag);
+        this.tag = tag;
         this.oid = oid;
         this.values = values;
         associations = new LinkedHashMap<>();
@@ -80,13 +81,13 @@ public final class ObjectValue extends Value {
 
     @Override
     public int compareTo(@NonNull Value o) {
-        var superComparison = super.compareTo(o);
-        if (superComparison != 0) {
-            return superComparison;
-        }
-
         if (!(o instanceof ObjectValue otherObject)) {
             throw new IllegalStateException("Cannot compare " + this.getClass().getSimpleName() + " with " + o.getClass().getSimpleName());
+        }
+
+        var tagComparison = this.tag.compareTo(otherObject.tag);
+        if (tagComparison != 0) {
+            return tagComparison;
         }
 
         for (var key : getCombinedKeys(values.keySet(), otherObject.values.keySet())) {
