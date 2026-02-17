@@ -11,7 +11,6 @@ import ch.interlis.iom_j.Iom_jObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -590,9 +589,8 @@ public final class ObjectComparerTest {
     }
 
     private void assertComparison(List<IomObject> first, List<IomObject> second, List<TestChange> expectedChanges) {
-        ObjectComparer analyzer = new ObjectComparer(transferDescription, first.stream(), second.stream());
-        var changes = new ArrayList<TestChange>();
-        analyzer.analyzeDifferences(c -> changes.add(new TestChange(c)));
+        ObjectComparer objectComparer = new ObjectComparer(transferDescription, first.stream(), second.stream());
+        var changes = objectComparer.analyzeDifferences().map(TestChange::new).toList();
         assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
     }
 }

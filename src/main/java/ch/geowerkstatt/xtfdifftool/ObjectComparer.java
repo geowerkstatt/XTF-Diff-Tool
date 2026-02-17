@@ -13,7 +13,6 @@ import ch.interlis.iox_j.filter.Rounder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -40,31 +39,37 @@ public final class ObjectComparer {
     /**
      * Analyzes the differences between the two streams and passes each change to the {@code changeConsumer}.
      */
-    public void analyzeDifferences(Consumer<Change> changeConsumer) {
-        firstObjects.objectsWithStableOid().forEach(object -> {
+    public Stream<Change> analyzeDifferences() {
+        var firstObjectChanges = firstObjects.objectsWithStableOid().flatMap(object -> {
             String oid = object.getOid();
             var matchingObject = secondObjects.getObject(oid);
             if (matchingObject == null) {
                 Change removeChange = new Change(oid, ChangeType.DELETED, ValueType.OBJECT, object.getTag(), null, null, null);
-                changeConsumer.accept(removeChange);
+                return Stream.of(removeChange);
             } else {
-                secondObjects.remove(matchingObject);
-                compareObjectValues(object, matchingObject, changeConsumer);
+                return compareObjectValues(object, matchingObject);
             }
         });
 
-        secondObjects.objectsWithStableOid().forEach(object -> {
-            Change addChange = new Change(object.getOid(), ChangeType.ADDED, ValueType.OBJECT, object.getTag(), null, null, null);
-            changeConsumer.accept(addChange);
-        });
+        var secondObjectsAddedChanges = secondObjects.objectsWithStableOid()
+                .flatMap(object -> {
+                    var matchingObject = firstObjects.getObject(object.getOid());
+                    if (matchingObject == null) {
+                        return Stream.of(new Change(object.getOid(), ChangeType.ADDED, ValueType.OBJECT, object.getTag(), null, null, null));
+                    } else {
+                        return Stream.of();
+                    }
+                });
+
+        return Stream.concat(firstObjectChanges, secondObjectsAddedChanges);
     }
 
-    private void compareObjectValues(ObjectValue first, ObjectValue second, Consumer<Change> changeConsumer) {
+    private Stream<Change> compareObjectValues(ObjectValue first, ObjectValue second) {
         try {
-            var changes = first.getChanges(second).stream().map(o -> o.withObject(first));
-            changes.forEach(changeConsumer);
+            return first.getChanges(second).stream().map(o -> o.withObject(first));
         } catch (Exception ex) {
             LOGGER.error("Could not compare class {}", first.getTag(), ex);
+            return Stream.of();
         }
     }
 
