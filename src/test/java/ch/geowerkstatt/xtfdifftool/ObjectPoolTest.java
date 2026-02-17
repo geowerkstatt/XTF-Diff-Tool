@@ -165,11 +165,11 @@ public final class ObjectPoolTest {
 
     private static Map<String, List<String>> getAssociations(ObjectPool pool, String tid) {
         var mapper = new ObjectMapper();
-        var object = pool.getObject(tid);
-        return object == null ? Map.of() : object
-                .getAssociations().entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> mapper.readValue(e.getValue().toString(), new TypeReference<>() {
-                })));
+        return pool.getObject(tid)
+                .<Map<String, List<String>>>map(objectValue -> objectValue
+                    .getAssociations().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> mapper.readValue(e.getValue().toString(), new TypeReference<>() {
+                })))).orElseGet(Map::of);
     }
 
     @ParameterizedTest

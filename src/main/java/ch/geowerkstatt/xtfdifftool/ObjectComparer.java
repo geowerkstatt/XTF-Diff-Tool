@@ -40,28 +40,19 @@ public final class ObjectComparer {
      * Analyzes the differences between the two streams and passes each change to the {@code changeConsumer}.
      */
     public Stream<Change> analyzeDifferences() {
-        var firstObjectChanges = firstObjects.objectsWithStableOid().flatMap(object -> {
-            String oid = object.getOid();
-            var matchingObject = secondObjects.getObject(oid);
-            if (matchingObject == null) {
-                Change removeChange = new Change(oid, ChangeType.DELETED, ValueType.OBJECT, object.getTag(), null, null, null);
-                return Stream.of(removeChange);
-            } else {
-                return compareObjectValues(object, matchingObject);
-            }
-        });
-
-        var secondObjectsAddedChanges = secondObjects.objectsWithStableOid()
-                .flatMap(object -> {
+        return Stream.concat(
+                firstObjects.objectsWithStableOid().flatMap(object -> {
+                    var matchingObject = secondObjects.getObject(object.getOid());
+                    return matchingObject
+                            .map(m -> compareObjectValues(object, m))
+                            .orElseGet(() -> Stream.of(new Change(object.getOid(), ChangeType.DELETED, ValueType.OBJECT, object.getTag(), null, null, null)));
+                }),
+                secondObjects.objectsWithStableOid().flatMap(object -> {
                     var matchingObject = firstObjects.getObject(object.getOid());
-                    if (matchingObject == null) {
-                        return Stream.of(new Change(object.getOid(), ChangeType.ADDED, ValueType.OBJECT, object.getTag(), null, null, null));
-                    } else {
-                        return Stream.of();
-                    }
-                });
-
-        return Stream.concat(firstObjectChanges, secondObjectsAddedChanges);
+                    return matchingObject.isEmpty()
+                            ? Stream.of(new Change(object.getOid(), ChangeType.ADDED, ValueType.OBJECT, object.getTag(), null, null, null))
+                            : Stream.of();
+        }));
     }
 
     private Stream<Change> compareObjectValues(ObjectValue first, ObjectValue second) {

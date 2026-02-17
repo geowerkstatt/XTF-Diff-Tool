@@ -59,8 +59,8 @@ public final class ObjectPool {
      * @param tid The transfer identifier of the object.
      * @return The IomObject with the specified TID, or {@code null} if not found.
      */
-    public ObjectValue getObject(String tid) {
-        return objectsByStableOID.get(tid);
+    public Optional<ObjectValue> getObject(String tid) {
+        return Optional.ofNullable(objectsByStableOID.get(tid));
     }
 
     /**
