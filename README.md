@@ -23,7 +23,7 @@ java -jar XTF-Diff-Tool.jar [options] <first XTF file> <second XTF file> <diff o
 
 Starting with Docker:
 ```shell
-docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/XTF-Diff-Tool [options] <first XTF file inside volume: /host/**/*.xtf> <second XTF file inside volume: /host/**/*.xtf> <diff output inside volume: /host/**/*.json>
+docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/xtf-diff-tool [options] <first XTF file inside volume: /host/**/*.xtf> <second XTF file inside volume: /host/**/*.xtf> <diff output inside volume: /host/**/*.json>
 ```
 
 ### Commandline Options
