@@ -7,6 +7,6 @@
 <suppressions>
 
     <!-- Disable some checks for test classes -->
-    <suppress checks="MissingJavadoc\w+Check|LineLengthCheck|VisibilityModifierCheck" files="[\\/]test[\\/]java[\\/]" />
+    <suppress checks="\w*Javadoc\w+Check|LineLengthCheck|VisibilityModifierCheck" files="[\\/]test[\\/]java[\\/]" />
 
 </suppressions>

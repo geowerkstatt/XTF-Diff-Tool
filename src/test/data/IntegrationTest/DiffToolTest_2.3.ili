@@ -21,6 +21,14 @@ MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
             Points: BAG {1..*} OF PointStructure;
         END MultiCoord2;
 
+        STRUCTURE LineStructure =
+            Line: POLYLINE WITH (STRAIGHTS, ARCS) VERTEX Coord2 WITHOUT OVERLAPS > 0.01;
+        END LineStructure;
+
+        STRUCTURE MultiLineCoord2 =
+            Lines: BAG {1..*} OF LineStructure;
+        END MultiLineCoord2;
+
         STRUCTURE Struct =
             Text: TextDomain;
         END Struct;
@@ -46,7 +54,9 @@ MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
             Point: Coord2;
             MultiPoint: MultiCoord2;
             Line: POLYLINE WITH (STRAIGHTS, ARCS) VERTEX Coord2;
+            MultiLine: MultiLineCoord2;
             Surface: SURFACE WITH (STRAIGHTS, ARCS) VERTEX Coord2 WITHOUT OVERLAPS > 0.02;
+            Area: AREA WITH (STRAIGHTS, ARCS) VERTEX Coord2 WITHOUT OVERLAPS > 0.02;
         END GeometryTypes;
 
         CLASS UnstableIds =
@@ -66,6 +76,9 @@ MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
 
         CLASS D =
         END D;
+
+        CLASS E =
+        END E;
 
         STRUCTURE ReferenceB =
             Ref: REFERENCE TO B;
@@ -90,6 +103,12 @@ MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
 
             text : TextDomain;
         END A_D;
+
+        !! Eingebettete Beziehung ohne Attribute
+        ASSOCIATION A_E =
+            RoleA -- {0..1} A;
+            RoleE -- {0..*} E;
+        END A_E;
 
     END ReferencesTopic;
 

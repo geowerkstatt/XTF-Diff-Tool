@@ -1,0 +1,85 @@
+INTERLIS 2.4;
+
+MODEL ObjectComparerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
+    TOPIC Topic =
+        STRUCTURE Struct =
+            text : TEXT;
+            text2 : TEXT;
+        END Struct;
+
+        STRUCTURE DerivedStruct EXTENDS Struct =
+            bool : BOOLEAN;
+        END DerivedStruct;
+
+        CLASS Class =
+            OID AS INTERLIS.STANDARDOID;
+
+            text : TEXT;
+            text2 : TEXT;
+            textList : LIST OF TEXT;
+            textBag : BAG OF TEXT;
+            struct : Struct;
+            structList : LIST OF Struct;
+            structBag : BAG OF Struct;
+            number : -100 .. 100;
+            numberTwoDecimals : -100.00 .. 100.00;
+        END Class;
+
+        CLASS ClassWithoutId =
+            text : TEXT;
+            text2 : TEXT;
+            textList : LIST OF TEXT;
+            textBag : BAG OF TEXT;
+        END ClassWithoutId;
+
+        CLASS ClassB =
+            OID AS INTERLIS.STANDARDOID;
+
+            ref : REFERENCE TO Class;
+        END ClassB;
+
+        ASSOCIATION EmbeddedAssociation =
+            role1A -- {1} Class;
+            role1B -- ClassB;
+
+            value : TEXT;
+        END EmbeddedAssociation;
+
+        ASSOCIATION StandaloneAssociation =
+            OID AS INTERLIS.STANDARDOID;
+
+            roleA -- {1} Class;
+            roleB -- ClassB;
+
+            value : TEXT;
+        END StandaloneAssociation;
+    END Topic;
+
+    TOPIC Geometry =
+
+        DOMAIN
+            !!@ CRS = EPSG:2056
+            Coord3 = COORD
+            0.00 .. 100.00 [INTERLIS.m],
+            0.00 .. 100.00 [INTERLIS.m],
+            -100.00 .. 100.00 [INTERLIS.m],
+            ROTATION 2 -> 1;
+
+            !!@ CRS = EPSG:2056
+            MultiCoord3 = MULTICOORD
+            0.00 .. 100.00 [INTERLIS.m],
+            0.00 .. 100.00 [INTERLIS.m],
+            -100.00 .. 100.00 [INTERLIS.m],
+            ROTATION 2 -> 1;
+
+        CLASS Class =
+            OID AS INTERLIS.STANDARDOID;
+            Point3: Coord3;
+            Point3List : LIST OF Coord3;
+            Point3Bag : BAG OF Coord3;
+            MultiPoint3: MultiCoord3;
+        END Class;
+
+    END Geometry;
+
+END ObjectComparerTest.

@@ -1,5 +1,123 @@
 [
   {
+    "oid": "978edfe5-0d40-4985-8ecb-f11154b8d2e6",
+    "changeType": "deleted",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.ReferencesTopic.B",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
+  },
+  {
+    "oid": "0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b",
+    "changeType": "deleted",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.ReferencesTopic.D",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
+  },
+  {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RefAttr.Ref",
+    "oldValue": "978edfe5-0d40-4985-8ecb-f11154b8d2e6",
+    "newValue": "fa24ef16-0492-4e67-b73e-07b1bb71ed51"
+  },
+  {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleC",
+    "oldValue": [
+      "b716cf01-5701-4e03-9f15-365dbefb3b9c",
+      "e9bf4330-8d4d-4f99-b1f9-6f87d22f8f5e"
+    ],
+    "newValue": [
+      "e9bf4330-8d4d-4f99-b1f9-6f87d22f8f5e"
+    ]
+  },
+  {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleD",
+    "oldValue": [
+      "0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b",
+      "ed08b778-5672-4fd4-a672-cb6e545e586d"
+    ],
+    "newValue": [
+      "e3a06b3b-7257-4631-8719-6a4016736b77",
+      "ed08b778-5672-4fd4-a672-cb6e545e586d"
+    ]
+  },
+  {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleE",
+    "oldValue": [
+      "1f19e044-61aa-4e21-ad37-e88fd0e7d39a",
+      "c380a740-7883-421c-8f47-5be6b1f5dfd9"
+    ],
+    "newValue": [
+      "1f19e044-61aa-4e21-ad37-e88fd0e7d39a"
+    ]
+  },
+  {
+    "oid": "d8023e76-e7da-4448-b5f6-059374245af0",
+    "changeType": "added",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleC",
+    "oldValue": null,
+    "newValue": [
+      "b716cf01-5701-4e03-9f15-365dbefb3b9c"
+    ]
+  },
+  {
+    "oid": "d8023e76-e7da-4448-b5f6-059374245af0",
+    "changeType": "added",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleE",
+    "oldValue": null,
+    "newValue": [
+      "c380a740-7883-421c-8f47-5be6b1f5dfd9"
+    ]
+  },
+  {
+    "oid": "b716cf01-5701-4e03-9f15-365dbefb3b9c",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.C",
+    "attributePath": "RoleA",
+    "oldValue": [
+      "707eb89d-6839-4964-a8bf-5d099e496ad3"
+    ],
+    "newValue": [
+      "d8023e76-e7da-4448-b5f6-059374245af0"
+    ]
+  },
+  {
+    "oid": "c380a740-7883-421c-8f47-5be6b1f5dfd9",
+    "changeType": "changed",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.E",
+    "attributePath": "RoleA",
+    "oldValue": [
+      "707eb89d-6839-4964-a8bf-5d099e496ad3"
+    ],
+    "newValue": [
+      "d8023e76-e7da-4448-b5f6-059374245af0"
+    ]
+  },
+  {
     "oid": "62738c65-ca45-4934-9699-f000ad2d1c05",
     "changeType": "deleted",
     "valueType": "object",
@@ -7,6 +125,51 @@
     "attributePath": null,
     "oldValue": null,
     "newValue": null
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Alignment",
+    "oldValue": "Right",
+    "newValue": "Center"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Blackbox",
+    "oldValue": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAZRJREFUWIW9l7tKA0EUhr9dyKJmQSNEa+OtUhJ7C61TCbYWgi8Q0NqUXvABrETwDbTVxtooQRAV0gqiCEZFBX+LIATMZi8zmwPTzZnvO2dmmR2H1EN5YB6YAaaBKWAYGAL8tKAl0C6oDvoBKXjYg/qgCui6O9C6gHKgKugpHthYQA5oBfSQDGwkoALo3AycWEBLoGc78FgCckF79sCxBOSBjuzDIwnIA52kAw8VkAM6SA8eLpDCnkcW0HL6cMkJgBeAC2AwpEXG4XaAO8BhL+ABodVetD5gC5QDboAR22X5NClzzAJnFLlkjAZDvPyrvmq7wgnutM+a3hjoOKEdngU92gL3864tNvRFpuvEdoGKLfg497piNtLkdoG6DXiRmh4YjZzwB5+zVXkceLvArim8jw/VKMZOtNb+bdYTJQLKE/rr3H1Mcht62oOGS+vREHAnRIt1dsjwnTRdmybVZ2nqFT/xAi6tp1LiKHOMTzNxvgtMmggscmqSjovhxVOiZixg9EIdo2Ek4IA+AS/pAl94Jl8Av3XPRwaoSMXqAAAAAElFTkSuQmCC",
+    "newValue": "UklGRsoCAABXRUJQVlA4WAoAAAAYAAAAHwAAHwAAVlA4TOoBAAAvH8AHEKekqG0jqfwxz9SPPTBMAEG2zfwFbvvOv9q2bZgxnXmDJQEhJCAGyBFAJSATIDAIDCEFkII0CygIKTIFKWBBNgUQUmygMg5IhpA6UhD4mE/UkKByAeT0wcFnrg8WMCHFpQwILAhUmvtPKDKD4zA3naMSRgFBkmTTVj/r27Zt27Zt27Zx+2vHV+dF/AVE9H8Cfr/d/PNNN3/9OxsTkhuGkz9Y4CBnGt8EFWGd5UFkUixFNAzy0lLJphjem5ZF7JttWywMZX8aB6MlEVx2BtxdmE9n8piySH0vJbfc8Uv8qFi72XnPlAT0w6Pj7Sx4igKVNnOdCFt9lMSRT9MZfk8kj46F7GTVTB48v5JkASJbL/TNAIBxVBYBwBB3VZKdGO5drbZf09ozMnMl8wKA8E3Iq9RInk+XdcrsMPuFF04rdKm9pvsBlnLZxYNEsry1IRpYVWMUPMqv1+qpOgf4liy0P2kYbXl4LDSEXLzIpL7cQgCopQZyJQABF4khZ/PXbd1ByBqww3ysaRvwO2lDTjOWDD5jQNpGYDU1sdRzf8+KtVSs+GMoHki4/NAhnT6FIejVhcV4ROwakfpEHeSWD+q2gZl8YK248ZP6+NB02QGM18NvhBo1kbye7T26PPykOJH/wN+3m38BRVhJRroAAABFeGlmAABJSSoACAAAAAYAEgEDAAEAAAABAAAAGgEFAAEAAABWAAAAGwEFAAEAAABeAAAAKAEDAAEAAAACAAAAEwIDAAEAAAABAAAAaYcEAAEAAABmAAAAAAAAAN+TBADoAwAA35MEAOgDAAAGAACQBwAEAAAAMDIxMAGRBwAEAAAAAQIDAACgBwAEAAAAMDEwMAGgAwABAAAA//8AAAKgBAABAAAAIAAAAAOgBAABAAAAIAAAAAAAAAA="
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Date",
+    "oldValue": "2026-01-01T10:42:00.000",
+    "newValue": "2026-01-01T12:43:00.000"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "Enum",
+    "oldValue": "red.crimson",
+    "newValue": "green"
+  },
+  {
+    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
+    "attributePath": "MText",
+    "oldValue": "AXOLOTL\nGUINEA PIG",
+    "newValue": "PENGUIN\nGUINEA PIG"
   },
   {
     "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
@@ -27,51 +190,6 @@
     "newValue": "SHARK"
   },
   {
-    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
-    "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "MText",
-    "oldValue": "AXOLOTL\nGUINEA PIG",
-    "newValue": "PENGUIN\nGUINEA PIG"
-  },
-  {
-    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
-    "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "Enum",
-    "oldValue": "red.crimson",
-    "newValue": "green"
-  },
-  {
-    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
-    "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "Alignment",
-    "oldValue": "Right",
-    "newValue": "Center"
-  },
-  {
-    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
-    "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "Date",
-    "oldValue": "2026-01-01T10:42:00.000",
-    "newValue": "2026-01-01T12:43:00.000"
-  },
-  {
-    "oid": "d1271ca8-cd2c-49e1-bedb-46393a1dfd90",
-    "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.PrimitiveTypes",
-    "attributePath": "Blackbox",
-    "oldValue": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAZRJREFUWIW9l7tKA0EUhr9dyKJmQSNEa+OtUhJ7C61TCbYWgi8Q0NqUXvABrETwDbTVxtooQRAV0gqiCEZFBX+LIATMZi8zmwPTzZnvO2dmmR2H1EN5YB6YAaaBKWAYGAL8tKAl0C6oDvoBKXjYg/qgCui6O9C6gHKgKugpHthYQA5oBfSQDGwkoALo3AycWEBLoGc78FgCckF79sCxBOSBjuzDIwnIA52kAw8VkAM6SA8eLpDCnkcW0HL6cMkJgBeAC2AwpEXG4XaAO8BhL+ABodVetD5gC5QDboAR22X5NClzzAJnFLlkjAZDvPyrvmq7wgnutM+a3hjoOKEdngU92gL3864tNvRFpuvEdoGKLfg497piNtLkdoG6DXiRmh4YjZzwB5+zVXkceLvArim8jw/VKMZOtNb+bdYTJQLKE/rr3H1Mcht62oOGS+vREHAnRIt1dsjwnTRdmybVZ2nqFT/xAi6tp1LiKHOMTzNxvgtMmggscmqSjovhxVOiZixg9EIdo2Ek4IA+AS/pAl94Jl8Av3XPRwaoSMXqAAAAAElFTkSuQmCC",
-    "newValue": "UklGRsoCAABXRUJQVlA4WAoAAAAYAAAAHwAAHwAAVlA4TOoBAAAvH8AHEKekqG0jqfwxz9SPPTBMAEG2zfwFbvvOv9q2bZgxnXmDJQEhJCAGyBFAJSATIDAIDCEFkII0CygIKTIFKWBBNgUQUmygMg5IhpA6UhD4mE/UkKByAeT0wcFnrg8WMCHFpQwILAhUmvtPKDKD4zA3naMSRgFBkmTTVj/r27Zt27Zt27Zx+2vHV+dF/AVE9H8Cfr/d/PNNN3/9OxsTkhuGkz9Y4CBnGt8EFWGd5UFkUixFNAzy0lLJphjem5ZF7JttWywMZX8aB6MlEVx2BtxdmE9n8piySH0vJbfc8Uv8qFi72XnPlAT0w6Pj7Sx4igKVNnOdCFt9lMSRT9MZfk8kj46F7GTVTB48v5JkASJbL/TNAIBxVBYBwBB3VZKdGO5drbZf09ozMnMl8wKA8E3Iq9RInk+XdcrsMPuFF04rdKm9pvsBlnLZxYNEsry1IRpYVWMUPMqv1+qpOgf4liy0P2kYbXl4LDSEXLzIpL7cQgCopQZyJQABF4khZ/PXbd1ByBqww3ysaRvwO2lDTjOWDD5jQNpGYDU1sdRzf8+KtVSs+GMoHki4/NAhnT6FIejVhcV4ROwakfpEHeSWD+q2gZl8YK248ZP6+NB02QGM18NvhBo1kbye7T26PPykOJH/wN+3m38BRVhJRroAAABFeGlmAABJSSoACAAAAAYAEgEDAAEAAAABAAAAGgEFAAEAAABWAAAAGwEFAAEAAABeAAAAKAEDAAEAAAACAAAAEwIDAAEAAAABAAAAaYcEAAEAAABmAAAAAAAAAN+TBADoAwAA35MEAOgDAAAGAACQBwAEAAAAMDIxMAGRBwAEAAAAAQIDAACgBwAEAAAAMDEwMAGgAwABAAAA//8AAAKgBAABAAAAIAAAAAOgBAABAAAAIAAAAAAAAAA="
-  },
-  {
     "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
     "changeType": "changed",
     "valueType": "attribute",
@@ -85,36 +203,152 @@
     "changeType": "changed",
     "valueType": "attribute",
     "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
-    "attributePath": "StructList[0].Text",
-    "oldValue": "SNAKE",
-    "newValue": "CAIMAN"
+    "attributePath": "StructBag",
+    "oldValue": [
+      {
+        "Text": "KINGFISHER"
+      },
+      {
+        "Text": "RACCOON"
+      }
+    ],
+    "newValue": [
+      {
+        "Text": "SNAKE"
+      },
+      {
+        "Text": "STARFISH"
+      }
+    ]
   },
   {
     "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
     "changeType": "changed",
     "valueType": "attribute",
     "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
-    "attributePath": "StructList[1].Text",
-    "oldValue": "CAIMAN",
-    "newValue": "SNAKE"
+    "attributePath": "StructList",
+    "oldValue": [
+      {
+        "Text": "SNAKE"
+      },
+      {
+        "Text": "CAIMAN"
+      }
+    ],
+    "newValue": [
+      {
+        "Text": "CAIMAN"
+      },
+      {
+        "Text": "SNAKE"
+      }
+    ]
   },
   {
-    "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
+    "oid": "982a979f-b94f-4f50-b579-db656afc4a1f",
     "changeType": "changed",
-    "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
-    "attributePath": "StructBag[0].Text",
-    "oldValue": "KINGFISHER",
-    "newValue": "STARFISH"
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "Point",
+    "oldValue": "POINT (2635184.85 1227915.54)",
+    "newValue": "POINT (2636184.85 1228915.54)"
   },
   {
-    "oid": "c9e0e1a7-89e7-43f3-9da9-1f098635aaaa",
+    "oid": "c5c910e5-f158-440a-bad3-e2efe173f6e4",
     "changeType": "changed",
     "valueType": "attribute",
-    "interlisName": "DiffToolTest.TypesTopic.NestedTypes",
-    "attributePath": "StructBag[1].Text",
-    "oldValue": "RACCOON",
-    "newValue": "SNAKE"
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "MultiPoint.Points",
+    "oldValue": [
+      {
+        "Point": "POINT (2635380.7 1244345.6)"
+      },
+      {
+        "Point": "POINT (2646043.91 1248937.31)"
+      },
+      {
+        "Point": "POINT (2682712.31 1248632.64)"
+      }
+    ],
+    "newValue": [
+      {
+        "Point": "POINT (2636380.7 1245345.6)"
+      },
+      {
+        "Point": "POINT (2647043.91 1249937.31)"
+      },
+      {
+        "Point": "POINT (2683712.31 1249632.64)"
+      }
+    ]
+  },
+  {
+    "oid": "257be841-a1b9-46d2-b764-c9361ae8b1f9",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "Line",
+    "oldValue": "COMPOUNDCURVE ((2683386.92 1246043.01, 2686520.6 1237860.62, 2697662.57 1230896.89, 2708630.44 1229852.33))",
+    "newValue": "COMPOUNDCURVE ((2684386.92 1247043.01, 2687520.6 1238860.62, 2698662.57 1231896.89, 2709630.44 1230852.33))"
+  },
+  {
+    "oid": "3a93aece-e0b0-4fad-a071-b963938ccbf6",
+    "changeType": "changed",
+    "valueType": "attribute",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "MultiLine.Lines",
+    "oldValue": [
+      {
+        "Line": "COMPOUNDCURVE ((2666782.93 1178030.71, 2690941.93 1178030.71, 2690941.93 1153871.71))"
+      },
+      {
+        "Line": "COMPOUNDCURVE ((2721139.93 1184069.71, 2696980.93 1184069.71, 2696980.93 1208228.71))"
+      }
+    ],
+    "newValue": [
+      {
+        "Line": "COMPOUNDCURVE ((2566782.93 1178030.71, 2590941.93 1178030.71, 2590941.93 1153871.71))"
+      },
+      {
+        "Line": "COMPOUNDCURVE ((2621139.93 1184069.71, 2596980.93 1184069.71, 2596980.93 1208228.71))"
+      }
+    ]
+  },
+  {
+    "oid": "ee09a2d7-1ca4-4d14-b25e-95e7d4b4e8ae",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "Surface",
+    "oldValue": "CURVEPOLYGON (COMPOUNDCURVE (CIRCULARSTRING (2649177.59 1234030.57, 2671287.44 1210963.21, 2688783.81 1233769.43), (2688783.81 1233769.43, 2670068.78 1247696.89, 2649177.59 1234030.57)))",
+    "newValue": "CURVEPOLYGON (COMPOUNDCURVE (CIRCULARSTRING (2650177.59 1235030.57, 2672287.44 1211963.21, 2689783.81 1234769.43), (2689783.81 1234769.43, 2671068.78 1248696.89, 2650177.59 1235030.57)))"
+  },
+  {
+    "oid": "58d4171a-22f3-4c64-8106-d0ca1c91baee",
+    "changeType": "changed",
+    "valueType": "geometry",
+    "interlisName": "DiffToolTest.TypesTopic.GeometryTypes",
+    "attributePath": "Area",
+    "oldValue": "CURVEPOLYGON (COMPOUNDCURVE (CIRCULARSTRING (2649177.59 1234030.57, 2671287.44 1210963.21, 2688783.81 1233769.43), (2688783.81 1233769.43, 2670068.78 1247696.89, 2649177.59 1234030.57)))",
+    "newValue": "CURVEPOLYGON (COMPOUNDCURVE (CIRCULARSTRING (2650177.59 1235030.57, 2672287.44 1211963.21, 2689783.81 1234769.43), (2689783.81 1234769.43, 2671068.78 1248696.89, 2650177.59 1235030.57)))"
+  },
+  {
+    "oid": "fa24ef16-0492-4e67-b73e-07b1bb71ed51",
+    "changeType": "added",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.ReferencesTopic.B",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
+  },
+  {
+    "oid": "e3a06b3b-7257-4631-8719-6a4016736b77",
+    "changeType": "added",
+    "valueType": "object",
+    "interlisName": "DiffToolTest.ReferencesTopic.D",
+    "attributePath": null,
+    "oldValue": null,
+    "newValue": null
   },
   {
     "oid": "418a27f5-c11c-4e14-902d-85e1647d2a07",

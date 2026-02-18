@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JsonDiffWriterTest {
+public final class JsonDiffWriterTest {
     @Test
     public void writeNoChanges() throws IOException {
         String json = serializeChanges();

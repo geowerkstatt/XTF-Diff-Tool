@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
-public class ModelReaderTest {
+public final class ModelReaderTest {
     private static final String MODEL_DIR = "src/test/data/ModelReaderTest/";
 
     @Test

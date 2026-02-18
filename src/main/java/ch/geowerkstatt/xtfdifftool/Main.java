@@ -77,7 +77,6 @@ public final class Main {
     }
 
     private static void process(XtfDiffToolOptions options) {
-        int[] changeCount = {0};
         try {
             Path firstXtfPath = Path.of(options.firstXtfFile());
             Path secondXtfPath = Path.of(options.secondXtfFile());
@@ -88,12 +87,10 @@ public final class Main {
                     XtfStreamReader secondReader = new XtfStreamReader(transferDescription, secondXtfPath.toFile());
                     JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
             ) {
-                ObjectAnalyzer objectAnalyzer = new ObjectAnalyzer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
-                objectAnalyzer.analyzeDifferences(change -> {
-                    diffWriter.writeChange(change);
-                    changeCount[0]++;
-                });
-                LOGGER.info("Total changes found: {}", changeCount[0]);
+                ObjectComparer objectComparer = new ObjectComparer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
+                var changes = objectComparer.analyzeDifferences().toList();
+                changes.forEach(diffWriter::writeChange);
+                LOGGER.info("Total changes found: {}", changes.size());
             }
         } catch (Exception e) {
             LOGGER.error("Error processing XTF files", e);

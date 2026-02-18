@@ -22,6 +22,7 @@ repositories {
 }
 
 dependencies {
+    implementation("ch.interlis:ili2db:5.5.1")
     implementation("ch.interlis:iox-ili:1.24.4")
     implementation("ch.interlis:ili2c-core:5.6.8")
     implementation("ch.interlis:ili2c-tool:5.6.8")
