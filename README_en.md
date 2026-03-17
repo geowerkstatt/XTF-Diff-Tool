@@ -5,29 +5,29 @@
 
 # XTF-Diff-Tool
 
-Das `XTF-Diff-Tool` kann verwendet werden, um die Unterschiede zwischen zwei INTERLIS-XTF-Dateien zu analysieren.
+The `XTF-Diff-Tool` can be used to analyze the differences of two INTERLIS XTF files.
 
-## Anforderungen
+## Requirements
 
-Java 25 (LTS) oder neuer wird benötigt, um das `XTF-Diff-Tool` auszuführen.
-Die erforderlichen Jar-Abhängigkeiten sind im Distributionspaket des Tools enthalten.
+Java 25 (LTS) or later is required to run `XTF-Diff-Tool`.
+Required Jar dependencies are bundled with the distribution of the tool.
 
-Ein [Docker-Image](https://github.com/geowerkstatt/XTF-Diff-Tool/pkgs/container/XTF-Diff-Tool), das alle notwendigen Abhängigkeiten enthält, steht ebenfalls zum Download bereit.
+A [docker image](https://github.com/geowerkstatt/XTF-Diff-Tool/pkgs/container/XTF-Diff-Tool) containing all necessary dependencies is also available for download.
 
-## Verwendung
+## Usage
 
-Start über JAR:
+Starting from JAR:
 ```shell
 java -jar XTF-Diff-Tool.jar [options] <first XTF file> <second XTF file> <diff output file>
 ```
 
-Start mit Docker:
+Starting with Docker:
 ```shell
 docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/xtf-diff-tool [options] <first XTF file inside volume: /host/**/*.xtf> <second XTF file inside volume: /host/**/*.xtf> <diff output inside volume: /host/**/*.json>
 ```
 
-### Commandline Optionen
-| Option | Beschreibung |
+### Commandline Options
+| Option | Description |
 | --- | --- |
 | --help | Show help message and exit |
 | --version | Show version information and exit |
@@ -36,5 +36,5 @@ docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/xtf-diff-tool [options]
 | --proxy \<host\> | Set the proxy server used to access the INTERLIS model repositories |
 | --proxyPort \<port\> | Set the proxy port used to access the INTERLIS model repositories |
 
-### Beschreibung der Outputdatei
-Der Inhalt und Aufbau der Outputdatei (*.json) ist [hier](OutputFileDescription.md) beschrieben.
+### Output file description
+The content and structure of the output file (*.json) is described [here](OutputFileDescription.md).
