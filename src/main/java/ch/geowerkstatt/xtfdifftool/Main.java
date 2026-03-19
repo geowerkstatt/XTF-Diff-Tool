@@ -81,6 +81,10 @@ public final class Main {
             Path firstXtfPath = Path.of(options.firstXtfFile());
             Path secondXtfPath = Path.of(options.secondXtfFile());
             TransferDescription transferDescription = ModelReader.validateAndCompileIli(firstXtfPath, secondXtfPath, options.modelDir());
+            if (transferDescription == null) {
+                LOGGER.error("Error compiling INTERLIS models");
+                System.exit(1);
+            }
 
             try (
                     XtfStreamReader firstReader = new XtfStreamReader(transferDescription, firstXtfPath.toFile());
