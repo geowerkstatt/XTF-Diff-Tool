@@ -32,46 +32,47 @@
   },
   {
     "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
-    "changeType": "changed",
+    "changeType": "deleted",
     "valueType": "reference",
     "interlisName": "DiffToolTest.ReferencesTopic.A",
     "attributePath": "RoleC",
     "oldValue": [
-      "b716cf01-5701-4e03-9f15-365dbefb3b9c",
-      "e9bf4330-8d4d-4f99-b1f9-6f87d22f8f5e"
+      "b716cf01-5701-4e03-9f15-365dbefb3b9c"
     ],
-    "newValue": [
-      "e9bf4330-8d4d-4f99-b1f9-6f87d22f8f5e"
-    ]
+    "newValue": null
   },
   {
     "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
-    "changeType": "changed",
+    "changeType": "deleted",
     "valueType": "reference",
     "interlisName": "DiffToolTest.ReferencesTopic.A",
     "attributePath": "RoleD",
     "oldValue": [
-      "0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b",
-      "ed08b778-5672-4fd4-a672-cb6e545e586d"
+      "0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b"
     ],
+    "newValue": null
+  },
+  {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "added",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleD",
+    "oldValue": null,
     "newValue": [
-      "e3a06b3b-7257-4631-8719-6a4016736b77",
-      "ed08b778-5672-4fd4-a672-cb6e545e586d"
+      "e3a06b3b-7257-4631-8719-6a4016736b77"
     ]
   },
   {
     "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
-    "changeType": "changed",
+    "changeType": "deleted",
     "valueType": "reference",
     "interlisName": "DiffToolTest.ReferencesTopic.A",
     "attributePath": "RoleE",
     "oldValue": [
-      "1f19e044-61aa-4e21-ad37-e88fd0e7d39a",
       "c380a740-7883-421c-8f47-5be6b1f5dfd9"
     ],
-    "newValue": [
-      "1f19e044-61aa-4e21-ad37-e88fd0e7d39a"
-    ]
+    "newValue": null
   },
   {
     "oid": "d8023e76-e7da-4448-b5f6-059374245af0",
