@@ -1,6 +1,5 @@
 package ch.geowerkstatt.xtfdifftool;
 
-import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.settings.Settings;
 import ch.interlis.ili2c.Ili2c;
 import ch.interlis.ili2c.Ili2cException;
@@ -10,6 +9,8 @@ import ch.interlis.ilirepository.IliManager;
 import ch.interlis.iox.IoxException;
 import ch.interlis.iox_j.logging.LogEventFactory;
 import ch.interlis.iox_j.utility.IoxUtility;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 public final class ModelReader {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final LogEventFactory ERROR_FACTORY = new LogEventFactory();
     private static final Settings SETTINGS = new Settings();
 
@@ -71,7 +73,7 @@ public final class ModelReader {
         try {
             ili2cConfig = modelManager.getConfig(new ArrayList<>(modelNames), version);
         } catch (Ili2cException ex) {
-            EhiLogger.logError(ex);
+            LOGGER.error(ex);
             return null;
         }
 
