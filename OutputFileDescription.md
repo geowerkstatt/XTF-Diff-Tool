@@ -23,7 +23,9 @@ Jedes Element im JSON-Array repräsentiert eine Änderung an einem Objekt und en
 - **attributePath**: Gibt den Pfad zur betroffenen Eigenschaft an, z.B. den Attributnamen.
 - **oldValue/newValue**: Enthalten den alten bzw. neuen Wert. Werte können als String oder base64-codiert vorliegen, abhängig vom Datentyp.
 
-#### Beispiel
+### Beispiele
+
+#### Neues Objekt
 ```json
 [
   {
@@ -38,5 +40,47 @@ Jedes Element im JSON-Array repräsentiert eine Änderung an einem Objekt und en
 ]
 ```
 
-1) **valueType**: Die Art der geänderten Eigenschaft (z.B. Attribut, Referenz, Geometrie).
-2) **oldValue/newValue**: Werte können je nach Typ als String oder base64-codiert vorliegen.
+#### Gelöschtes Objekt
+```json
+[
+    {
+        "oid": "30f04ceb-44fd-49cb-8326-f9c1ceed8edd",
+        "changeType": "deleted",
+        "valueType": "reference",
+        "interlisName": "DMAV_Grundstuecke_V1_0.Grundstuecke.GSNachfuehrung",
+        "attributePath": "entstehender_Grenzpunkt",
+        "oldValue": [
+            "9afc0fd7-af41-4643-ac7a-8247a87d2650"
+        ],
+        "newValue": null
+    },
+    {
+        "oid": "9afc0fd7-af41-4643-ac7a-8247a87d2650",
+        "changeType": "deleted",
+        "valueType": "object",
+        "interlisName": "DMAV_Grundstuecke_V1_0.Grundstuecke.Grenzpunkt",
+        "attributePath": null,
+        "oldValue": null,
+        "newValue": null
+    }
+]
+```
+Da die Objektlöschung in diesem Fall auch eine Auswirkung auf die Referenzierten Objekte in der GSNachfuehrungstabelle hat, wird die Veränderung der Rererenz ebenfalls aufgelistet.
+
+#### Objektveränderung
+```json
+[
+    {
+        "oid": "e9cf8d88-3898-4e2a-869c-32d45e3f21a2",
+        "changeType": "changed",
+        "valueType": "attribute",
+        "interlisName": "DMAV_Grundstuecke_V1_0.Grundstuecke.Grundstueck",
+        "attributePath": "Nummer",
+        "oldValue": "1132",
+        "newValue": "320"
+    }
+]
+```
+
+
+
