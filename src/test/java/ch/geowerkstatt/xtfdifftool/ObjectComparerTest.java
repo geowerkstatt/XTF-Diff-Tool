@@ -422,8 +422,8 @@ public final class ObjectComparerTest {
         );
 
         var expectedChanges = List.of(
-                new TestChange("o1", ChangeType.CHANGED, ValueType.REFERENCE, CLASS_NAME, "role1B", "[\"o3\"]", "[\"o3\",\"o4\"]"),
-                new TestChange("o2", ChangeType.CHANGED, ValueType.REFERENCE, CLASS_NAME, "role1B", "[\"o4\",\"o5\",\"o6\"]", "[\"o5\",\"o6\"]"),
+                new TestChange("o1", ChangeType.ADDED, ValueType.REFERENCE, CLASS_NAME, "role1B", null, "[\"o4\"]"),
+                new TestChange("o2", ChangeType.DELETED, ValueType.REFERENCE, CLASS_NAME, "role1B", "[\"o4\"]", null),
                 new TestChange("o4", ChangeType.CHANGED, ValueType.REFERENCE, CLASS_NAME_B, "role1A", "[\"o2\"]", "[\"o1\"]")
         );
 
@@ -496,7 +496,8 @@ public final class ObjectComparerTest {
         var expectedChanges = List.of(
                 new TestChange("oB1", ChangeType.DELETED, ValueType.OBJECT, CLASS_NAME_B, null, null, null),
                 new TestChange("oB3", ChangeType.ADDED, ValueType.OBJECT, CLASS_NAME_B, null, null, null),
-                new TestChange("oA1", ChangeType.CHANGED, ValueType.REFERENCE, CLASS_NAME, "roleB", "[\"oB1\",\"oB2\"]", "[\"oB2\",\"oB3\"]"),
+                new TestChange("oA1", ChangeType.DELETED, ValueType.REFERENCE, CLASS_NAME, "roleB", "[\"oB1\"]", null),
+                new TestChange("oA1", ChangeType.ADDED, ValueType.REFERENCE, CLASS_NAME, "roleB", null, "[\"oB3\"]"),
                 new TestChange("oAssoc2", ChangeType.CHANGED, ValueType.ATTRIBUTE, STANDALONE_ASSOCIATION_NAME, "value", "\"DODO\"", "\"MOTH\"")
         );
 

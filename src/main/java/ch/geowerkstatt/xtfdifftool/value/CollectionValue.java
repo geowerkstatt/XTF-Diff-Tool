@@ -1,5 +1,6 @@
 package ch.geowerkstatt.xtfdifftool.value;
 
+import ch.geowerkstatt.xtfdifftool.diff.Change;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.interlis.ili2c.metamodel.Type;
 import ch.interlis.iom.IomObject;
@@ -7,20 +8,17 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import org.jspecify.annotations.NonNull;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public final class CollectionValue implements Value {
     @JsonValue
     private final List<Value> values;
-    private final boolean isOrdered;
+    private final boolean keepOrder;
 
-    CollectionValue(List<Value> values, boolean isOrdered) {
+    CollectionValue(List<Value> values, boolean keepOrder) {
         this.values = values;
-        this.isOrdered = isOrdered;
-        if (!isOrdered) {
+        this.keepOrder = keepOrder;
+        if (!keepOrder) {
             Collections.sort(this.values);
         }
     }
@@ -34,7 +32,7 @@ public final class CollectionValue implements Value {
      */
     public void addValue(Value value) {
         values.add(value);
-        if (!isOrdered) {
+        if (!keepOrder) {
             Collections.sort(values);
         }
     }
@@ -82,6 +80,57 @@ public final class CollectionValue implements Value {
     public ValueType getValueType() {
         // Assume all values have the same ValueType
         return values.isEmpty() ? ValueType.ATTRIBUTE : values.getFirst().getValueType();
+    }
+
+    @Override
+    public List<Change> getChanges(Value o) {
+        if (!(o instanceof CollectionValue otherCollection)
+                || this.keepOrder
+                || otherCollection.keepOrder
+                || this.getValueType() != ValueType.REFERENCE
+                || otherCollection.getValueType() != ValueType.REFERENCE) {
+            return Value.super.getChanges(o);
+        }
+
+        var added = new ArrayList<Value>();
+        var deleted = new ArrayList<Value>();
+        var hasEqualElements = false;
+        var iOld = 0;
+        var iNew = 0;
+
+        while (iOld < this.values.size() && iNew < otherCollection.values.size()) {
+            var comparison = this.values.get(iOld).compareTo(otherCollection.values.get(iNew));
+            if (comparison == 0) {
+                hasEqualElements = true;
+                iOld++;
+                iNew++;
+            } else if (comparison < 0) {
+                deleted.add(this.values.get(iOld++));
+            } else {
+                added.add(otherCollection.values.get(iNew++));
+            }
+        }
+
+        while (iOld < this.values.size()) {
+            deleted.add(this.values.get(iOld++));
+        }
+
+        while (iNew < otherCollection.values.size()) {
+            added.add(otherCollection.values.get(iNew++));
+        }
+
+        var changes = new ArrayList<Change>();
+        if (!hasEqualElements) {
+            changes.add(Change.attribute("", this, otherCollection));
+        } else {
+            if (!deleted.isEmpty()) {
+                changes.add(Change.attribute("", new CollectionValue(deleted, false), null));
+            }
+            if (!added.isEmpty()) {
+                changes.add(Change.attribute("", null, new CollectionValue(added, false)));
+            }
+        }
+        return changes;
     }
 
     @Override

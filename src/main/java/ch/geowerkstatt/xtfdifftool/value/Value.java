@@ -5,6 +5,9 @@ import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 
 import java.util.List;
 
+/**
+ * A {@link Value} is a piece of data from a transfer that can be compared to other {@link Value}s.
+ */
 public interface Value extends Comparable<Value> {
     /**
      * Computes the list of changes between this value and another value.
