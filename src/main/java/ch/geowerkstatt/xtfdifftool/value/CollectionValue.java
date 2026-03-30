@@ -13,12 +13,12 @@ import java.util.*;
 public final class CollectionValue implements Value {
     @JsonValue
     private final List<Value> values;
-    private final boolean isOrdered;
+    private final boolean keepOrder;
 
-    CollectionValue(List<Value> values, boolean isOrdered) {
+    CollectionValue(List<Value> values, boolean keepOrder) {
         this.values = values;
-        this.isOrdered = isOrdered;
-        if (!isOrdered) {
+        this.keepOrder = keepOrder;
+        if (!keepOrder) {
             Collections.sort(this.values);
         }
     }
@@ -32,7 +32,7 @@ public final class CollectionValue implements Value {
      */
     public void addValue(Value value) {
         values.add(value);
-        if (!isOrdered) {
+        if (!keepOrder) {
             Collections.sort(values);
         }
     }
@@ -85,8 +85,8 @@ public final class CollectionValue implements Value {
     @Override
     public List<Change> getChanges(Value o) {
         if (!(o instanceof CollectionValue otherCollection)
-                || this.isOrdered
-                || otherCollection.isOrdered
+                || this.keepOrder
+                || otherCollection.keepOrder
                 || this.getValueType() != ValueType.REFERENCE
                 || otherCollection.getValueType() != ValueType.REFERENCE) {
             return Value.super.getChanges(o);
