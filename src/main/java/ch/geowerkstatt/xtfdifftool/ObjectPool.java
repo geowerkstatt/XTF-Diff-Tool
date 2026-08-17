@@ -26,6 +26,7 @@ public final class ObjectPool {
     private static final Logger LOGGER = LogManager.getLogger();
     private final TransferDescription transferDescription;
     private final Map<String, Boolean> hasStableOidCache = new HashMap<>();
+    private final Map<String, Integer> ignoredReferenceCountByRole = new HashMap<>();
 
     private final Map<String, ObjectValue> objectsByStableOID;
 
@@ -51,6 +52,9 @@ public final class ObjectPool {
         for (var entry : groups.entrySet()) {
             analyzeAssociations(entry.getKey(), entry.getValue());
         }
+
+        ignoredReferenceCountByRole.forEach((roleName, count) ->
+                LOGGER.warn("Ignored {} reference(s) of role \"{}\" because the objects are not part of the compared transfers or have no stable OID.", count, roleName));
     }
 
     /**
@@ -172,7 +176,11 @@ public final class ObjectPool {
                             var thisObject = objectsByStableOID.get(thisRef);
                             var oppositeObject = objectsByStableOID.get(oppositeRef);
                             if (thisObject == null || oppositeObject == null) {
-                                LOGGER.debug("Reference of role \"{}\" between \"{}\" and \"{}\" is ignored because an object has no stable OID.", role.getName(), thisRef, oppositeRef);
+                                LOGGER.debug(
+                                        "Reference of role \"{}\" between \"{}\" and \"{}\" is ignored because an object is not part of the compared transfers or has no stable OID.",
+                                        role.getName(), thisRef, oppositeRef);
+                                ignoredReferenceCountByRole.merge(role.getScopedName(), 1, Integer::sum);
+                                ignoredReferenceCountByRole.merge(oppositeRole.getScopedName(), 1, Integer::sum);
                                 return;
                             }
 
@@ -194,26 +202,29 @@ public final class ObjectPool {
             // Gather referenced OIDs of each role
             var roleReferences = standaloneRoles.stream()
                     .collect(Collectors.toMap(
-                            RoleDef::getName,
+                            Function.identity(),
                             roleDef -> getAttrObj(object, roleDef.getName()).stream().map(IomObject::getobjectrefoid).toList()
                     ));
 
             // Add cross-role connections
-            roleReferences.forEach((roleNameA, refsA) ->
+            roleReferences.forEach((roleA, refsA) ->
                     roleReferences.entrySet().stream()
-                            .filter(entry -> !entry.getKey().equals(roleNameA))
+                            .filter(entry -> !entry.getKey().equals(roleA))
                             .forEach(entry -> {
-                                var roleNameB = entry.getKey();
+                                var roleB = entry.getKey();
                                 var refsB = entry.getValue();
                                 refsA.forEach(refA ->
                                         refsB.forEach(refB -> {
                                             var objectA = objectsByStableOID.get(refA);
                                             if (objectA == null || !objectsByStableOID.containsKey(refB)) {
-                                                LOGGER.debug("Reference of role \"{}\" between \"{}\" and \"{}\" is ignored because an object has no stable OID.", roleNameB, refA, refB);
+                                                LOGGER.debug(
+                                                        "Reference of role \"{}\" between \"{}\" and \"{}\" is ignored because an object is not part of the compared transfers or has no stable OID.",
+                                                        roleB.getName(), refA, refB);
+                                                ignoredReferenceCountByRole.merge(roleB.getScopedName(), 1, Integer::sum);
                                                 return;
                                             }
 
-                                            objectA.addReference(roleNameB, refB);
+                                            objectA.addReference(roleB.getName(), refB);
                                         })
                                 );
                             })
