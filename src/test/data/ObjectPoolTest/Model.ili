@@ -94,4 +94,28 @@ MODEL Model AT "mailto:noreply@localhost" VERSION "2026-01-22" =
         END StandaloneWithRoleToUnstableId;
 
     END TopicAssociations;
+
+    TOPIC TopicBaseWithoutOid =
+        CLASS BaseMain = END BaseMain;
+        CLASS BaseA = END BaseA;
+        CLASS BaseB = END BaseB;
+
+        ASSOCIATION BaseEmbedded =
+            RoleBaseMain -- {0..1} BaseMain;
+            RoleBaseA -- {0..*} BaseA;
+        END BaseEmbedded;
+
+        ASSOCIATION BaseStandalone =
+            RoleBaseMain2 -- {0..*} BaseMain;
+            RoleBaseB -- {0..*} BaseB;
+        END BaseStandalone;
+    END TopicBaseWithoutOid;
+
+    TOPIC TopicExtendedWithOid EXTENDS TopicBaseWithoutOid =
+        OID AS INTERLIS.UUIDOID;
+
+        CLASS BaseMain (EXTENDED) = END BaseMain;
+        CLASS BaseA (EXTENDED) = END BaseA;
+        CLASS BaseB (EXTENDED) = END BaseB;
+    END TopicExtendedWithOid;
 END Model.

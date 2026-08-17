@@ -23,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public final class ObjectPoolTest {
     private static final String TOPIC_ASSOCIATIONS = "Model.TopicAssociations";
+    private static final String TOPIC_BASE_WITHOUT_OID = "Model.TopicBaseWithoutOid";
+    private static final String TOPIC_EXTENDED_WITH_OID = "Model.TopicExtendedWithOid";
 
     private static final String MODEL_FILE = "src/test/data/ObjectPoolTest/Model.ili";
     private TransferDescription transferDescription;
@@ -161,6 +163,71 @@ public final class ObjectPoolTest {
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleG", List.of("oG"))),
                 () -> assertThat(getAssociations(pool, "oUnstableF")).containsExactlyInAnyOrderEntriesOf(Map.of()),
                 () -> assertThat(getAssociations(pool, "oG")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
+    }
+
+    @Test
+    public void embeddedAssociationDefinedInBaseTopicWithoutStableOid() {
+        List<IomObject> objects = List.of(
+                new Iom_jObject(TOPIC_EXTENDED_WITH_OID + ".BaseMain", "oMain"),
+                IomObjectHelper.createObject(TOPIC_EXTENDED_WITH_OID + ".BaseA", "oA", obj -> {
+                    obj.addattrobj("RoleBaseMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMain");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseA", List.of("oA"))),
+                () -> assertThat(getAssociations(pool, "oA")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseMain", List.of("oMain"))));
+    }
+
+    @Test
+    public void standaloneAssociationDefinedInBaseTopicWithoutStableOid() {
+        List<IomObject> objects = List.of(
+                new Iom_jObject(TOPIC_EXTENDED_WITH_OID + ".BaseMain", "oMain"),
+                new Iom_jObject(TOPIC_EXTENDED_WITH_OID + ".BaseB", "oB"),
+                IomObjectHelper.createObject(TOPIC_BASE_WITHOUT_OID + ".BaseStandalone", null, obj -> {
+                    obj.addattrobj("RoleBaseMain2", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMain");
+                    }));
+                    obj.addattrobj("RoleBaseB", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oB");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseB", List.of("oB"))),
+                () -> assertThat(getAssociations(pool, "oB")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseMain2", List.of("oMain"))));
+    }
+
+    @Test
+    public void associationReferencingObjectWithoutStableOidIsIgnored() {
+        List<IomObject> objects = List.of(
+                new Iom_jObject(TOPIC_EXTENDED_WITH_OID + ".BaseMain", "oMain"),
+                new Iom_jObject(TOPIC_BASE_WITHOUT_OID + ".BaseB", "oUnstableB"),
+                IomObjectHelper.createObject(TOPIC_BASE_WITHOUT_OID + ".BaseA", "oUnstableA", obj -> {
+                    obj.addattrobj("RoleBaseMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMain");
+                    }));
+                }),
+                IomObjectHelper.createObject(TOPIC_BASE_WITHOUT_OID + ".BaseStandalone", null, obj -> {
+                    obj.addattrobj("RoleBaseMain2", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMain");
+                    }));
+                    obj.addattrobj("RoleBaseB", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oUnstableB");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of()),
+                () -> assertThat(getAssociations(pool, "oUnstableA")).containsExactlyInAnyOrderEntriesOf(Map.of()),
+                () -> assertThat(getAssociations(pool, "oUnstableB")).containsExactlyInAnyOrderEntriesOf(Map.of()));
     }
 
     private static Map<String, List<String>> getAssociations(ObjectPool pool, String tid) {

@@ -82,12 +82,17 @@ public final class ObjectPool {
     }
 
     private boolean validateRoleHasTargetWithStableOid(RoleDef role) {
-        if (toStream(role.iteratorDestination()).anyMatch(a -> !hasClassStableOid(a.getScopedName()))) {
-            LOGGER.warn("Target of role \"{}\" has no stable OID and is ignored in comparison.", role);
+        if (toStream(role.iteratorDestination()).noneMatch(this::hasClassOrExtensionStableOid)) {
+            LOGGER.warn("No target of role \"{}\" has a stable OID, the role is ignored in comparison.", role);
             return false;
         }
 
         return true;
+    }
+
+    private boolean hasClassOrExtensionStableOid(AbstractClassDef<?> classDef) {
+        return classDef.getExtensions().stream()
+                .anyMatch(extension -> hasClassStableOid(((Element) extension).getScopedName()));
     }
 
     private boolean hasClassStableOid(String className) {
@@ -164,8 +169,15 @@ public final class ObjectPool {
                         .forEach(object -> {
                             var oppositeRef = object.getattrobj(role.getName(), 0).getobjectrefoid();
                             var thisRef = object.getobjectoid();
-                            objectsByStableOID.get(thisRef).addReference(role.getName(), oppositeRef);
-                            objectsByStableOID.get(oppositeRef).addReference(oppositeRole.getName(), thisRef);
+                            var thisObject = objectsByStableOID.get(thisRef);
+                            var oppositeObject = objectsByStableOID.get(oppositeRef);
+                            if (thisObject == null || oppositeObject == null) {
+                                LOGGER.debug("Reference of role \"{}\" between \"{}\" and \"{}\" is ignored because an object has no stable OID.", role.getName(), thisRef, oppositeRef);
+                                return;
+                            }
+
+                            thisObject.addReference(role.getName(), oppositeRef);
+                            oppositeObject.addReference(oppositeRole.getName(), thisRef);
                         })
         );
     }
@@ -194,9 +206,15 @@ public final class ObjectPool {
                                 var roleNameB = entry.getKey();
                                 var refsB = entry.getValue();
                                 refsA.forEach(refA ->
-                                        refsB.forEach(refB ->
-                                                objectsByStableOID.get(refA).addReference(roleNameB, refB)
-                                        )
+                                        refsB.forEach(refB -> {
+                                            var objectA = objectsByStableOID.get(refA);
+                                            if (objectA == null || !objectsByStableOID.containsKey(refB)) {
+                                                LOGGER.debug("Reference of role \"{}\" between \"{}\" and \"{}\" is ignored because an object has no stable OID.", roleNameB, refA, refB);
+                                                return;
+                                            }
+
+                                            objectA.addReference(roleNameB, refB);
+                                        })
                                 );
                             })
             );
