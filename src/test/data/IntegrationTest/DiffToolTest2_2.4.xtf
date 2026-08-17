@@ -14,6 +14,9 @@
 <DiffToolTest:C ili:tid="b716cf01-5701-4e03-9f15-365dbefb3b9c"><DiffToolTest:RoleA ili:ref="d8023e76-e7da-4448-b5f6-059374245af0"><DiffToolTest:A_C><DiffToolTest:text>KOALA</DiffToolTest:text></DiffToolTest:A_C></DiffToolTest:RoleA></DiffToolTest:C>
 <DiffToolTest:E ili:tid="1f19e044-61aa-4e21-ad37-e88fd0e7d39a"><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleA></DiffToolTest:E>
 <DiffToolTest:E ili:tid="c380a740-7883-421c-8f47-5be6b1f5dfd9"><DiffToolTest:RoleA ili:ref="d8023e76-e7da-4448-b5f6-059374245af0"></DiffToolTest:RoleA></DiffToolTest:E>
+<DiffToolTest:F ili:tid="fUnstable2"></DiffToolTest:F>
+<DiffToolTest:A_Mixed><DiffToolTest:RoleAMixed ili:ref="d8023e76-e7da-4448-b5f6-059374245af0"></DiffToolTest:RoleAMixed><DiffToolTest:RoleMixed ili:ref="fUnstable2"></DiffToolTest:RoleMixed></DiffToolTest:A_Mixed>
+<DiffToolTest:A_Mixed><DiffToolTest:RoleAMixed ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleAMixed><DiffToolTest:RoleMixed ili:ref="fUnstable2"></DiffToolTest:RoleMixed></DiffToolTest:A_Mixed>
 </DiffToolTest:ReferencesTopic>
 <DiffToolTest:TypesTopic ili:bid="_9d871155-0057-4098-9bda-b8046b3c2bd9">
 <DiffToolTest:PrimitiveTypes ili:tid="418a27f5-c11c-4e14-902d-85e1647d2a07"><DiffToolTest:Number>13.00</DiffToolTest:Number></DiffToolTest:PrimitiveTypes>

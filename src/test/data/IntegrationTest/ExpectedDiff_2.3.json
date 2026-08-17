@@ -71,6 +71,17 @@
     "newValue": null
   },
   {
+    "oid": "707eb89d-6839-4964-a8bf-5d099e496ad3",
+    "changeType": "deleted",
+    "valueType": "reference",
+    "interlisName": "DiffToolTest.ReferencesTopic.A",
+    "attributePath": "RoleMixed",
+    "oldValue": [
+      "978edfe5-0d40-4985-8ecb-f11154b8d2e6"
+    ],
+    "newValue": null
+  },
+  {
     "oid": "d8023e76-e7da-4448-b5f6-059374245af0",
     "changeType": "added",
     "valueType": "reference",
