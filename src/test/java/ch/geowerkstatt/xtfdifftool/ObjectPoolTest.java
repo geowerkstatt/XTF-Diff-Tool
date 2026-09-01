@@ -204,7 +204,7 @@ public final class ObjectPoolTest {
     }
 
     @Test
-    public void associationReferencingObjectWithoutStableOidIsIgnored() {
+    public void associationReferencingObjectWithoutStableOidInTransferIsIgnored() {
         List<IomObject> objects = List.of(
                 new Iom_jObject(TOPIC_EXTENDED_WITH_OID + ".BaseMain", "oMain"),
                 new Iom_jObject(TOPIC_BASE_WITHOUT_OID + ".BaseB", "oUnstableB"),
@@ -227,7 +227,170 @@ public final class ObjectPoolTest {
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of()),
                 () -> assertThat(getAssociations(pool, "oUnstableA")).containsExactlyInAnyOrderEntriesOf(Map.of()),
-                () -> assertThat(getAssociations(pool, "oUnstableB")).containsExactlyInAnyOrderEntriesOf(Map.of()));
+                () -> assertThat(getAssociations(pool, "oUnstableB")).containsExactlyInAnyOrderEntriesOf(Map.of()),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.IGNORED_UNSTABLE_IN_TRANSFER)).containsExactlyInAnyOrderEntriesOf(Map.of(
+                        TOPIC_BASE_WITHOUT_OID + ".BaseEmbedded.RoleBaseA", 1,
+                        TOPIC_BASE_WITHOUT_OID + ".BaseStandalone.RoleBaseB", 1)));
+    }
+
+    @Test
+    public void roleWithOnlyUnstableTargetsReferencingMissingObjectIsCompared() {
+        // The role F can only target the class F without stable OID. A reference to an object that
+        // is not part of the transfer is still compared, because the referenced TID might be stable.
+        List<IomObject> objects = List.of(
+                new Iom_jObject(TOPIC_ASSOCIATIONS + ".Main", "oMain"),
+                IomObjectHelper.createObject(TOPIC_ASSOCIATIONS + ".StandaloneWithRoleToUnstableId", "oAssoc", obj -> {
+                    obj.addattrobj("RoleMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMain");
+                    }));
+                    obj.addattrobj("RoleF", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMissingF");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleF", List.of("oMissingF"))),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.COMPARED_MAYBE_UNSTABLE)).containsExactlyInAnyOrderEntriesOf(Map.of(
+                        TOPIC_ASSOCIATIONS + ".StandaloneWithRoleToUnstableId.RoleF", 1)));
+    }
+
+    @Test
+    public void associationReferencingObjectMissingInTransferIsCompared() {
+        // The classes Main and C have a stable OID according to the model, the references are
+        // compared without warning although the referenced objects are not part of the transfer.
+        List<IomObject> objects = List.of(
+                new Iom_jObject(TOPIC_ASSOCIATIONS + ".Main", "oMain"),
+                IomObjectHelper.createObject(TOPIC_ASSOCIATIONS + ".A", "oA", obj -> {
+                    obj.addattrobj("RoleMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMissingMain");
+                    }));
+                }),
+                IomObjectHelper.createObject(TOPIC_ASSOCIATIONS + ".Standalone", null, obj -> {
+                    obj.addattrobj("RoleMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMain");
+                    }));
+                    obj.addattrobj("RoleC", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMissingC");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleC", List.of("oMissingC"))),
+                () -> assertThat(getAssociations(pool, "oA")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMissingMain"))),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.IGNORED_NO_STABLE_ENDPOINT)).isEmpty(),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.IGNORED_UNSTABLE_IN_TRANSFER)).isEmpty(),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.COMPARED_MAYBE_UNSTABLE)).isEmpty());
+    }
+
+    @Test
+    public void extendedClassReferencingMissingObjectIsCompared() {
+        // Mirrors a catalogue reference: the referencing object belongs to an extended class in a
+        // topic with stable OIDs, the role is defined in the base topic without stable OIDs, and
+        // the referenced object (e.g. a catalogue entry) is not part of the transfer.
+        List<IomObject> objects = List.of(
+                IomObjectHelper.createObject(TOPIC_EXTENDED_WITH_OID + ".BaseA", "oA", obj -> {
+                    obj.addattrobj("RoleBaseMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMissingMain");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertThat(getAssociations(pool, "oA")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseMain", List.of("oMissingMain"))),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.COMPARED_MAYBE_UNSTABLE)).containsExactlyInAnyOrderEntriesOf(Map.of(
+                        TOPIC_BASE_WITHOUT_OID + ".BaseEmbedded.RoleBaseMain", 1)));
+    }
+
+    @Test
+    public void externalRoleReferencingMissingObjectIsCompared() {
+        // Same as above but with an EXTERNAL role, as used by catalogue references.
+        List<IomObject> objects = List.of(
+                IomObjectHelper.createObject(TOPIC_EXTENDED_WITH_OID + ".BaseB", "oB", obj -> {
+                    obj.addattrobj("RoleExternalMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMissingCatalogueEntry");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertThat(getAssociations(pool, "oB")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleExternalMain", List.of("oMissingCatalogueEntry"))),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.COMPARED_MAYBE_UNSTABLE)).containsExactlyInAnyOrderEntriesOf(Map.of(
+                        TOPIC_BASE_WITHOUT_OID + ".BaseExternal.RoleExternalMain", 1)));
+    }
+
+    @Test
+    public void associationBetweenObjectsWithoutStableOidIsIgnored() {
+        // No involved object has a stable OID (e.g. a topic without any OID definition):
+        // there is no object to attach a comparison to, the references are ignored entirely.
+        List<IomObject> objects = List.of(
+                new Iom_jObject(TOPIC_BASE_WITHOUT_OID + ".BaseMain", "oUnstableMain"),
+                new Iom_jObject(TOPIC_BASE_WITHOUT_OID + ".BaseB", "oUnstableB"),
+                IomObjectHelper.createObject(TOPIC_BASE_WITHOUT_OID + ".BaseA", "oUnstableA", obj -> {
+                    obj.addattrobj("RoleBaseMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oUnstableMain");
+                    }));
+                }),
+                IomObjectHelper.createObject(TOPIC_BASE_WITHOUT_OID + ".BaseA", "oUnstableA2", obj -> {
+                    obj.addattrobj("RoleBaseMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMissingMain");
+                    }));
+                }),
+                IomObjectHelper.createObject(TOPIC_BASE_WITHOUT_OID + ".BaseStandalone", null, obj -> {
+                    obj.addattrobj("RoleBaseMain2", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oUnstableMain");
+                    }));
+                    obj.addattrobj("RoleBaseB", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oUnstableB");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertEquals(0, pool.objectsWithStableOid().count()),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.IGNORED_NO_STABLE_ENDPOINT)).containsExactlyInAnyOrderEntriesOf(Map.of(
+                        TOPIC_BASE_WITHOUT_OID + ".BaseEmbedded.RoleBaseMain", 2,
+                        TOPIC_BASE_WITHOUT_OID + ".BaseEmbedded.RoleBaseA", 2,
+                        TOPIC_BASE_WITHOUT_OID + ".BaseStandalone.RoleBaseMain2", 1,
+                        TOPIC_BASE_WITHOUT_OID + ".BaseStandalone.RoleBaseB", 1)),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.IGNORED_UNSTABLE_IN_TRANSFER)).isEmpty(),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.COMPARED_MAYBE_UNSTABLE)).isEmpty());
+    }
+
+    @Test
+    public void objectOfUnknownClassIsTreatedLikeObjectWithoutStableOid() {
+        // The class of oUnknown is not part of the compiled model: the object cannot join the
+        // pool, and references to its TID are ignored like references to unstable objects.
+        List<IomObject> objects = List.of(
+                new Iom_jObject(TOPIC_ASSOCIATIONS + ".Main", "oMain"),
+                new Iom_jObject(TOPIC_ASSOCIATIONS + ".DoesNotExist", "oUnknown"),
+                IomObjectHelper.createObject(TOPIC_ASSOCIATIONS + ".Standalone", null, obj -> {
+                    obj.addattrobj("RoleMain", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oMain");
+                    }));
+                    obj.addattrobj("RoleC", IomObjectHelper.createObject(Iom_jObject.REF, null, ass -> {
+                        ass.setobjectrefoid("oUnknown");
+                    }));
+                })
+        );
+
+        var pool = new ObjectPool(objects.stream(), transferDescription);
+        assertAll(
+                () -> assertEquals(1, pool.objectsWithStableOid().count()),
+                () -> assertTrue(pool.getObject("oUnknown").isEmpty()),
+                () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of()),
+                () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.IGNORED_UNSTABLE_IN_TRANSFER)).containsExactlyInAnyOrderEntriesOf(Map.of(
+                        TOPIC_ASSOCIATIONS + ".Standalone.RoleC", 1)));
+    }
+
+    private static Map<String, Integer> getCounts(ObjectPool pool, ObjectPool.ReferenceOutcome outcome) {
+        return pool.getReferenceStatistics().getCounts(outcome);
     }
 
     private static Map<String, List<String>> getAssociations(ObjectPool pool, String tid) {

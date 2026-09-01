@@ -109,6 +109,11 @@ MODEL Model AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             RoleBaseMain2 -- {0..*} BaseMain;
             RoleBaseB -- {0..*} BaseB;
         END BaseStandalone;
+
+        ASSOCIATION BaseExternal =
+            RoleExternalMain (EXTERNAL) -- {1} BaseMain;
+            RoleExternalB -- {0..*} BaseB;
+        END BaseExternal;
     END TopicBaseWithoutOid;
 
     TOPIC TopicExtendedWithOid EXTENDS TopicBaseWithoutOid =
