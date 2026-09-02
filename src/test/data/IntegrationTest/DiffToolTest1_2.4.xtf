@@ -7,6 +7,7 @@
 <DiffToolTest:D ili:tid="0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b"></DiffToolTest:D>
 <DiffToolTest:A ili:tid="707eb89d-6839-4964-a8bf-5d099e496ad3"><DiffToolTest:RefAttr ili:ref="978edfe5-0d40-4985-8ecb-f11154b8d2e6"></DiffToolTest:RefAttr></DiffToolTest:A>
 <DiffToolTest:A ili:tid="d8023e76-e7da-4448-b5f6-059374245af0"></DiffToolTest:A>
+<DiffToolTest:A ili:tid="3f9dd52e-7a49-4c39-9569-3272e5e2a30c"></DiffToolTest:A>
 <DiffToolTest:A_D><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleA><DiffToolTest:RoleD ili:ref="ed08b778-5672-4fd4-a672-cb6e545e586d"></DiffToolTest:RoleD><DiffToolTest:text>ALLIGATOR</DiffToolTest:text></DiffToolTest:A_D>
 <DiffToolTest:A_D><DiffToolTest:RoleA ili:ref="d8023e76-e7da-4448-b5f6-059374245af0"></DiffToolTest:RoleA><DiffToolTest:RoleD ili:ref="ed08b778-5672-4fd4-a672-cb6e545e586d"></DiffToolTest:RoleD><DiffToolTest:text>RHINOCEROS</DiffToolTest:text></DiffToolTest:A_D>
 <DiffToolTest:A_D><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleA><DiffToolTest:RoleD ili:ref="0caf5a8b-6cce-43ec-bd4f-95bcd7c5843b"></DiffToolTest:RoleD><DiffToolTest:text>BUFFALO</DiffToolTest:text></DiffToolTest:A_D>
@@ -14,6 +15,12 @@
 <DiffToolTest:C ili:tid="b716cf01-5701-4e03-9f15-365dbefb3b9c"><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"><DiffToolTest:A_C><DiffToolTest:text>KOALA</DiffToolTest:text></DiffToolTest:A_C></DiffToolTest:RoleA></DiffToolTest:C>
 <DiffToolTest:E ili:tid="1f19e044-61aa-4e21-ad37-e88fd0e7d39a"><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleA></DiffToolTest:E>
 <DiffToolTest:E ili:tid="c380a740-7883-421c-8f47-5be6b1f5dfd9"><DiffToolTest:RoleA ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleA></DiffToolTest:E>
+<DiffToolTest:F ili:tid="fUnstable1"></DiffToolTest:F>
+<DiffToolTest:A_Mixed><DiffToolTest:RoleAMixed ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleAMixed><DiffToolTest:RoleMixed ili:ref="978edfe5-0d40-4985-8ecb-f11154b8d2e6"></DiffToolTest:RoleMixed></DiffToolTest:A_Mixed>
+<DiffToolTest:A_Mixed><DiffToolTest:RoleAMixed ili:ref="d8023e76-e7da-4448-b5f6-059374245af0"></DiffToolTest:RoleAMixed><DiffToolTest:RoleMixed ili:ref="fUnstable1"></DiffToolTest:RoleMixed></DiffToolTest:A_Mixed>
+<DiffToolTest:A_Mixed><DiffToolTest:RoleAMixed ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleAMixed><DiffToolTest:RoleMixed ili:ref="fUnstable1"></DiffToolTest:RoleMixed></DiffToolTest:A_Mixed>
+<DiffToolTest:A_Mixed><DiffToolTest:RoleAMixed ili:ref="707eb89d-6839-4964-a8bf-5d099e496ad3"></DiffToolTest:RoleAMixed><DiffToolTest:RoleMixed ili:ref="29c81411-9e2e-4f7f-8b5e-2cf3e0f1a90d"></DiffToolTest:RoleMixed></DiffToolTest:A_Mixed>
+<DiffToolTest:A_Mixed><DiffToolTest:RoleAMixed ili:ref="3f9dd52e-7a49-4c39-9569-3272e5e2a30c"></DiffToolTest:RoleAMixed><DiffToolTest:RoleMixed ili:ref="29c81411-9e2e-4f7f-8b5e-2cf3e0f1a90d"></DiffToolTest:RoleMixed></DiffToolTest:A_Mixed>
 </DiffToolTest:ReferencesTopic>
 <DiffToolTest:TypesTopic ili:bid="_9d871155-0057-4098-9bda-b8046b3c2bd9">
 <DiffToolTest:PrimitiveTypes ili:tid="62738c65-ca45-4934-9699-f000ad2d1c05"><DiffToolTest:Number>13.00</DiffToolTest:Number></DiffToolTest:PrimitiveTypes>

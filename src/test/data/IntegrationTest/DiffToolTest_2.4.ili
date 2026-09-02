@@ -73,6 +73,10 @@ MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
         CLASS E =
         END E;
 
+        CLASS F =
+            NO OID;
+        END F;
+
         CLASS A =
             RefAttr: BAG OF REFERENCE TO B;
         END A;
@@ -98,6 +102,12 @@ MODEL DiffToolTest AT "mailto:noreply@localhost" VERSION "2026-01-21" =
             RoleA -- {0..1} A;
             RoleE -- {0..*} E;
         END A_E;
+
+        !! Nicht eingebettete Beziehung mit gemischten Zielklassen (stabile und instabile OID)
+        ASSOCIATION A_Mixed =
+            RoleAMixed -- {*} A;
+            RoleMixed -- {*} B OR F;
+        END A_Mixed;
 
     END ReferencesTopic;
 

@@ -35,6 +35,7 @@ docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/xtf-diff-tool [options]
 | --modeldir \<modeldir\> | INTERLIS model search directories and repositories separated by `;` |
 | --proxy \<host\> | Set the proxy server used to access the INTERLIS model repositories |
 | --proxyPort \<port\> | Set the proxy port used to access the INTERLIS model repositories |
+| --verbose | Enable debug log output |
 
 ### Output file description
 The content and structure of the output file (*.json) is described [here](OutputFileDescription.md).

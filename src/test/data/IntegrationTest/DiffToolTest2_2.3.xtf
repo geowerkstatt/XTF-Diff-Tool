@@ -7,6 +7,7 @@
 <DiffToolTest.ReferencesTopic.D TID="e3a06b3b-7257-4631-8719-6a4016736b77"></DiffToolTest.ReferencesTopic.D>
 <DiffToolTest.ReferencesTopic.A TID="707eb89d-6839-4964-a8bf-5d099e496ad3"><RefAttr><DiffToolTest.ReferencesTopic.ReferenceB><Ref REF="fa24ef16-0492-4e67-b73e-07b1bb71ed51"></Ref></DiffToolTest.ReferencesTopic.ReferenceB></RefAttr></DiffToolTest.ReferencesTopic.A>
 <DiffToolTest.ReferencesTopic.A TID="d8023e76-e7da-4448-b5f6-059374245af0"></DiffToolTest.ReferencesTopic.A>
+<DiffToolTest.ReferencesTopic.A TID="3f9dd52e-7a49-4c39-9569-3272e5e2a30c"></DiffToolTest.ReferencesTopic.A>
 <DiffToolTest.ReferencesTopic.A_D><RoleA REF="707eb89d-6839-4964-a8bf-5d099e496ad3"></RoleA><RoleD REF="e3a06b3b-7257-4631-8719-6a4016736b77"></RoleD><text>BUFFALO</text></DiffToolTest.ReferencesTopic.A_D>
 <DiffToolTest.ReferencesTopic.A_D><RoleA REF="707eb89d-6839-4964-a8bf-5d099e496ad3"></RoleA><RoleD REF="ed08b778-5672-4fd4-a672-cb6e545e586d"></RoleD><text>ALLIGATOR</text></DiffToolTest.ReferencesTopic.A_D>
 <DiffToolTest.ReferencesTopic.A_D><RoleA REF="d8023e76-e7da-4448-b5f6-059374245af0"></RoleA><RoleD REF="ed08b778-5672-4fd4-a672-cb6e545e586d"></RoleD><text>RHINOCEROS</text></DiffToolTest.ReferencesTopic.A_D>
@@ -14,6 +15,12 @@
 <DiffToolTest.ReferencesTopic.C TID="b716cf01-5701-4e03-9f15-365dbefb3b9c"><RoleA REF="d8023e76-e7da-4448-b5f6-059374245af0"><DiffToolTest.ReferencesTopic.A_C><text>KOALA</text></DiffToolTest.ReferencesTopic.A_C></RoleA></DiffToolTest.ReferencesTopic.C>
 <DiffToolTest.ReferencesTopic.E TID="1f19e044-61aa-4e21-ad37-e88fd0e7d39a"><RoleA REF="707eb89d-6839-4964-a8bf-5d099e496ad3"></RoleA></DiffToolTest.ReferencesTopic.E>
 <DiffToolTest.ReferencesTopic.E TID="c380a740-7883-421c-8f47-5be6b1f5dfd9"><RoleA REF="d8023e76-e7da-4448-b5f6-059374245af0"></RoleA></DiffToolTest.ReferencesTopic.E>
+<DiffToolTest.ReferencesTopic.F TID="fUnstable2"></DiffToolTest.ReferencesTopic.F>
+<DiffToolTest.ReferencesTopic.A_Mixed><RoleAMixed REF="d8023e76-e7da-4448-b5f6-059374245af0"></RoleAMixed><RoleMixed REF="fUnstable2"></RoleMixed></DiffToolTest.ReferencesTopic.A_Mixed>
+<DiffToolTest.ReferencesTopic.A_Mixed><RoleAMixed REF="707eb89d-6839-4964-a8bf-5d099e496ad3"></RoleAMixed><RoleMixed REF="fUnstable2"></RoleMixed></DiffToolTest.ReferencesTopic.A_Mixed>
+<DiffToolTest.ReferencesTopic.A_Mixed><RoleAMixed REF="707eb89d-6839-4964-a8bf-5d099e496ad3"></RoleAMixed><RoleMixed REF="29c81411-9e2e-4f7f-8b5e-2cf3e0f1a90d"></RoleMixed></DiffToolTest.ReferencesTopic.A_Mixed>
+<DiffToolTest.ReferencesTopic.A_Mixed><RoleAMixed REF="3f9dd52e-7a49-4c39-9569-3272e5e2a30c"></RoleAMixed><RoleMixed REF="29c81411-9e2e-4f7f-8b5e-2cf3e0f1a90d"></RoleMixed></DiffToolTest.ReferencesTopic.A_Mixed>
+<DiffToolTest.ReferencesTopic.A_Mixed><RoleAMixed REF="d8023e76-e7da-4448-b5f6-059374245af0"></RoleAMixed><RoleMixed REF="76fa9b62-32a5-4f88-9a4b-40de1b06e2fa"></RoleMixed></DiffToolTest.ReferencesTopic.A_Mixed>
 </DiffToolTest.ReferencesTopic>
 <DiffToolTest.TypesTopic BID="_9d871155-0057-4098-9bda-b8046b3c2bd9">
 <DiffToolTest.TypesTopic.PrimitiveTypes TID="418a27f5-c11c-4e14-902d-85e1647d2a07"><Number>13.00</Number></DiffToolTest.TypesTopic.PrimitiveTypes>

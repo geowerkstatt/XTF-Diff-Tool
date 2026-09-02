@@ -9,6 +9,7 @@ public record XtfDiffToolOptions(
         Optional<String> logfile,
         Optional<String> modelDir,
         Optional<String> proxyHost,
-        Optional<String> proxyPort
+        Optional<String> proxyPort,
+        boolean verbose
 ) {
 }

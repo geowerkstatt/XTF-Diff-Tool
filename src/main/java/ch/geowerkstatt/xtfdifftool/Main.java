@@ -32,6 +32,7 @@ public final class Main {
     private static final String OPTION_MODEL_DIR = "modeldir";
     private static final String OPTION_PROXY = "proxy";
     private static final String OPTION_PROXY_PORT = "proxyPort";
+    private static final String OPTION_VERBOSE = "verbose";
     private static final String OPTION_VERSION = "version";
     private static final String VERSION;
     private static final Logger LOGGER = LogManager.getLogger();
@@ -140,7 +141,8 @@ public final class Main {
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_LOGFILE)),
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_MODEL_DIR)),
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_PROXY)),
-                Optional.ofNullable(commandLine.getOptionValue(OPTION_PROXY_PORT))
+                Optional.ofNullable(commandLine.getOptionValue(OPTION_PROXY_PORT)),
+                commandLine.hasOption(OPTION_VERBOSE)
         ));
     }
 
@@ -159,7 +161,8 @@ public final class Main {
     }
 
     private static void configureLogging(XtfDiffToolOptions options) {
-        Configurator.setRootLevel(Level.INFO);
+        Level logLevel = options.verbose() ? Level.DEBUG : Level.INFO;
+        Configurator.setRootLevel(logLevel);
         if (options.logfile().isPresent()) {
             var layout = PatternLayout.newBuilder()
                     .withPattern("%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n")
@@ -171,7 +174,7 @@ public final class Main {
                     .withAppend(false)
                     .build();
             var rootLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
-            rootLogger.get().addAppender(fileAppender, Level.INFO, null);
+            rootLogger.get().addAppender(fileAppender, logLevel, null);
             fileAppender.start();
         }
 
@@ -215,6 +218,10 @@ public final class Main {
                 .desc("set the proxy port to access the INTERLIS model repositories")
                 .argName("port")
                 .hasArg()
+                .get());
+        options.addOption(Option.builder("v")
+                .longOpt(OPTION_VERBOSE)
+                .desc("enable debug log output")
                 .get());
         options.addOption(Option.builder()
                 .longOpt(OPTION_VERSION)
