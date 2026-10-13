@@ -15,6 +15,7 @@ import ch.interlis.iox_j.filter.Rounder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -74,20 +75,19 @@ public final class ObjectComparer {
     private Stream<Change> compareObjectValues(ObjectValue first, ObjectValue second) {
         try {
             return first.getChanges(second).stream()
-                    .map(o -> o.withObject(first).withLocations(locationOf(o, first, o.oldValue()), locationOf(o, second, o.newValue())));
+                    .map(o -> o.withObject(first).withLocations(locationOf(o.oldValue(), first), locationOf(o.newValue(), second)));
         } catch (Exception ex) {
             LOGGER.error("Could not compare class {}", first.getTag(), ex);
             return Stream.of();
         }
     }
 
-    // A changed geometry locates itself, any other change is located by the geometry of its object.
-    private static String locationOf(Change change, ObjectValue object, Value value) {
-        if (change.valueType() != ValueType.GEOMETRY) {
-            return object.getLocation();
-        }
-
-        return value == null ? null : Locations.combine(value.getLocations());
+    // A changed geometry locates itself. Any other change, and a geometry missing on one side, is located by the
+    // geometry of its object.
+    private static String locationOf(Value value, ObjectValue object) {
+        return Optional.ofNullable(value)
+                .map(v -> Locations.combine(v.getLocations()))
+                .orElseGet(object::getLocation);
     }
 
     private record RounderFacade(Rounder rounder) {

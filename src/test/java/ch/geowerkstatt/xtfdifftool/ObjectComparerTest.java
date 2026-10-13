@@ -694,14 +694,46 @@ public final class ObjectComparerTest {
     public void locationIgnoresGeometryInStructure() {
         var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
             obj.setattrvalue("text", "a");
-            obj.addattrobj("struct", createGeometryStruct());
+            obj.addattrobj("struct", createObject(GEOMETRY_STRUCT, null, s -> s.addattrobj("Point", createCoord("15", "15"))));
         }));
         var second = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
             obj.setattrvalue("text", "b");
-            obj.addattrobj("struct", createGeometryStruct());
+            obj.addattrobj("struct", createObject(GEOMETRY_STRUCT, null, s -> s.addattrobj("Point", createCoord("15", "15"))));
         }));
 
         assertLocations(first, second, List.of(new TestLocation("o1", "text", null, null)));
+    }
+
+    @Test
+    public void locationOfGeometryChangeInStructureIsTheChangedGeometry() {
+        var first = List.of(createObject(LOCATED_CLASS, "o1", obj ->
+                obj.addattrobj("struct", createObject(GEOMETRY_STRUCT, null, s -> s.addattrobj("Point", createCoord("15", "15"))))));
+        var second = List.of(createObject(LOCATED_CLASS, "o1", obj ->
+                obj.addattrobj("struct", createObject(GEOMETRY_STRUCT, null, s -> s.addattrobj("Point", createCoord("16", "16"))))));
+
+        // A changed geometry locates itself, also in a structure; only the location of the object leaves structures out.
+        assertLocations(first, second, List.of(new TestLocation("o1", "struct.Point", "POINT (15 15)", "POINT (16 16)")));
+    }
+
+    @Test
+    public void locationOfRemovedOrAddedGeometryIsTheObjectOnTheOtherSide() {
+        var first = List.of(
+                createObject(LOCATED_CLASS, "o1", obj -> {
+                    obj.addattrobj("Point3", createCoord("20", "30", "54"));
+                    obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
+                }),
+                createObject(LOCATED_CLASS, "o2", obj -> obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"))));
+        var second = List.of(
+                createObject(LOCATED_CLASS, "o1", obj -> obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"))),
+                createObject(LOCATED_CLASS, "o2", obj -> {
+                    obj.addattrobj("Point3", createCoord("20", "30", "54"));
+                    obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
+                }));
+
+        // The object exists in both states, so its own geometry locates the side without the point.
+        assertLocations(first, second, List.of(
+                new TestLocation("o1", "Point3", "POINT (20 30)", RECTANGLE),
+                new TestLocation("o2", "Point3", RECTANGLE, "POINT (20 30)")));
     }
 
     @Test
@@ -752,12 +784,6 @@ public final class ObjectComparerTest {
 
     private static IomObject createSemicircleMultiPolyline() {
         return createMultiPolyline(createPolyline(createCoord("10", "20"), createArc("20", "30", "30", "20")));
-    }
-
-    private static IomObject createGeometryStruct() {
-        var struct = new Iom_jObject(GEOMETRY_STRUCT, null);
-        struct.addattrobj("Point", createCoord("15", "15"));
-        return struct;
     }
 
     // Each chord of the approximated arc stays within 1 cm of the circle, plus the rounding to mm.

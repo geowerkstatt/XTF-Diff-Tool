@@ -84,7 +84,7 @@ Mit der Option `--locations` bekommt jedes Element zwei weitere Eigenschaften, d
 | newLocation | WKT String  | Lage der Änderung im neuen Stand; fehlt bei "deleted" und ohne Lage |
 
 - Die Lage ist WKT nach OGC Simple Features 1.1, also `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` oder `GEOMETRYCOLLECTION`, immer 2D. Bögen sind durch Geraden mit höchstens 1 cm Abweichung angenähert, die Koordinaten auf mm gerundet. `oldValue` und `newValue` bleiben exakt.
-- Bei valueType "geometry" ist die Lage die geänderte Geometrie selbst, sonst die Geometrie des Objekts im jeweiligen Stand.
+- Bei valueType "geometry" ist die Lage die geänderte Geometrie selbst, auch in einer Struktur. Fehlt sie auf einer Seite, weil das Attribut hinzugefügt oder entfernt wurde, ist die Lage dort die Geometrie des Objekts, ebenso bei allen anderen Änderungen.
 - Als Geometrie des Objekts zählen die Geometrie-Attribute seiner Klasse, nicht die Geometrien in Strukturen. Mehrere ergeben eine `GEOMETRYCOLLECTION`. Ein Objekt ohne eigene Geometrie hat keine Lage, auch nicht über Referenzen auf andere Objekte.
 
 #### Objektveränderung mit Lage
