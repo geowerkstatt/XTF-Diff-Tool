@@ -28,6 +28,7 @@ import java.util.Optional;
 
 public final class Main {
     private static final String OPTION_HELP = "help";
+    private static final String OPTION_LOCATIONS = "locations";
     private static final String OPTION_LOGFILE = "logfile";
     private static final String OPTION_MODEL_DIR = "modeldir";
     private static final String OPTION_PROXY = "proxy";
@@ -59,22 +60,23 @@ public final class Main {
         } else if (commandLine.hasOption(OPTION_VERSION)) {
             System.out.println(VERSION);
         } else {
-            Optional<XtfDiffToolOptions> options = parseXtfDiffToolOptions(commandLine);
-            if (options.isEmpty()) {
+            parseXtfDiffToolOptions(commandLine).ifPresentOrElse(Main::run, () -> {
                 printUsage(cliOptions);
                 System.exit(1);
-            }
-
-            configureProxy(options.get());
-            configureLogging(options.get());
-
-            Instant start = Instant.now();
-            process(options.get());
-            Instant end = Instant.now();
-            Duration duration = Duration.between(start, end);
-            String formattedDuration = String.format("%d.%03ds", duration.toSeconds(), duration.toMillisPart());
-            LOGGER.info("Processing took {}", formattedDuration);
+            });
         }
+    }
+
+    private static void run(XtfDiffToolOptions options) {
+        configureProxy(options);
+        configureLogging(options);
+
+        Instant start = Instant.now();
+        process(options);
+        Instant end = Instant.now();
+        Duration duration = Duration.between(start, end);
+        String formattedDuration = String.format("%d.%03ds", duration.toSeconds(), duration.toMillisPart());
+        LOGGER.info("Processing took {}", formattedDuration);
     }
 
     private static void process(XtfDiffToolOptions options) {
@@ -92,7 +94,7 @@ public final class Main {
                     XtfStreamReader secondReader = new XtfStreamReader(transferDescription, secondXtfPath.toFile());
                     JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
             ) {
-                ObjectComparer objectComparer = new ObjectComparer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
+                ObjectComparer objectComparer = new ObjectComparer(transferDescription, firstReader.readObjects(), secondReader.readObjects(), options.locations());
                 var changes = objectComparer.analyzeDifferences().toList();
                 changes.forEach(diffWriter::writeChange);
                 LOGGER.info("Total changes found: {}", changes.size());
@@ -142,41 +144,27 @@ public final class Main {
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_MODEL_DIR)),
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_PROXY)),
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_PROXY_PORT)),
-                commandLine.hasOption(OPTION_VERBOSE)
+                commandLine.hasOption(OPTION_VERBOSE),
+                commandLine.hasOption(OPTION_LOCATIONS)
         ));
     }
 
     private static void configureProxy(XtfDiffToolOptions options) {
-        if (options.proxyHost().isPresent()) {
-            System.setProperty("http.proxyHost", options.proxyHost().get());
-            System.setProperty("https.proxyHost", options.proxyHost().get());
+        options.proxyHost().ifPresentOrElse(proxyHost -> {
+            System.setProperty("http.proxyHost", proxyHost);
+            System.setProperty("https.proxyHost", proxyHost);
 
-            if (options.proxyPort().isPresent()) {
-                System.setProperty("http.proxyPort", options.proxyPort().get());
-                System.setProperty("https.proxyPort", options.proxyPort().get());
-            }
-        } else {
-            System.setProperty("java.net.useSystemProxies", "true");
-        }
+            options.proxyPort().ifPresent(proxyPort -> {
+                System.setProperty("http.proxyPort", proxyPort);
+                System.setProperty("https.proxyPort", proxyPort);
+            });
+        }, () -> System.setProperty("java.net.useSystemProxies", "true"));
     }
 
     private static void configureLogging(XtfDiffToolOptions options) {
         Level logLevel = options.verbose() ? Level.DEBUG : Level.INFO;
         Configurator.setRootLevel(logLevel);
-        if (options.logfile().isPresent()) {
-            var layout = PatternLayout.newBuilder()
-                    .withPattern("%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n")
-                    .build();
-            var fileAppender = FileAppender.newBuilder()
-                    .setName("Logfile")
-                    .setLayout(layout)
-                    .withFileName(options.logfile().get())
-                    .withAppend(false)
-                    .build();
-            var rootLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
-            rootLogger.get().addAppender(fileAppender, logLevel, null);
-            fileAppender.start();
-        }
+        options.logfile().ifPresent(logfile -> addLogfileAppender(logfile, logLevel));
 
         EhiLogger.getInstance().addListener(new EhiLogAdapter());
         EhiLogger.getInstance().removeListener(StdListener.getInstance());
@@ -188,12 +176,31 @@ public final class Main {
         LOGGER.info("Diff output file: {}", options.diffOutputFile());
     }
 
+    private static void addLogfileAppender(String logfile, Level logLevel) {
+        var layout = PatternLayout.newBuilder()
+                .withPattern("%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n")
+                .build();
+        var fileAppender = FileAppender.newBuilder()
+                .setName("Logfile")
+                .setLayout(layout)
+                .withFileName(logfile)
+                .withAppend(false)
+                .build();
+        var rootLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
+        rootLogger.get().addAppender(fileAppender, logLevel, null);
+        fileAppender.start();
+    }
+
     private static Options createCliOptions() {
         Options options = new Options();
 
         options.addOption(Option.builder("h")
                 .longOpt(OPTION_HELP)
                 .desc("print this help message")
+                .get());
+        options.addOption(Option.builder()
+                .longOpt(OPTION_LOCATIONS)
+                .desc("add the location of each change in the old and the new state as WKT (oldLocation, newLocation)")
                 .get());
         options.addOption(Option.builder()
                 .longOpt(OPTION_LOGFILE)

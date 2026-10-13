@@ -81,6 +81,15 @@ public final class ObjectValue implements Value {
         return associations;
     }
 
+    /**
+     * Returns the location of this object: the locations of its own geometry attributes, not those in structures.
+     *
+     * @return the location as WKT, {@code null} without one, see {@link Locations#combine}
+     */
+    public String getLocation() {
+        return Locations.combine(values.values().stream().flatMap(Value::getLocations));
+    }
+
     @Override
     public int compareTo(@NonNull Value o) {
         if (!(o instanceof ObjectValue otherObject)) {

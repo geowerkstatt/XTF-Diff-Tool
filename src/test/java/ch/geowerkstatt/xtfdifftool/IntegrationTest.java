@@ -96,6 +96,22 @@ public final class IntegrationTest {
         assertEquals(prettyPrintJson(expectedOutput), prettyPrintJson(actualOutput));
     }
 
+    @Test
+    public void analyzeDifference24WithLocations() throws IOException {
+        var output = new File(TEST_OUT_DIR + "Diff_24_locations.json");
+        assertFalse(output.exists(), "Precondition: output file should not exist.");
+
+        String[] arguments = {XTF_FILE_1_24, XTF_FILE_2_24, output.toString(), "--modeldir", TEST_DIR, "--locations"};
+        Main.main(arguments);
+
+        assertTrue(output.exists());
+
+        // The test data hold every geometry type and arcs, so the expected file also pins how the locations approximate them.
+        var expectedOutput = Files.readString(Path.of(TEST_DIR + "ExpectedDiff_2.4_locations.json"));
+        var actualOutput = Files.readString(output.toPath());
+        assertEquals(prettyPrintJson(expectedOutput), prettyPrintJson(actualOutput));
+    }
+
     private static TransferDescription compileIli(String iliFile) {
         Configuration config = new Configuration();
         config.addFileEntry(new FileEntry(iliFile, FileEntryKind.ILIMODELFILE));

@@ -33,11 +33,11 @@ public final class ObjectPool {
     private final Set<String> allTransferTids;
 
     /**
-     * Creates a new instance of the ObjectPool.
+     * Creates a new instance of the ObjectPool, with the locations of the geometries if {@code includeLocations} is set.
      */
-    public ObjectPool(Stream<IomObject> objects, TransferDescription transferDescription) {
+    public ObjectPool(Stream<IomObject> objects, TransferDescription transferDescription, boolean includeLocations) {
         this.transferDescription = transferDescription;
-        var factory = new ValueFactory(transferDescription);
+        var factory = new ValueFactory(transferDescription, includeLocations);
         var objectList = objects.toList();
         this.objectsByStableOID = objectList.stream()
                 .filter(o -> hasClassStableOid(o.getobjecttag()))

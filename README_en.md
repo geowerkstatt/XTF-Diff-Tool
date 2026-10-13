@@ -36,6 +36,7 @@ docker run -it --rm -v ${PWD}:/host ghcr.io/geowerkstatt/xtf-diff-tool [options]
 | --proxy \<host\> | Set the proxy server used to access the INTERLIS model repositories |
 | --proxyPort \<port\> | Set the proxy port used to access the INTERLIS model repositories |
 | --verbose | Enable debug log output |
+| --locations | Add the location of each change in the old and the new state as WKT (`oldLocation`, `newLocation`) |
 
 ### Output file description
 The content and structure of the output file (*.json) is described [here](OutputFileDescription.md).
