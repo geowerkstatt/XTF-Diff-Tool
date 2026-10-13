@@ -59,22 +59,23 @@ public final class Main {
         } else if (commandLine.hasOption(OPTION_VERSION)) {
             System.out.println(VERSION);
         } else {
-            Optional<XtfDiffToolOptions> options = parseXtfDiffToolOptions(commandLine);
-            if (options.isEmpty()) {
+            parseXtfDiffToolOptions(commandLine).ifPresentOrElse(Main::run, () -> {
                 printUsage(cliOptions);
                 System.exit(1);
-            }
-
-            configureProxy(options.get());
-            configureLogging(options.get());
-
-            Instant start = Instant.now();
-            process(options.get());
-            Instant end = Instant.now();
-            Duration duration = Duration.between(start, end);
-            String formattedDuration = String.format("%d.%03ds", duration.toSeconds(), duration.toMillisPart());
-            LOGGER.info("Processing took {}", formattedDuration);
+            });
         }
+    }
+
+    private static void run(XtfDiffToolOptions options) {
+        configureProxy(options);
+        configureLogging(options);
+
+        Instant start = Instant.now();
+        process(options);
+        Instant end = Instant.now();
+        Duration duration = Duration.between(start, end);
+        String formattedDuration = String.format("%d.%03ds", duration.toSeconds(), duration.toMillisPart());
+        LOGGER.info("Processing took {}", formattedDuration);
     }
 
     private static void process(XtfDiffToolOptions options) {
@@ -147,36 +148,21 @@ public final class Main {
     }
 
     private static void configureProxy(XtfDiffToolOptions options) {
-        if (options.proxyHost().isPresent()) {
-            System.setProperty("http.proxyHost", options.proxyHost().get());
-            System.setProperty("https.proxyHost", options.proxyHost().get());
+        options.proxyHost().ifPresentOrElse(proxyHost -> {
+            System.setProperty("http.proxyHost", proxyHost);
+            System.setProperty("https.proxyHost", proxyHost);
 
-            if (options.proxyPort().isPresent()) {
-                System.setProperty("http.proxyPort", options.proxyPort().get());
-                System.setProperty("https.proxyPort", options.proxyPort().get());
-            }
-        } else {
-            System.setProperty("java.net.useSystemProxies", "true");
-        }
+            options.proxyPort().ifPresent(proxyPort -> {
+                System.setProperty("http.proxyPort", proxyPort);
+                System.setProperty("https.proxyPort", proxyPort);
+            });
+        }, () -> System.setProperty("java.net.useSystemProxies", "true"));
     }
 
     private static void configureLogging(XtfDiffToolOptions options) {
         Level logLevel = options.verbose() ? Level.DEBUG : Level.INFO;
         Configurator.setRootLevel(logLevel);
-        if (options.logfile().isPresent()) {
-            var layout = PatternLayout.newBuilder()
-                    .withPattern("%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n")
-                    .build();
-            var fileAppender = FileAppender.newBuilder()
-                    .setName("Logfile")
-                    .setLayout(layout)
-                    .withFileName(options.logfile().get())
-                    .withAppend(false)
-                    .build();
-            var rootLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
-            rootLogger.get().addAppender(fileAppender, logLevel, null);
-            fileAppender.start();
-        }
+        options.logfile().ifPresent(logfile -> addLogfileAppender(logfile, logLevel));
 
         EhiLogger.getInstance().addListener(new EhiLogAdapter());
         EhiLogger.getInstance().removeListener(StdListener.getInstance());
@@ -186,6 +172,21 @@ public final class Main {
         LOGGER.info("iox-ili version {}", IoxUtility.getVersion());
         LOGGER.info("Transfer files: {}, {}", options.firstXtfFile(), options.secondXtfFile());
         LOGGER.info("Diff output file: {}", options.diffOutputFile());
+    }
+
+    private static void addLogfileAppender(String logfile, Level logLevel) {
+        var layout = PatternLayout.newBuilder()
+                .withPattern("%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n")
+                .build();
+        var fileAppender = FileAppender.newBuilder()
+                .setName("Logfile")
+                .setLayout(layout)
+                .withFileName(logfile)
+                .withAppend(false)
+                .build();
+        var rootLogger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
+        rootLogger.get().addAppender(fileAppender, logLevel, null);
+        fileAppender.start();
     }
 
     private static Options createCliOptions() {
