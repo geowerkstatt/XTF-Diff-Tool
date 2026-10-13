@@ -36,6 +36,22 @@ public final class JsonDiffWriterTest {
                 [{"oid":"o1","changeType":"added","valueType":"object","interlisName":"ClassName","attributePath":null,"oldValue":null,"newValue":null},{"oid":"o2","changeType":"deleted","valueType":"object","interlisName":"ClassName","attributePath":null,"oldValue":null,"newValue":null}]""", json);
     }
 
+    @Test
+    public void writeChangeWithLocations() throws IOException {
+        Change change = new Change("o1", ChangeType.CHANGED, ValueType.ATTRIBUTE, "ClassName", "text", null, null, "POINT (1 2)", "POINT (1 3)");
+        String json = serializeChanges(change);
+        assertEquals("""
+                [{"oid":"o1","changeType":"changed","valueType":"attribute","interlisName":"ClassName","attributePath":"text","oldValue":null,"newValue":null,"oldLocation":"POINT (1 2)","newLocation":"POINT (1 3)"}]""", json);
+    }
+
+    @Test
+    public void writeAddedObjectWithoutOldLocation() throws IOException {
+        Change change = new Change("o1", ChangeType.ADDED, ValueType.OBJECT, "ClassName", null, null, null, null, "POINT (1 2)");
+        String json = serializeChanges(change);
+        assertEquals("""
+                [{"oid":"o1","changeType":"added","valueType":"object","interlisName":"ClassName","attributePath":null,"oldValue":null,"newValue":null,"newLocation":"POINT (1 2)"}]""", json);
+    }
+
     private String serializeChanges(Change... changes) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (JsonDiffWriter writer = new JsonDiffWriter(outputStream)) {

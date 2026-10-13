@@ -18,19 +18,29 @@ import ch.interlis.iox_j.jts.Iox2jtsException;
 import ch.interlis.iox_j.jts.Iox2jtsext;
 import ch.interlis.iox_j.logging.LogEventFactory;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.WKTWriter;
 import org.jspecify.annotations.NonNull;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public final class GeometryValue implements Value {
+    private static final double LOCATION_ARC_TOLERANCE = 0.01;
+    private static final PrecisionModel LOCATION_PRECISION = new PrecisionModel(1000);
+    private static final GeometryFactory LOCATION_FACTORY = new GeometryFactory(LOCATION_PRECISION);
 
     @JsonValue
     private final String wktValue;
+    private final String location;
 
-    GeometryValue(String wktValue) {
+    GeometryValue(String wktValue, String location) {
         this.wktValue = wktValue;
+        this.location = location;
     }
 
     /**
@@ -55,11 +65,39 @@ public final class GeometryValue implements Value {
                 return Optional.empty();
             } else {
                 var wktValue = new WKTWriterJtsext(3).write(geometry);
-                return Optional.of(new GeometryValue(wktValue));
+                var location = factory.includesLocations() ? createLocation(geometryObject, type) : null;
+                return Optional.of(new GeometryValue(wktValue, location));
             }
         } catch (IoxException | Iox2jtsException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // The geometry as a simple feature every map reads: arcs approximated within the tolerance, in 2D, rounded to mm.
+    private static String createLocation(IomObject geometryObject, Type type) throws IoxException, Iox2jtsException {
+        Geometry geometry = switch (type.resolveAliases()) {
+            case MultiCoordType _ -> Iox2jts.multicoord2JTS(geometryObject);
+            case CoordType _ -> LOCATION_FACTORY.createPoint(Iox2jts.coord2JTS(geometryObject));
+            case PolylineType _ -> Iox2jts.polyline2JTSlineString(geometryObject, false, LOCATION_ARC_TOLERANCE);
+            case MultiPolylineType _ -> Iox2jts.multipolyline2JTS(geometryObject, LOCATION_ARC_TOLERANCE);
+            case SurfaceOrAreaType _ -> Iox2jts.surface2JTS(geometryObject, LOCATION_ARC_TOLERANCE);
+            case MultiSurfaceOrAreaType _ -> Iox2jts.multisurface2JTS(geometryObject, LOCATION_ARC_TOLERANCE, 0);
+            case null, default -> null;
+        };
+
+        if (geometry == null) {
+            return null;
+        }
+
+        var rounded = LOCATION_FACTORY.createGeometry(geometry);
+        rounded.apply((CoordinateFilter) LOCATION_PRECISION::makePrecise);
+        rounded.geometryChanged();
+        return new WKTWriter().write(rounded);
+    }
+
+    @Override
+    public Stream<String> getLocations() {
+        return Stream.ofNullable(location);
     }
 
     @Override

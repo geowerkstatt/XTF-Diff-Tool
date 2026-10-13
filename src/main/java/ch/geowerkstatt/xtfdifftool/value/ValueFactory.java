@@ -19,12 +19,20 @@ public final class ValueFactory {
     };
 
     private final TransferDescription transferDescription;
+    private final boolean includeLocations;
 
     /**
      * Constructs a factory using the provided transfer description to resolve elements.
+     *
+     * @param includeLocations whether a geometry also gets its location for a map, see {@link Value#getLocations()}
      */
-    public ValueFactory(TransferDescription transferDescription) {
+    public ValueFactory(TransferDescription transferDescription, boolean includeLocations) {
         this.transferDescription = transferDescription;
+        this.includeLocations = includeLocations;
+    }
+
+    boolean includesLocations() {
+        return includeLocations;
     }
 
     /**

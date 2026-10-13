@@ -74,5 +74,35 @@ Da die Objektlöschung in diesem Fall auch eine Auswirkung auf die Referenzierte
 ]
 ```
 
+## Lage der Änderungen (Option `--locations`)
+
+Mit der Option `--locations` bekommt jedes Element zwei weitere Eigenschaften, damit sich die Änderungen auf einer Karte zeigen lassen. Ohne die Option bleibt die Ausgabe unverändert, wie oben beschrieben.
+
+| Eigenschaft | Typ / Werte | Beschreibung |
+|-------------|-------------|--------------|
+| oldLocation | WKT String  | Lage der Änderung im alten Stand; fehlt bei "added" und ohne Lage |
+| newLocation | WKT String  | Lage der Änderung im neuen Stand; fehlt bei "deleted" und ohne Lage |
+
+- Die Lage ist WKT nach OGC Simple Features 1.1, also `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` oder `GEOMETRYCOLLECTION`, immer 2D. Bögen sind durch Geraden mit höchstens 1 cm Abweichung angenähert, die Koordinaten auf mm gerundet. `oldValue` und `newValue` bleiben exakt.
+- Bei valueType "geometry" ist die Lage die geänderte Geometrie selbst, sonst die Geometrie des Objekts im jeweiligen Stand.
+- Als Geometrie des Objekts zählen die Geometrie-Attribute seiner Klasse, nicht die Geometrien in Strukturen. Mehrere ergeben eine `GEOMETRYCOLLECTION`. Ein Objekt ohne eigene Geometrie hat keine Lage, auch nicht über Referenzen auf andere Objekte.
+
+#### Objektveränderung mit Lage
+```json
+[
+    {
+        "oid": "b3650c21-95ee-49f9-a2d1-15f0964b5fc0",
+        "changeType": "changed",
+        "valueType": "attribute",
+        "interlisName": "DMAV_Gebaeudeadressen_V1_1.Gebaeudeadressen.Gebaeudeeingang",
+        "attributePath": "Hausnummer",
+        "oldValue": "26a",
+        "newValue": "26",
+        "oldLocation": "POINT (2586295.643 1224110.819)",
+        "newLocation": "POINT (2586295.643 1224110.819)"
+    }
+]
+```
+
 
 

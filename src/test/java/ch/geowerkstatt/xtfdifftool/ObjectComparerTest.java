@@ -1,5 +1,6 @@
 package ch.geowerkstatt.xtfdifftool;
 
+import ch.geowerkstatt.xtfdifftool.diff.Change;
 import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
 import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.interlis.ili2c.config.Configuration;
@@ -8,17 +9,27 @@ import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.metamodel.TransferDescription;
 import ch.interlis.iom.IomObject;
 import ch.interlis.iom_j.Iom_jObject;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
 
+import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createArc;
+import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createBoundary;
 import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createCoord;
 import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createMultiCoord;
+import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createMultiPolyline;
 import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createObject;
+import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createPolygonFromBoundaries;
+import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createPolyline;
+import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createRectangleGeometry;
 import static ch.geowerkstatt.xtfdifftool.IomObjectHelper.createRef;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 public final class ObjectComparerTest {
     private static final String MODEL_FILE = "src/test/data/ObjectComparerTest/Model.ili";
@@ -30,6 +41,11 @@ public final class ObjectComparerTest {
     private static final String EMBEDDED_ASSOCIATION_NAME = TOPIC + ".EmbeddedAssociation";
     private static final String STANDALONE_ASSOCIATION_NAME = TOPIC + ".StandaloneAssociation";
     private static final String GEOMETRY_CLASS = "ObjectComparerTest.Geometry.Class";
+    private static final String LOCATED_CLASS = "ObjectComparerTest.Geometry.Located";
+    private static final String GEOMETRY_STRUCT = "ObjectComparerTest.Geometry.GeometryStruct";
+    private static final String RECTANGLE = "POLYGON ((10 10, 10 20, 20 20, 20 10, 10 10))";
+    private static final Coordinate SEMICIRCLE_CENTER = new Coordinate(20, 20);
+    private static final double SEMICIRCLE_RADIUS = 10;
     private TransferDescription transferDescription;
 
     @BeforeEach
@@ -585,6 +601,128 @@ public final class ObjectComparerTest {
         assertComparison(first, second, expectedChanges);
     }
 
+    @Test
+    public void locationOfAttributeChangeIsObjectGeometry() {
+        var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "a");
+            obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
+        }));
+        var second = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "b");
+            obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
+        }));
+
+        assertLocations(first, second, List.of(new TestLocation("o1", "text", RECTANGLE, RECTANGLE)));
+    }
+
+    @Test
+    public void locationOfGeometryChangeIsChangedGeometryWithApproximatedArc() throws ParseException {
+        var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> obj.addattrobj("Surface", createSemicircleSurface())));
+        var second = List.of(createObject(LOCATED_CLASS, "o1", obj -> obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"))));
+
+        var changes = analyzeWithLocations(first, second);
+
+        assertThat(changes).hasSize(1);
+        var change = changes.getFirst();
+        assertThat(change.valueType()).isEqualTo(ValueType.GEOMETRY);
+        assertThat(change.oldValue().toString()).contains("CURVEPOLYGON");
+        assertApproximatesSemicircle(change.oldLocation(), "POLYGON");
+        assertThat(change.newLocation()).isEqualTo(RECTANGLE);
+    }
+
+    @Test
+    public void locationOfMultiPolylineApproximatesArc() throws ParseException {
+        var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "a");
+            obj.addattrobj("MultiLine", createSemicircleMultiPolyline());
+        }));
+        var second = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "b");
+            obj.addattrobj("MultiLine", createSemicircleMultiPolyline());
+        }));
+
+        var change = analyzeWithLocations(first, second).getFirst();
+
+        assertApproximatesSemicircle(change.oldLocation(), "MULTILINESTRING");
+        assertThat(change.newLocation()).isEqualTo(change.oldLocation());
+    }
+
+    @Test
+    public void locationOfAddedAndDeletedObjectIsOnlyOnItsSide() {
+        var first = List.of(createObject(LOCATED_CLASS, "deleted", obj -> obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"))));
+        var second = List.of(createObject(LOCATED_CLASS, "added", obj -> obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"))));
+
+        assertLocations(first, second, List.of(
+                new TestLocation("deleted", null, RECTANGLE, null),
+                new TestLocation("added", null, null, RECTANGLE)));
+    }
+
+    @Test
+    public void locationOfObjectWithoutGeometryIsMissing() {
+        var first = List.of(createObject(CLASS_NAME, "o1", obj -> obj.setattrvalue("text", "a")));
+        var second = List.of(createObject(CLASS_NAME, "o1", obj -> obj.setattrvalue("text", "b")));
+
+        assertLocations(first, second, List.of(new TestLocation("o1", "text", null, null)));
+    }
+
+    @Test
+    public void locationOfCoordWithHeightIsTwoDimensional() {
+        var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> obj.addattrobj("Point3", createCoord("20", "30", "54"))));
+        var second = List.of(createObject(LOCATED_CLASS, "o1", obj -> obj.addattrobj("Point3", createCoord("20", "30", "59"))));
+
+        assertLocations(first, second, List.of(new TestLocation("o1", "Point3", "POINT (20 30)", "POINT (20 30)")));
+    }
+
+    @Test
+    public void locationOfObjectWithSeveralGeometriesIsCollection() {
+        var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "a");
+            obj.addattrobj("Point3", createCoord("20", "30", "54"));
+            obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
+        }));
+        var second = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "b");
+            obj.addattrobj("Point3", createCoord("20", "30", "54"));
+            obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
+        }));
+
+        var collection = "GEOMETRYCOLLECTION (POINT (20 30), " + RECTANGLE + ")";
+        assertLocations(first, second, List.of(new TestLocation("o1", "text", collection, collection)));
+    }
+
+    @Test
+    public void locationIgnoresGeometryInStructure() {
+        var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "a");
+            obj.addattrobj("struct", createGeometryStruct());
+        }));
+        var second = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "b");
+            obj.addattrobj("struct", createGeometryStruct());
+        }));
+
+        assertLocations(first, second, List.of(new TestLocation("o1", "text", null, null)));
+    }
+
+    @Test
+    public void withoutLocationsChangesStayTheSame() {
+        var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "a");
+            obj.addattrobj("Surface", createSemicircleSurface());
+        }));
+        var second = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "b");
+            obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
+        }));
+
+        var withoutLocations = new ObjectComparer(transferDescription, first.stream(), second.stream()).analyzeDifferences().toList();
+        var withLocations = analyzeWithLocations(first, second);
+
+        assertThat(withoutLocations).allMatch(change -> change.oldLocation() == null && change.newLocation() == null);
+        assertThat(withoutLocations.stream().map(TestChange::new).toList())
+                .containsExactlyInAnyOrderElementsOf(withLocations.stream().map(TestChange::new).toList());
+    }
+
     private TestChange createChange(String oid, ChangeType type) {
         return new TestChange(oid, type, ValueType.OBJECT, CLASS_NAME, null, null, null);
     }
@@ -593,5 +731,57 @@ public final class ObjectComparerTest {
         ObjectComparer objectComparer = new ObjectComparer(transferDescription, first.stream(), second.stream());
         var changes = objectComparer.analyzeDifferences().map(TestChange::new).toList();
         assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
+    }
+
+    private List<Change> analyzeWithLocations(List<IomObject> first, List<IomObject> second) {
+        return new ObjectComparer(transferDescription, first.stream(), second.stream(), true).analyzeDifferences().toList();
+    }
+
+    private void assertLocations(List<IomObject> first, List<IomObject> second, List<TestLocation> expectedLocations) {
+        var locations = analyzeWithLocations(first, second).stream().map(TestLocation::new).toList();
+        assertThat(locations).containsExactlyInAnyOrderElementsOf(expectedLocations);
+    }
+
+    // The upper half of the circle around (20 20) with radius 10, closed along its diameter.
+    private static IomObject createSemicircleSurface() {
+        return createPolygonFromBoundaries(createBoundary(
+                createCoord("10", "20"),
+                createArc("20", "30", "30", "20"),
+                createCoord("10", "20")));
+    }
+
+    private static IomObject createSemicircleMultiPolyline() {
+        return createMultiPolyline(createPolyline(createCoord("10", "20"), createArc("20", "30", "30", "20")));
+    }
+
+    private static IomObject createGeometryStruct() {
+        var struct = new Iom_jObject(GEOMETRY_STRUCT, null);
+        struct.addattrobj("Point", createCoord("15", "15"));
+        return struct;
+    }
+
+    // Each chord of the approximated arc stays within 1 cm of the circle, plus the rounding to mm.
+    private static void assertApproximatesSemicircle(String location, String geometryType) throws ParseException {
+        assertThat(location).startsWith(geometryType + " (").doesNotContainPattern("\\d\\.\\d{4,}");
+
+        var coordinates = new WKTReader().read(location).getCoordinates();
+        assertThat(coordinates.length).isGreaterThan(10);
+        for (var i = 1; i < coordinates.length; i++) {
+            var start = coordinates[i - 1];
+            var end = coordinates[i];
+            assertThat(start.distance(SEMICIRCLE_CENTER)).isCloseTo(SEMICIRCLE_RADIUS, within(0.001));
+            if (start.y == SEMICIRCLE_CENTER.y && end.y == SEMICIRCLE_CENTER.y) {
+                continue;
+            }
+
+            var chordMiddle = new Coordinate((start.x + end.x) / 2, (start.y + end.y) / 2);
+            assertThat(SEMICIRCLE_RADIUS - chordMiddle.distance(SEMICIRCLE_CENTER)).isLessThanOrEqualTo(0.011);
+        }
+    }
+
+    private record TestLocation(String oid, String attributePath, String oldLocation, String newLocation) {
+        TestLocation(Change change) {
+            this(change.oid(), change.attributePath(), change.oldLocation(), change.newLocation());
+        }
     }
 }

@@ -72,6 +72,12 @@ MODEL ObjectComparerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             -100.00 .. 100.00 [INTERLIS.m],
             ROTATION 2 -> 1;
 
+            !!@ CRS = EPSG:2056
+            Coord2 = COORD
+            0.00 .. 100.00 [INTERLIS.m],
+            0.00 .. 100.00 [INTERLIS.m],
+            ROTATION 2 -> 1;
+
         CLASS Class =
             OID AS INTERLIS.STANDARDOID;
             Point3: Coord3;
@@ -79,6 +85,19 @@ MODEL ObjectComparerTest AT "mailto:noreply@localhost" VERSION "2026-01-22" =
             Point3Bag : BAG OF Coord3;
             MultiPoint3: MultiCoord3;
         END Class;
+
+        STRUCTURE GeometryStruct =
+            Point: Coord2;
+        END GeometryStruct;
+
+        CLASS Located =
+            OID AS INTERLIS.STANDARDOID;
+            text : TEXT;
+            Point3: Coord3;
+            Surface: SURFACE WITH (STRAIGHTS, ARCS) VERTEX Coord2 WITHOUT OVERLAPS > 0.002;
+            MultiLine: MULTIPOLYLINE WITH (STRAIGHTS, ARCS) VERTEX Coord2;
+            struct : GeometryStruct;
+        END Located;
 
     END Geometry;
 

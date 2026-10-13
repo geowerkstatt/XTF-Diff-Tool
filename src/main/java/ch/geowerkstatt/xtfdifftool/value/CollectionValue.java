@@ -9,6 +9,7 @@ import org.jspecify.annotations.NonNull;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public final class CollectionValue implements Value {
     @JsonValue
@@ -80,6 +81,11 @@ public final class CollectionValue implements Value {
     public ValueType getValueType() {
         // Assume all values have the same ValueType
         return values.isEmpty() ? ValueType.ATTRIBUTE : values.getFirst().getValueType();
+    }
+
+    @Override
+    public Stream<String> getLocations() {
+        return values.stream().flatMap(Value::getLocations);
     }
 
     @Override

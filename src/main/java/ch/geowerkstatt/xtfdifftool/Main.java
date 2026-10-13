@@ -28,6 +28,7 @@ import java.util.Optional;
 
 public final class Main {
     private static final String OPTION_HELP = "help";
+    private static final String OPTION_LOCATIONS = "locations";
     private static final String OPTION_LOGFILE = "logfile";
     private static final String OPTION_MODEL_DIR = "modeldir";
     private static final String OPTION_PROXY = "proxy";
@@ -93,7 +94,7 @@ public final class Main {
                     XtfStreamReader secondReader = new XtfStreamReader(transferDescription, secondXtfPath.toFile());
                     JsonDiffWriter diffWriter = new JsonDiffWriter(Files.newOutputStream(Path.of(options.diffOutputFile())))
             ) {
-                ObjectComparer objectComparer = new ObjectComparer(transferDescription, firstReader.readObjects(), secondReader.readObjects());
+                ObjectComparer objectComparer = new ObjectComparer(transferDescription, firstReader.readObjects(), secondReader.readObjects(), options.locations());
                 var changes = objectComparer.analyzeDifferences().toList();
                 changes.forEach(diffWriter::writeChange);
                 LOGGER.info("Total changes found: {}", changes.size());
@@ -143,7 +144,8 @@ public final class Main {
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_MODEL_DIR)),
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_PROXY)),
                 Optional.ofNullable(commandLine.getOptionValue(OPTION_PROXY_PORT)),
-                commandLine.hasOption(OPTION_VERBOSE)
+                commandLine.hasOption(OPTION_VERBOSE),
+                commandLine.hasOption(OPTION_LOCATIONS)
         ));
     }
 
@@ -195,6 +197,10 @@ public final class Main {
         options.addOption(Option.builder("h")
                 .longOpt(OPTION_HELP)
                 .desc("print this help message")
+                .get());
+        options.addOption(Option.builder()
+                .longOpt(OPTION_LOCATIONS)
+                .desc("add the location of each change in the old and the new state as WKT (oldLocation, newLocation)")
                 .get());
         options.addOption(Option.builder()
                 .longOpt(OPTION_LOGFILE)

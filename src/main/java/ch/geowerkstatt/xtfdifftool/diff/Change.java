@@ -2,6 +2,7 @@ package ch.geowerkstatt.xtfdifftool.diff;
 
 import ch.geowerkstatt.xtfdifftool.value.ObjectValue;
 import ch.geowerkstatt.xtfdifftool.value.Value;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * A change detected between two XTF files.
@@ -13,6 +14,8 @@ import ch.geowerkstatt.xtfdifftool.value.Value;
  * @param attributePath The attribute path of the changed attribute
  * @param oldValue Old attribute value
  * @param newValue New attribute value
+ * @param oldLocation Location of the change in the old state as WKT, omitted from the output when absent
+ * @param newLocation Location of the change in the new state as WKT, omitted from the output when absent
  */
 public record Change(
         String oid,
@@ -21,7 +24,16 @@ public record Change(
         String interlisName,
         String attributePath,
         Value oldValue,
-        Value newValue) {
+        Value newValue,
+        @JsonInclude(JsonInclude.Include.NON_NULL) String oldLocation,
+        @JsonInclude(JsonInclude.Include.NON_NULL) String newLocation) {
+
+    /**
+     * Construct a new change without locations.
+     */
+    public Change(String oid, ChangeType changeType, ValueType valueType, String interlisName, String attributePath, Value oldValue, Value newValue) {
+        this(oid, changeType, valueType, interlisName, attributePath, oldValue, newValue, null, null);
+    }
 
     /**
      * Construct a new change for an attribute from an attributePath, old and new value.
@@ -37,7 +49,7 @@ public record Change(
      * Get a new Change where the oid and tag properties are set according to the object.
      */
     public Change withObject(ObjectValue object) {
-        return new Change(object.getOid(), changeType, valueType, object.getTag(), attributePath, oldValue, newValue);
+        return new Change(object.getOid(), changeType, valueType, object.getTag(), attributePath, oldValue, newValue, oldLocation, newLocation);
     }
 
     /**
@@ -45,6 +57,13 @@ public record Change(
      */
     public Change withBaseAttribute(String attributeName) {
         var combinedPath = attributePath.isEmpty() ? attributeName : attributeName + "." + attributePath;
-        return new Change(oid, changeType, valueType, interlisName, combinedPath, oldValue, newValue);
+        return new Change(oid, changeType, valueType, interlisName, combinedPath, oldValue, newValue, oldLocation, newLocation);
+    }
+
+    /**
+     * Get a new Change with the given locations in the old and the new state.
+     */
+    public Change withLocations(String oldLocation, String newLocation) {
+        return new Change(oid, changeType, valueType, interlisName, attributePath, oldValue, newValue, oldLocation, newLocation);
     }
 }
