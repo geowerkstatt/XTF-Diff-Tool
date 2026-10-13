@@ -52,7 +52,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleA", List.of("oA1", "oA2"))),
                 () -> assertThat(getAssociations(pool, "oA1")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))),
@@ -71,7 +71,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleB", List.of("oB"))),
                 () -> assertThat(getAssociations(pool, "oB")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))));
@@ -100,7 +100,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleC", List.of("oC"), "RoleD", List.of("oD1", "oD2"))),
                 () -> assertThat(getAssociations(pool, "oC")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"), "RoleD", List.of("oD1", "oD2"))),
@@ -132,7 +132,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleE", List.of("oE1", "oE2"))),
                 () -> assertThat(getAssociations(pool, "oE1")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMain"))),
@@ -158,7 +158,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleG", List.of("oG"))),
                 () -> assertThat(getAssociations(pool, "oUnstableF")).containsExactlyInAnyOrderEntriesOf(Map.of()),
@@ -176,7 +176,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseA", List.of("oA"))),
                 () -> assertThat(getAssociations(pool, "oA")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseMain", List.of("oMain"))));
@@ -197,7 +197,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseB", List.of("oB"))),
                 () -> assertThat(getAssociations(pool, "oB")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseMain2", List.of("oMain"))));
@@ -223,7 +223,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of()),
                 () -> assertThat(getAssociations(pool, "oUnstableA")).containsExactlyInAnyOrderEntriesOf(Map.of()),
@@ -249,7 +249,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleF", List.of("oMissingF"))),
                 () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.COMPARED_MAYBE_UNSTABLE)).containsExactlyInAnyOrderEntriesOf(Map.of(
@@ -277,7 +277,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oMain")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleC", List.of("oMissingC"))),
                 () -> assertThat(getAssociations(pool, "oA")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleMain", List.of("oMissingMain"))),
@@ -299,7 +299,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oA")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleBaseMain", List.of("oMissingMain"))),
                 () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.COMPARED_MAYBE_UNSTABLE)).containsExactlyInAnyOrderEntriesOf(Map.of(
@@ -317,7 +317,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertThat(getAssociations(pool, "oB")).containsExactlyInAnyOrderEntriesOf(Map.of("RoleExternalMain", List.of("oMissingCatalogueEntry"))),
                 () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.COMPARED_MAYBE_UNSTABLE)).containsExactlyInAnyOrderEntriesOf(Map.of(
@@ -351,7 +351,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertEquals(0, pool.objectsWithStableOid().count()),
                 () -> assertThat(getCounts(pool, ObjectPool.ReferenceOutcome.IGNORED_NO_STABLE_ENDPOINT)).containsExactlyInAnyOrderEntriesOf(Map.of(
@@ -380,7 +380,7 @@ public final class ObjectPoolTest {
                 })
         );
 
-        var pool = new ObjectPool(objects.stream(), transferDescription);
+        var pool = new ObjectPool(objects.stream(), transferDescription, false);
         assertAll(
                 () -> assertEquals(1, pool.objectsWithStableOid().count()),
                 () -> assertTrue(pool.getObject("oUnknown").isEmpty()),
@@ -429,7 +429,7 @@ public final class ObjectPoolTest {
 
     private boolean validateObjectHasStableOid(String className) {
         IomObject object = new Iom_jObject(className, "o1");
-        var pool = new ObjectPool(Stream.of(object), transferDescription);
+        var pool = new ObjectPool(Stream.of(object), transferDescription, false);
         return pool.objectsWithStableOid().count() == 1L;
     }
 }

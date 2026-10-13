@@ -768,7 +768,7 @@ public final class ObjectComparerTest {
             obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
         }));
 
-        var withoutLocations = new ObjectComparer(transferDescription, first.stream(), second.stream()).analyzeDifferences().toList();
+        var withoutLocations = new ObjectComparer(transferDescription, first.stream(), second.stream(), false).analyzeDifferences().toList();
         var withLocations = analyzeWithLocations(first, second);
 
         assertThat(withoutLocations).allMatch(change -> change.oldLocation() == null && change.newLocation() == null);
@@ -781,7 +781,7 @@ public final class ObjectComparerTest {
     }
 
     private void assertComparison(List<IomObject> first, List<IomObject> second, List<TestChange> expectedChanges) {
-        ObjectComparer objectComparer = new ObjectComparer(transferDescription, first.stream(), second.stream());
+        ObjectComparer objectComparer = new ObjectComparer(transferDescription, first.stream(), second.stream(), false);
         var changes = objectComparer.analyzeDifferences().map(TestChange::new).toList();
         assertThat(changes).containsExactlyInAnyOrderElementsOf(expectedChanges);
     }

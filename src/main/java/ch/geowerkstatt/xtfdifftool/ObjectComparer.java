@@ -25,17 +25,6 @@ public final class ObjectComparer {
     private final ObjectPool secondObjects;
 
     /**
-     * Creates a new ObjectAnalyzer for the given object streams, without the locations of the changes.
-     *
-     * @param transferDescription The INTERLIS transfer description.
-     * @param firstObjects        The objects of the first transfer.
-     * @param secondObjects       The objects of the second transfer.
-     */
-    public ObjectComparer(TransferDescription transferDescription, Stream<IomObject> firstObjects, Stream<IomObject> secondObjects) {
-        this(transferDescription, firstObjects, secondObjects, false);
-    }
-
-    /**
      * Creates a new ObjectAnalyzer for the given object streams.
      *
      * @param transferDescription The INTERLIS transfer description.
