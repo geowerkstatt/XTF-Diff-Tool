@@ -2,8 +2,6 @@ package ch.geowerkstatt.xtfdifftool;
 
 import ch.ehi.basics.settings.Settings;
 import ch.geowerkstatt.xtfdifftool.diff.Change;
-import ch.geowerkstatt.xtfdifftool.diff.ChangeType;
-import ch.geowerkstatt.xtfdifftool.diff.ValueType;
 import ch.geowerkstatt.xtfdifftool.value.Locations;
 import ch.geowerkstatt.xtfdifftool.value.ObjectValue;
 import ch.geowerkstatt.xtfdifftool.value.Value;
@@ -60,14 +58,12 @@ public final class ObjectComparer {
                     var matchingObject = secondObjects.getObject(object.getOid());
                     return matchingObject
                             .map(m -> compareObjectValues(object, m))
-                            .orElseGet(() -> Stream.of(new Change(object.getOid(), ChangeType.DELETED, ValueType.OBJECT, object.getTag(), null, null, null)
-                                    .withLocations(object.getLocation(), null)));
+                            .orElseGet(() -> Stream.of(Change.deleted(object)));
                 }),
                 secondObjects.objectsWithStableOid().flatMap(object -> {
                     var matchingObject = firstObjects.getObject(object.getOid());
                     return matchingObject.isEmpty()
-                            ? Stream.of(new Change(object.getOid(), ChangeType.ADDED, ValueType.OBJECT, object.getTag(), null, null, null)
-                                    .withLocations(null, object.getLocation()))
+                            ? Stream.of(Change.added(object))
                             : Stream.of();
         }));
     }

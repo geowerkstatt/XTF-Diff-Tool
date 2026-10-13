@@ -46,6 +46,20 @@ public record Change(
     }
 
     /**
+     * Construct a new change for an object that only the second state has, located by the object.
+     */
+    public static Change added(ObjectValue object) {
+        return new Change(object.getOid(), ChangeType.ADDED, ValueType.OBJECT, object.getTag(), null, null, null, null, object.getLocation());
+    }
+
+    /**
+     * Construct a new change for an object that only the first state has, located by the object.
+     */
+    public static Change deleted(ObjectValue object) {
+        return new Change(object.getOid(), ChangeType.DELETED, ValueType.OBJECT, object.getTag(), null, null, null, object.getLocation(), null);
+    }
+
+    /**
      * Get a new Change where the oid and tag properties are set according to the object.
      */
     public Change withObject(ObjectValue object) {
