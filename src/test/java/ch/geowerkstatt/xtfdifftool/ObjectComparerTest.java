@@ -737,6 +737,27 @@ public final class ObjectComparerTest {
     }
 
     @Test
+    public void locationOfObjectIsSharedByItsChanges() {
+        var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "a");
+            obj.addattrobj("Point3", createCoord("20", "30", "54"));
+            obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
+            obj.addattrobj("MultiLine", createSemicircleMultiPolyline());
+        }));
+        var second = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
+            obj.setattrvalue("text", "b");
+            obj.addattrobj("Point3", createCoord("20", "30", "54"));
+            obj.addattrobj("Surface", createRectangleGeometry("10", "10", "20", "20"));
+        }));
+
+        var changes = analyzeWithLocations(first, second);
+
+        // The object in the new state locates both changes, and the diff holds one copy of that location, not one per change.
+        assertThat(changes).hasSize(2);
+        assertThat(changes.get(0).newLocation()).startsWith("GEOMETRYCOLLECTION").isSameAs(changes.get(1).newLocation());
+    }
+
+    @Test
     public void withoutLocationsChangesStayTheSame() {
         var first = List.of(createObject(LOCATED_CLASS, "o1", obj -> {
             obj.setattrvalue("text", "a");

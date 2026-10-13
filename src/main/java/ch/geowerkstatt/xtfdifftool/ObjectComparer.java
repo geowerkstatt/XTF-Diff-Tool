@@ -74,8 +74,19 @@ public final class ObjectComparer {
 
     private Stream<Change> compareObjectValues(ObjectValue first, ObjectValue second) {
         try {
-            return first.getChanges(second).stream()
-                    .map(o -> o.withObject(first).withLocations(locationOf(o.oldValue(), first), locationOf(o.newValue(), second)));
+            var changes = first.getChanges(second);
+            if (changes.isEmpty()) {
+                return Stream.of();
+            }
+
+            // Each object is located once for all its changes. The list is built here, so that a failure while
+            // locating also skips only this class.
+            var firstLocation = first.getLocation();
+            var secondLocation = second.getLocation();
+            return changes.stream()
+                    .map(o -> o.withObject(first).withLocations(locationOf(o.oldValue(), firstLocation), locationOf(o.newValue(), secondLocation)))
+                    .toList()
+                    .stream();
         } catch (Exception ex) {
             LOGGER.error("Could not compare class {}", first.getTag(), ex);
             return Stream.of();
@@ -84,10 +95,10 @@ public final class ObjectComparer {
 
     // A changed geometry locates itself. Any other change, and a geometry missing on one side, is located by the
     // geometry of its object.
-    private static String locationOf(Value value, ObjectValue object) {
+    private static String locationOf(Value value, String objectLocation) {
         return Optional.ofNullable(value)
                 .map(v -> Locations.combine(v.getLocations()))
-                .orElseGet(object::getLocation);
+                .orElse(objectLocation);
     }
 
     private record RounderFacade(Rounder rounder) {
