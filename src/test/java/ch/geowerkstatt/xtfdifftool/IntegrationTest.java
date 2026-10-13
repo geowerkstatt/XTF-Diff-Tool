@@ -19,7 +19,6 @@ import ch.interlis.iox_j.validator.ValidationConfig;
 import ch.interlis.iox_j.validator.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -27,10 +26,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,8 +41,6 @@ public final class IntegrationTest {
     private static final String MODEL_FILE_23 = TEST_DIR + "DiffToolTest_2.3.ili";
     private static final String XTF_FILE_1_23 = TEST_DIR + "DiffToolTest1_2.3.xtf";
     private static final String XTF_FILE_2_23 = TEST_DIR + "DiffToolTest2_2.3.xtf";
-
-    private static final Pattern SIMPLE_FEATURE = Pattern.compile("(POINT|LINESTRING|POLYGON|MULTIPOINT|MULTILINESTRING|MULTIPOLYGON|GEOMETRYCOLLECTION) \\(");
 
     @BeforeAll
     public static void initAll() {
@@ -111,24 +104,12 @@ public final class IntegrationTest {
         String[] arguments = {XTF_FILE_1_24, XTF_FILE_2_24, output.toString(), "--modeldir", TEST_DIR, "--locations"};
         Main.main(arguments);
 
-        var mapper = new ObjectMapper();
-        List<Map<String, Object>> expectedChanges = mapper.readValue(Files.readString(Path.of(TEST_DIR + "ExpectedDiff_2.4.json")), new TypeReference<>() { });
-        List<Map<String, Object>> actualChanges = mapper.readValue(Files.readString(output.toPath()), new TypeReference<>() { });
+        assertTrue(output.exists());
 
-        // The option only adds the two locations, every other field stays as it is without the option.
-        var locations = new ArrayList<Object>();
-        for (var change : actualChanges) {
-            locations.add(change.remove("oldLocation"));
-            locations.add(change.remove("newLocation"));
-        }
-        locations.removeIf(Objects::isNull);
-
-        assertEquals(expectedChanges, actualChanges);
-        assertFalse(locations.isEmpty(), "The changed objects of the test data have geometries.");
-        for (var location : locations) {
-            var wkt = (String) location;
-            assertTrue(SIMPLE_FEATURE.matcher(wkt).lookingAt() && !wkt.contains("CURVE") && !wkt.contains("CIRCULAR"), "Not a simple feature: " + wkt);
-        }
+        // The test data hold every geometry type and arcs, so the expected file also pins how the locations approximate them.
+        var expectedOutput = Files.readString(Path.of(TEST_DIR + "ExpectedDiff_2.4_locations.json"));
+        var actualOutput = Files.readString(output.toPath());
+        assertEquals(prettyPrintJson(expectedOutput), prettyPrintJson(actualOutput));
     }
 
     private static TransferDescription compileIli(String iliFile) {
